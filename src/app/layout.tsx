@@ -1,8 +1,13 @@
 import type { Metadata } from 'next'
 import { Open_Sans } from 'next/font/google'
 import './globals.css'
+import { cn } from '@/lib/tailwind'
 
-const sans = Open_Sans({ subsets: ['latin'] })
+const sans = Open_Sans({
+  subsets: ['latin'],
+  variable: '--font-open-sans',
+  fallback: ['Open Sans']
+})
 
 export const metadata: Metadata = {
   title: 'You can do this!',
@@ -16,7 +21,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={sans.className}>{children}</body>
+      <body className={ cn(
+        sans.variable,
+        "font-sans",
+        "bg-black",
+        "text-white/70",
+      ) }>{ children }</body>
     </html>
   )
 }
