@@ -4,9 +4,7 @@ import Image from 'next/image'
 
 export default function Home() {
   return (
-    <main className="min-h-screen w-screen bg-black flex items-center justify-center">
-      
-
+    <main className="min-h-screen w-full flex items-center justify-center">
       <div className={ cn(
         "text-center",
         "flex flex-col items-center",
@@ -18,8 +16,7 @@ export default function Home() {
           "drop-shadow-lg"
         ) } />
 
-        <h1 className="mt-8 text-4xl font-bold text-white upper"
-        >
+        <h1 className="mt-8 text-4xl font-bold text-white">
           Yet Another Discord Clone
         </h1>
 
@@ -39,18 +36,23 @@ export default function Home() {
             // "hover:shadow-xl",
             "shadow-indigo-500/80",
             "hover:shadow-indigo-500/50",
-          ) }>
+          ) }
+            href="/auth"
+          >
             Sign Up Now
           </a>
+
           <span>
             or <a className="underline">
               login
             </a>
           </span>
+
         </div>
+
       </div>
 
-
+      
     </main>
   )
 }
