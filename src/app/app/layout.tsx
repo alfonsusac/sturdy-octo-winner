@@ -1,3 +1,4 @@
+import { getServerSession } from "next-auth"
 import Providers from "./layout.client"
 import { getSession } from "@/lib/next-auth"
 
@@ -6,7 +7,7 @@ export default async function AppLayout(p: {
 }) {
   const session = await getSession()
   return (
-    <Providers session={session} >
+    <Providers session={session} > 
       {p.children}
     </Providers>
   )
