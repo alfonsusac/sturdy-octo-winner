@@ -1,0 +1,1 @@
+export const cardbg = 'rounded-lg bg-indigo-300/5'

@@ -1,4 +1,4 @@
-import { ButtonBase, LoginButton } from "@/components/button"
+import { ButtonBase, LoginButton } from "@/components/ui/button"
 import { Icon } from '@iconify/react'
 
 export default function AuthPage() {

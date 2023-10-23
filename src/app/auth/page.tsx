@@ -1,5 +1,5 @@
-import { ButtonBase, LoginButton } from "@/components/button"
-import { LoginGoogleButton } from "@/components/button.login"
+import { ButtonBase, LoginButton } from "@/components/ui/button"
+import { LoginGoogleButton } from "@/components/ui/button.login"
 import { Icon } from '@iconify/react'
 
 export default function AuthPage() {

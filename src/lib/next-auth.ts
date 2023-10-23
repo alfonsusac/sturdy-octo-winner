@@ -2,6 +2,7 @@ import { AuthOptions, getServerSession } from "next-auth"
 import GoogleProvider from "next-auth/providers/google"
 import { env } from "./env"
 
+
 export const authOption: AuthOptions = {
   providers: [
     GoogleProvider({
