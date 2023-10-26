@@ -13,6 +13,7 @@ export default function BaseModal(p: {
   },
   onCloseTransitionStart?: () => void,
   onOpenTransitionStart?: () => void,
+  onOpen?:()=>void,
 }) {
   const [open, setOpen] = useState(false)
   const [transition, setTransition] = useState(false)
@@ -20,6 +21,7 @@ export default function BaseModal(p: {
   const handleOpenChange = (open: boolean) => {
     if (open) {
       setOpen(true)
+      p.onOpen?.()
     }
     if (!open) {
       setTransition(false)

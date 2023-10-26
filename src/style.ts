@@ -26,6 +26,13 @@ export const style = {
     "rounded-md py-2 px-4 bg-indigo-300/20 font-semibold",
     "hover:bg-indigo-700",
     "hover:shadow-md", 
+
+
+    "disabled:saturate-50",
+    "disabled:brightness-75",
+    "disabled:pointer-events-none",
+
+
   ),
 
   categoryTitle: cn(
@@ -34,9 +41,26 @@ export const style = {
     "font-semibold",
     "uppercase",
     "select-none",
-    
   ),
   cardbg: cn(
     'rounded-lg bg-indigo-300/5'
+  ),
+  inputLabel: cn(
+    "text-[0.7rem] uppercase font-semibold",
+    "my-1.5",
+  ),
+  textInput: cn(
+    "p-2.5 px-3",
+    "rounded-md",
+    "bg-black/30",
+  ),
+  fileInput: cn(
+    "transition-all", 
+    "file:bg-indigo-300/20 file:font-semibold",
+    "file:hover:bg-indigo-700",
+    "file:hover:shadow-md",
+    "file:rounded-md",
+    "file:border-0",
+    "file:p-2 file:px-4",
   )
 }
