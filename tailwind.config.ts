@@ -1,4 +1,6 @@
+import { unstable_cache } from 'next/cache'
 import type { Config } from 'tailwindcss'
+import colors from "tailwindcss/colors"
 
 const config: Config = {
   content: [
@@ -17,11 +19,26 @@ const config: Config = {
         'gradient-conic':
           'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
       },
+      keyframes: {
+        setting: {
+          show: {
+            from: "",
+            to: "",
+          },
+          hide: {
+            from: "",
+            to: "",
+          }
+        },
+      }
     },
 
   },
   plugins: [
     require('tailwind-scrollbar'),
+    require('@tailwindcss/typography'),
   ],
 }
 export default config
+
+unstable_cache

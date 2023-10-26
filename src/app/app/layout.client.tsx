@@ -3,10 +3,12 @@
 
 import { useSession } from "@/lib/next-auth.client"
 import { cn } from "@/lib/tailwind"
-import { cardbg } from "@/style"
 import { Session } from "next-auth"
 import { SessionProvider } from "next-auth/react"
 import { usePathname } from "next/navigation"
+import { ComponentProps, MutableRefObject, RefObject, SVGProps, createContext, useContext, useRef, useState } from "react"
+import UserSettingView from "./_settings/user"
+import { style } from "@/style"
 
 export function Providers(p: {
   children: React.ReactNode
@@ -22,34 +24,29 @@ export function Providers(p: {
 export function SidebarItem(p: {
   icon: React.ReactNode
   label: React.ReactNode
-  link: string
-  strict: boolean
-}) {
+  link?: string | string[]
+  strict?: boolean
+} & ComponentProps<"button">) {
+  const {icon, label, link, strict, children, ...rest} = p
+
   const path = usePathname()
+  const selected = p.strict ? (
+    typeof p.link === 'string' ? p.link === path : p.link?.includes(path)
+  ) : (
+    typeof p.link === 'string' ? path.startsWith(path) : p.link?.some(link => path.startsWith(link))
+  )
 
   return (
     <button className={ cn(
       "w-auto aspect-square rounded-xl",
       "flex flex-row justify-center items-center",
-
       "text-lg",
-      "hover:bg-indigo-300/10",
-
-      "data-[selected=true]:text-indigo-100/80",
-      "data-[selected=true]:bg-indigo-300/5",
-      "data-[selected=true]:hover:bg-indigo-300/10",
-      // "m-2"
-      "active:text-indigo-100/90",
-      "active:bg-indigo-300/20",
-
-      "data-[selected=true]:active:text-indigo-100/90",
-      "data-[selected=true]:active:bg-indigo-300/20",
+      style.buttonListItem,
     ) }
-      data-selected={
-        p.strict ? (p.link === path) : (path.startsWith(p.link)) 
-      }
+      data-state={ selected ? "active" : "" }
+      {...rest}
     >
-      {p.icon}
+      { p.icon }
     </button>
   )
 }
@@ -66,6 +63,7 @@ export function UserStatus() {
       "p-2.5",
       "rounded-b-lg",
       "flex flex-row gap-2",
+      "items-center"
     ) }>
       <div className="h-full aspect-square rounded-full overflow-hidden bg-black/50">
         <img
@@ -74,7 +72,7 @@ export function UserStatus() {
         />
       </div>
       <div className={ cn(
-        "flex flex-col gap-1 leading-[0.8] justify-center"
+        "flex flex-col gap-1 leading-[0.8] justify-center grow"
       ) }>
         <div className={ cn(
           "text-[0.8rem] text-indigo-100/90",
@@ -89,8 +87,67 @@ export function UserStatus() {
           status
         </div>
       </div>
+      <UserSettingView>
+        <button className={ cn(
+          "w-6 h-6 flex justify-center items-center",
+          "rounded-md",
+          "text-lg",
+          "text-indigo-200/40",
+          "hover:bg-indigo-400/10",
+        ) }>
+          <FluentSettings28Filled className="text-lg" />
+        </button>
+      </UserSettingView>
     </div>
   )
 
 }
 
+
+export function FluentSettings28Filled(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 28 28" { ...props }><path fill="currentColor" d="M16.693 2.311A12.974 12.974 0 0 0 14.013 2c-.924.01-1.823.115-2.704.311a.923.923 0 0 0-.716.8l-.209 1.877a1.707 1.707 0 0 1-2.371 1.376l-1.72-.757a.92.92 0 0 0-1.043.214a12.059 12.059 0 0 0-2.709 4.667a.924.924 0 0 0 .334 1.017l1.527 1.125a1.701 1.701 0 0 1 0 2.74l-1.527 1.128a.924.924 0 0 0-.334 1.016a12.064 12.064 0 0 0 2.707 4.672a.92.92 0 0 0 1.043.215l1.728-.759a1.694 1.694 0 0 1 1.526.086c.466.27.777.745.838 1.281l.208 1.877a.923.923 0 0 0 .702.796a11.67 11.67 0 0 0 5.413 0a.923.923 0 0 0 .702-.796l.208-1.88a1.693 1.693 0 0 1 2.366-1.37l1.727.759a.92.92 0 0 0 1.043-.215a12.065 12.065 0 0 0 2.707-4.667a.924.924 0 0 0-.334-1.017L23.6 15.37a1.701 1.701 0 0 1-.001-2.74l1.525-1.127a.924.924 0 0 0 .333-1.016a12.057 12.057 0 0 0-2.708-4.667a.92.92 0 0 0-1.043-.214l-1.72.757a1.666 1.666 0 0 1-.68.144a1.701 1.701 0 0 1-1.688-1.518l-.21-1.879a.922.922 0 0 0-.714-.799ZM14 18a4 4 0 1 1 0-8a4 4 0 0 1 0 8Z"></path></svg>
+  )
+}
+
+
+const screen = createContext(undefined as RefObject<HTMLDivElement> | undefined)
+export const useScreen = () => useContext(screen)
+
+export function BaseScreen(p: {
+  children: React.ReactNode
+}) {
+  const ref = useRef<HTMLDivElement>(null)
+
+  return (
+    <screen.Provider value={ ref }>
+      <div className={ cn(
+        "w-screen h-screen",
+        "bg-indigo-300/20",
+      ) }
+        // ref={ ref }
+      >
+        <div className={ cn(
+          "w-screen h-screen",
+          "grid grid-flow-row",
+          "grid-cols-[3rem_13rem_minmax(0,_1fr)]",
+          "p-2 gap-2",
+
+          "scale-100",
+
+          "data-[transition-setting=true]:transition-all",
+          "data-[transition-setting=true]:duration-150",
+          "data-[transition-setting=true]:scale-90",
+          "data-[transition-setting=true]:opacity-50",
+
+          "data-[transition-setting=false]:transition-all",
+          "data-[transition-setting=false]:duration-150",
+        ) }
+          ref={ ref }
+        >
+          { p.children }
+        </div>
+      </div>
+    </screen.Provider>
+  )
+}

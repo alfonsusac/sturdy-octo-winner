@@ -1,7 +1,13 @@
+import { FluentPremium12Filled } from "../@sidebar/default"
+import { TitleBar } from "../_comps/titlebar"
+
 export default function PremiumPage() {
   return (
     <>
-      Premium Page Content
+      <TitleBar
+        icon={ <FluentPremium12Filled /> }
+        title="Premium"
+      />
     </>
   )
 }

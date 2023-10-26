@@ -27,3 +27,14 @@
   background-color: var(--thumbBG) ;
   /* border: 3px solid var(--scrollbarBG); */
 }
+flex > * {
+  min-height: 0;
+  min-width: 0;
+}
+grid > * {
+  min-height: 0;
+  min-width: 0;
+}
+*:focus-visible{    
+  outline: #818CF833 3px solid;
+}

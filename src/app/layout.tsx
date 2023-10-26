@@ -25,7 +25,7 @@ export default function RootLayout({
         sans.variable,
         "font-sans",
         "bg-black",
-        "text-white/70",
+        "text-indigo-100/90",
       ) }>{ children }</body>
     </html>
   )

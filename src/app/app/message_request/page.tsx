@@ -1,7 +1,13 @@
+import { FluentChat28Filled } from "../@sidebar/default"
+import { TitleBar } from "../_comps/titlebar"
+
 export default function MessageRequestPage() {
   return (
     <>
-      Message Request Page
+      <TitleBar
+        icon={ <FluentChat28Filled /> }
+        title="Message Request"
+      />
     </>
   )
 }

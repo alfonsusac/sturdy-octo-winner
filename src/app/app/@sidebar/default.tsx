@@ -2,8 +2,9 @@ import { cn } from "@/lib/tailwind"
 import { usePathname } from "next/navigation"
 import { HomeSidebarMenuItem } from "./client"
 import { SVGProps } from "react"
+import { style } from "@/style"
 
-export default function HomeSidebar(){
+export default function HomeSidebar(p: any){
   return (
     <>
       <div className={ cn(
@@ -45,10 +46,8 @@ export default function HomeSidebar(){
           <div className={ cn(
             "flex flex-row justify-between items-center ",
             "px-2",
-            "text-[0.7rem] text-indigo-200/20",
-            "font-bold",
-            "uppercase",
             "my-2",
+            style.categoryTitle,
           ) }>
             <div>
               Direct Messages
@@ -65,22 +64,8 @@ export default function HomeSidebar(){
                 "flex flex-row gap-2 items-center",
                 "min-h-0",
                 "w-full",
-                
                 "text-sm",
-                "text-indigo-200/40",
-
-                "hover:bg-indigo-300/10",
-                "hover:text-indigo-200/60",
-
-                "data-[selected=true]:text-indigo-100/80",
-                "data-[selected=true]:bg-indigo-400/5",
-                "data-[selected=true]:hover:bg-indigo-300/10",
-
-                "active:text-indigo-200/90",
-                "active:bg-indigo-300/20",
-
-                "data-[selected=true]:active:text-indigo-100/90",
-                "data-[selected=true]:active:bg-indigo-300/20",
+                style.buttonListItem,
 
               ) }>
                 <div className="w-7 h-7 bg-black/30 rounded-full">
