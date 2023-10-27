@@ -38,6 +38,8 @@ export default function CreateServerForm(p: {
           <label className={ cn(style.inputLabel) }>
             Server Profile Picture
           </label>
+
+          {/* https://www.youtube.com/watch?v=PEGUFi9Sx-U  TUTORIAL HOW TO UPLOAD FILE */}
           <input { ...register("serverPicture") } type="file" name="serverPicture"
             className={ cn(style.fileInput) }
           />

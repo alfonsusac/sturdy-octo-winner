@@ -2,7 +2,6 @@ import { cn } from '@/lib/tailwind'
 import { style } from '@/style'
 import * as Dialog from '@radix-ui/react-dialog'
 import * as Tabs from '@radix-ui/react-tabs'
-import { SVGProps, useEffect, useState } from 'react'
 import { useScreen } from '../layout.client'
 import { CloseModalButton } from '../_modal/buttons'
 import BaseModal from '../_modal/base'
@@ -29,6 +28,7 @@ export default function BaseSettingView(p: {
         content: cn(
           "bg-indigo-300/20",
           "flex flex-row justify-center items-stretch",
+          "sm:p-8",
 
           // Remove Center Offset
           "translate-x-0 translate-y-0",

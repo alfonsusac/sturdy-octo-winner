@@ -22,8 +22,11 @@ export const style = {
     "flex flex-row justify-end gap-2"
   ),
   dialogButton: cn(
+    "text-sm",
+    "font-medium",
+
     "transition-all",
-    "rounded-md py-2 px-4 bg-indigo-300/20 font-semibold",
+    "rounded-md py-2 px-4 bg-indigo-300/20",
     "hover:bg-indigo-700",
     "hover:shadow-md", 
 

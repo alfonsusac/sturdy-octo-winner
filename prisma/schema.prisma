@@ -1,0 +1,53 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("PROD_DB_URL_POOLED")
+  directUrl = env("PROD_DB_URL")
+}
+
+model User {
+  id             String          @id @default(uuid())
+  name           String
+  profilePicture String
+  bio            String
+  friendsOf      User[]          @relation("userFriends")
+  friends        User[]          @relation("userFriends")
+  friendRequest  FriendRequest[]
+  server         ServerMember[]
+  createdAt      DateTime        @default(now())
+}
+
+model FriendRequest {
+  id         String              @id @default(uuid())
+  fromUser   User                @relation(fields: [fromUserID], references: [id])
+  fromUserID String
+  status     FriendRequestStatus
+}
+
+enum FriendRequestStatus {
+  PENDING
+  REJECTED
+  BLOCKED
+}
+
+model Server {
+  id             String         @id @default(uuid())
+  name           String
+  profilePicture String
+  members        ServerMember[]
+}
+
+model ServerMember {
+  server   Server @relation(fields: [serverId], references: [id])
+  serverId String
+  user     User   @relation(fields: [userId], references: [id])
+  userId   String
+
+  @@id([serverId])
+}

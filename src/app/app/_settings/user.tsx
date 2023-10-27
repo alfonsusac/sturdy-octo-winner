@@ -1,5 +1,5 @@
 import BaseSettingView, { SettingTabTrigger, SettingsTabContent, settingTabTriggerStyle } from "@/app/app/_settings/base"
-import { ButtonBase } from "@/components/ui/button"
+import LogoutButton from "@/components/ui/logout"
 import { SVGProps } from "react"
 
 export default function UserSettingView(p: {
@@ -16,11 +16,13 @@ export default function UserSettingView(p: {
           <SettingTabTrigger value="Profile">Profile</SettingTabTrigger>
           <SettingTabTrigger value="Appearance">Appearance</SettingTabTrigger>
           <SettingTabTrigger value="Language">Language</SettingTabTrigger>
-          <div className="h-px bg-indigo-300/10 mx-2 my-2"/>
-          <button className={ settingTabTriggerStyle }>
-            Log Out
-            <FluentSignOut20Filled className="text-lg"/>
-          </button>
+          <div className="h-px bg-indigo-300/10 mx-2 my-2" />
+          <LogoutButton>
+            <button className={ settingTabTriggerStyle }>
+              Log Out
+              <FluentSignOut20Filled className="text-lg"/>
+            </button>
+          </LogoutButton>
           </>
       }
     >

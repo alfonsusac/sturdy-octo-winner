@@ -69,6 +69,7 @@ export function AddServerDialog(p: {
         "relative w-full items-center",
         // "outline outline-white",
         "transition-none",
+        // "ease-linear",
         "duration-500",
 
         "data-[animation-state=right]:-translate-x-1/2",
