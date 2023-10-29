@@ -143,25 +143,49 @@ export interface Database {
       }
       User: {
         Row: {
-          bio: string
+          bio: string | null
           createdAt: string
+          displayName: string
+          email: string
           id: string
-          name: string
           profilePicture: string
+          provider: Database["public"]["Enums"]["AcccountProvider"]
+          username: string
         }
         Insert: {
-          bio: string
+          bio?: string | null
           createdAt?: string
+          displayName: string
+          email: string
           id: string
-          name: string
           profilePicture: string
+          provider: Database["public"]["Enums"]["AcccountProvider"]
+          username: string
         }
         Update: {
-          bio?: string
+          bio?: string | null
           createdAt?: string
+          displayName?: string
+          email?: string
           id?: string
-          name?: string
           profilePicture?: string
+          provider?: Database["public"]["Enums"]["AcccountProvider"]
+          username?: string
+        }
+        Relationships: []
+      }
+      UserDefaultImage: {
+        Row: {
+          email: string
+          id: string
+        }
+        Insert: {
+          email: string
+          id: string
+        }
+        Update: {
+          email?: string
+          id?: string
         }
         Relationships: []
       }
@@ -173,6 +197,7 @@ export interface Database {
       [_ in never]: never
     }
     Enums: {
+      AcccountProvider: "google"
       FriendRequestStatus: "PENDING" | "REJECTED" | "BLOCKED"
     }
     CompositeTypes: {

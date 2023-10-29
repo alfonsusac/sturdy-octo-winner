@@ -11,16 +11,31 @@ datasource db {
   directUrl = env("PROD_DB_URL")
 }
 
+enum AcccountProvider {
+  google
+  github
+}
+
 model User {
   id             String          @id @default(uuid())
-  name           String
+  email          String
+  provider       AcccountProvider[] @default([])
+  username       String          
+  displayName    String
   profilePicture String
-  bio            String
   friendsOf      User[]          @relation("userFriends")
   friends        User[]          @relation("userFriends")
   friendRequest  FriendRequest[]
   server         ServerMember[]
   createdAt      DateTime        @default(now())
+  bio            String?
+
+  @@unique([email, provider])
+}
+
+model UserDefaultImage {
+  email String @id @unique
+  id String @default(uuid())
 }
 
 model FriendRequest {

@@ -20,16 +20,10 @@ const config: Config = {
           'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
       },
       keyframes: {
-        setting: {
-          show: {
-            from: "",
-            to: "",
-          },
-          hide: {
-            from: "",
-            to: "",
-          }
-        },
+        showFormError: {
+          from: { height: "0rem" },
+          to: { height: "4rem" }
+        }
       }
     },
 

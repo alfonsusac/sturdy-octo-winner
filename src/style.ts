@@ -49,8 +49,8 @@ export const style = {
     'rounded-lg bg-indigo-300/5'
   ),
   inputLabel: cn(
-    "text-[0.7rem] uppercase font-semibold",
-    "my-1.5",
+    // "text-[0.7rem] uppercase font-semibold",
+    // "my-1.5",
   ),
   textInput: cn(
     "p-2.5 px-3",
