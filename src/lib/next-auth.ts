@@ -59,7 +59,7 @@ export const getSession = cache(async () => {
     name: session.user.name,
     image: session.user.image,
     expiryDate: session.expires,
-    provider: session.user.provider as AcccountProvider,
+    provider: session.user.provider as unknown as AcccountProvider[],
   }
 })
 

@@ -9,6 +9,7 @@ import { usePathname } from "next/navigation"
 import { ComponentProps, MutableRefObject, RefObject, SVGProps, createContext, useContext, useRef, useState } from "react"
 import UserSettingView from "./_settings/user"
 import { style } from "@/style"
+import { User } from "@prisma/client"
 
 export function Providers(p: {
   children: React.ReactNode
@@ -53,7 +54,9 @@ export function SidebarItem(p: {
 
 
 
-export function UserStatus() {
+export function UserStatus(p: {
+  user: User
+}) {
   const session = useSession()
 
   return (

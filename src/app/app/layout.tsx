@@ -4,13 +4,15 @@ import { cn } from "@/lib/tailwind"
 import { style } from "@/style"
 import { ComponentProps, SVGProps } from "react"
 import { AddServerDialog } from "./_modal/addserver"
+import { getUserData } from "@/controller/user"
 
 export default async function AppLayout(p: {
   children: React.ReactNode
   sidebar: React.ReactNode
   header: React.ReactNode
 }) {
-  const session = await getSession()
+  const { session } = await getSession()
+  const user = await getUserData()
   return (
     <Providers session={ session }>
       <BaseScreen>
@@ -21,11 +23,12 @@ export default async function AppLayout(p: {
             <AddServerButton />
           </AddServerDialog>
         </Sidebar>
+
         <SubSidebar>
           <div className="min-h-0 flex flex-col">
             { p.sidebar }
           </div>
-          <UserStatus />
+          <UserStatus user={user} />
         </SubSidebar>
 
         <div className={ cn(style.cardbg, "grid grid-flow-row",

@@ -17,17 +17,17 @@ enum AcccountProvider {
 }
 
 model User {
-  id             String          @id @default(uuid())
+  id             String             @id @default(uuid())
   email          String
   provider       AcccountProvider[] @default([])
-  username       String          
+  username       String
   displayName    String
   profilePicture String
-  friendsOf      User[]          @relation("userFriends")
-  friends        User[]          @relation("userFriends")
+  friendsOf      User[]             @relation("userFriends")
+  friends        User[]             @relation("userFriends")
   friendRequest  FriendRequest[]
   server         ServerMember[]
-  createdAt      DateTime        @default(now())
+  createdAt      DateTime           @default(now())
   bio            String?
 
   @@unique([email, provider])
@@ -35,7 +35,7 @@ model User {
 
 model UserDefaultImage {
   email String @id @unique
-  id String @default(uuid())
+  id    String @default(uuid())
 }
 
 model FriendRequest {
