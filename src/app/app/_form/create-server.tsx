@@ -5,8 +5,7 @@ import { useForm, SubmitHandler } from "react-hook-form"
 import { generateSlug } from "random-word-slugs"
 import { cn } from "@/lib/tailwind"
 import { style } from "@/style"
-import { ComponentProps, MutableRefObject, RefCallback, RefObject, SVGProps, useRef } from "react"
-import { generate } from "random-words"
+import { MutableRefObject, RefObject, SVGProps, useRef } from "react"
 
 type Inputs = {
   serverName: string
@@ -29,6 +28,7 @@ export default function CreateServerForm(p: {
   const { ref, ...rest } = register('serverPicture');
   const inputpfpref = useRef<HTMLInputElement | null>(null)
   const imagepfpref = useRef<HTMLImageElement>(null)
+  const sizelimitref = useRef<HTMLElement>(null)
 
   return (
     <form
@@ -42,16 +42,10 @@ export default function CreateServerForm(p: {
           inputref={ inputpfpref }
           imgref={ imagepfpref }
         />
-
-        {/* <fieldset className="mt-4 flex flex-col items-stretch">
-          <label className={ cn(style.inputLabel) }>
-            Server Profile Picture
-          </label>
-
-          <input { ...register("serverPicture") } type="file" name="serverPicture"
-            className={ cn(style.fileInput) }
-          />
-        </fieldset> */}
+        <small className="block self-center mt-2 text-indigo-300/40 data-[emphasize=true]:text-red-500/80"
+          ref={sizelimitref}>
+          Maximum File Size: 1MB
+        </small>
 
         <input
           { ...rest }
@@ -64,10 +58,20 @@ export default function CreateServerForm(p: {
           accept="image/*"
           className="hidden"
           onChange={ (e) => {
-            console.log(e.target.value)
-            const fileReader = new FileReader()
             const file = e.target.files?.[0]
-            if (!file) return
+
+            if (!file) {
+              console.log("no file"); return
+            }
+            if ((file.size / 1024) > 1024) {
+              sizelimitref.current?.setAttribute("data-emphasize", "true")
+              e.target.value = ""
+              return
+            } else {
+              sizelimitref.current?.setAttribute("data-emphasize", "false")
+            }
+
+            const fileReader = new FileReader()
             fileReader.readAsDataURL(file)
             fileReader.onloadend = (e2) => {
               const result = e2.target?.result
@@ -78,6 +82,24 @@ export default function CreateServerForm(p: {
               else 
                 console.warn("Input something went wrong?")
             }
+            fileReader.onerror = (e2) => {
+              console.log("Error!")
+              console.log(e2)
+            }
+            fileReader.onload = (e2) => {
+              console.log("OnLoad?!")
+              console.log(e2)
+              const result = e2.target?.result
+              if (!result)
+                console.warn("PFPInput OnloadEnd: Result not found??")
+              else if (imagepfpref.current) {
+                imagepfpref.current.src = result?.toString()
+                imagepfpref.current.setAttribute('data-show', "true")
+              }
+              else
+                console.warn("Input something went wrong?")
+            }
+            console.log("Finished")
           } }
         />
 
@@ -136,11 +158,17 @@ function UploadImageButton(p: {
       "text-indigo-200/80",
       "p-0",
       "overflow-hidden",
+      "relative",
+      "shadow-black",
+      "hover:shadow-[0px_0px_0px_8px_#717AC233]",
     ) }
       onClick={() => p.inputref.current?.click()}
     >
-      <img ref={ p.imgref } className={ cn(
-        "w-full h-full object-cover"
+      <img
+        alt="New Server Profile Picture"
+        ref={ p.imgref }
+        className={ cn(
+        "w-full h-full object-cover absolute hidden data-[show]:block"
       )} />
       <FluentImageAdd20Filled />
     </button>
