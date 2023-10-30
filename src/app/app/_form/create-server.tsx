@@ -7,23 +7,26 @@ import { cn } from "@/lib/tailwind"
 import { style } from "@/style"
 import { MutableRefObject, RefObject, SVGProps, useRef } from "react"
 
-type Inputs = {
+export type CreateServerInputs = {
   serverName: string
-  serverPicture: any
+  serverPicture: File
 }
+// export type CreateServerFormSubmitHandler = SubmitHandler<Inputs>
+export type CreateServerFormSubmitHandler = (data: FormData) => void
 
 export default function CreateServerForm(p: {
   toBack: () => void
+  onSubmit: (data: FormData) => void
 }) {
-  const { register, handleSubmit, formState,  } = useForm<Inputs>({
+  const { register, handleSubmit, formState,  } = useForm<CreateServerInputs>({
     mode: "onChange",
   })
+  // https://www.youtube.com/watch?v=PEGUFi9Sx-U  TUTORIAL HOW TO UPLOAD FILE
 
-  const onSubmit: SubmitHandler<Inputs> = (data) => {
-    console.log(data)
+  const onSubmit: SubmitHandler<CreateServerInputs> = async (_, event) => {
+    p.onSubmit(new FormData(event?.target)) // <- Server Action <- Works :/
   }
 
-  // https://www.youtube.com/watch?v=PEGUFi9Sx-U  TUTORIAL HOW TO UPLOAD FILE
 
   const { ref, ...rest } = register('serverPicture');
   const inputpfpref = useRef<HTMLInputElement | null>(null)
@@ -53,6 +56,7 @@ export default function CreateServerForm(p: {
             ref(e)
             inputpfpref.current = e
           }}
+          // { ...register("serverPicture") }
           type="file"
           name="serverPicture"
           accept="image/*"
@@ -162,7 +166,8 @@ function UploadImageButton(p: {
       "shadow-black",
       "hover:shadow-[0px_0px_0px_8px_#717AC233]",
     ) }
-      onClick={() => p.inputref.current?.click()}
+      onClick={ () => p.inputref.current?.click() }
+      type="button"
     >
       <img
         alt="New Server Profile Picture"

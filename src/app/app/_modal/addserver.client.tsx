@@ -6,12 +6,12 @@ import { ModalDescription, ModalTitle } from "./basecomponents"
 import { style } from "@/style"
 import { CloseModalButton } from "./buttons"
 import { ComponentProps, SVGProps, useEffect, useState } from "react"
-import CreateServerForm from "../_form/create-server"
+import CreateServerForm, { CreateServerFormSubmitHandler } from "../_form/create-server"
 import JoinServerForm from "../_form/join-server"
 
 export function AddServerDialog(p: {
   children: React.ReactNode
-  onCreate: (data: FormData) => void
+  onCreate: CreateServerFormSubmitHandler
   onJoin: (data: FormData) => void
 }) {
   enum states {
@@ -69,9 +69,7 @@ export function AddServerDialog(p: {
     >
       <div className={ cn(
         "relative w-full items-center",
-        // "outline outline-white",
         "transition-none",
-        // "ease-linear",
         "duration-500",
 
         "data-[animation-state=right]:-translate-x-1/2",
@@ -113,7 +111,10 @@ export function AddServerDialog(p: {
           show={ state === states.create }
           position={ left === states.create ? "left" : right === states.create ? "right" : "center" }
         >
-          <CreateServerModalContent go_back={ () => goBack(states.index) } />
+          <CreateServerModalContent
+            goBack={ () => goBack(states.index) }
+            onCreate={ p.onCreate }
+          />
         </SlidingModalContent>
 
         <SlidingModalContent
@@ -123,10 +124,7 @@ export function AddServerDialog(p: {
         >
           <JoinServerModalContent go_back={ () => goBack(states.index) } />
         </SlidingModalContent>
-
-
       </div>
-
       <CloseModalButton />
     </BaseModal>
   )
@@ -206,9 +204,10 @@ function Index(p: ComponentProps<"div"> & {
 }
 
 function CreateServerModalContent(p: ComponentProps<"div"> & {
-  go_back: () => void
+  goBack: () => void
+  onCreate: CreateServerFormSubmitHandler
 }) {
-  const { go_back: goBack, ...props } = p
+  const { goBack, onCreate, ...props } = p
   return (
     <div { ...props }>
       <div className={ cn("text-center", "p-4 pb-0",
@@ -221,7 +220,7 @@ function CreateServerModalContent(p: ComponentProps<"div"> & {
           Give your new server a personality with a name and an icon. You can always change it later.
         </ModalDescription>
       </div>
-      <CreateServerForm toBack={goBack}/>
+      <CreateServerForm toBack={ goBack } onSubmit={ onCreate } />
     </div>
   )
 }
