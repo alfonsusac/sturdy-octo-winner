@@ -2,6 +2,7 @@ import { cn } from "./lib/tailwind"
 
 export const style = {
   buttonListItem: cn(
+    "bg-transparent",
     "text-indigo-200/60",
     "transition-shadow",
 

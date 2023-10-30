@@ -1,5 +1,5 @@
 import { cn } from "@/lib/tailwind"
-import { FluentPeople28Filled } from "./@sidebar/default"
+import { FluentPeople28Filled } from "./@innersidebar/default"
 import { TitleBar } from "./_comps/titlebar"
 import { style } from "@/style"
 

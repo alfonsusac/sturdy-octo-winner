@@ -143,33 +143,33 @@ export interface Database {
       }
       User: {
         Row: {
-          bio: string | null
+          bio: string
           createdAt: string
           displayName: string
           email: string
           id: string
           profilePicture: string
-          provider: Database["public"]["Enums"]["AcccountProvider"]
+          provider: Database["public"]["Enums"]["AcccountProvider"][] | null
           username: string
         }
         Insert: {
-          bio?: string | null
+          bio?: string
           createdAt?: string
           displayName: string
           email: string
           id: string
           profilePicture: string
-          provider: Database["public"]["Enums"]["AcccountProvider"]
+          provider?: Database["public"]["Enums"]["AcccountProvider"][] | null
           username: string
         }
         Update: {
-          bio?: string | null
+          bio?: string
           createdAt?: string
           displayName?: string
           email?: string
           id?: string
           profilePicture?: string
-          provider?: Database["public"]["Enums"]["AcccountProvider"]
+          provider?: Database["public"]["Enums"]["AcccountProvider"][] | null
           username?: string
         }
         Relationships: []

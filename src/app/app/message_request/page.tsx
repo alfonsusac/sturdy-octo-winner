@@ -1,4 +1,4 @@
-import { FluentChat28Filled } from "../@sidebar/default"
+import { FluentChat28Filled } from "../@innersidebar/default"
 import { TitleBar } from "../_comps/titlebar"
 
 export default function MessageRequestPage() {

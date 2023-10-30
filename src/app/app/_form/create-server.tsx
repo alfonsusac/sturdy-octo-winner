@@ -4,7 +4,7 @@ import { useForm, SubmitHandler } from "react-hook-form"
 import { generateSlug } from "random-word-slugs"
 import { cn } from "@/lib/tailwind"
 import { style } from "@/style"
-import { SVGProps } from "react"
+import { SVGProps, useRef } from "react"
 import { generate } from "random-words"
 
 type Inputs = {
@@ -32,7 +32,7 @@ export default function CreateServerForm(p: {
       ) }
     >
       <div className="flex flex-col p-4 items-stretch">
-        {/* <UploadImageButton /> */}
+        <UploadImageButton />
 
         <fieldset className="mt-4 flex flex-col items-stretch">
           <label className={ cn(style.inputLabel) }>
@@ -83,8 +83,10 @@ export default function CreateServerForm(p: {
 }
 
 function UploadImageButton() {
+  const inputref = useRef<HTMLInputElement>(null)
+
   return (
-    <div className={ cn(
+    <button className={ cn(
       "self-center",
       "mt-2",
       "w-20 h-20",
@@ -93,9 +95,17 @@ function UploadImageButton() {
       "flex flex-row items-center justify-center",
       "text-3xl",
       "text-indigo-200/80",
-    ) }>
+    ) }
+      onClick={() => inputref.current?.click()}
+    >
       <FluentImageAdd20Filled />
-    </div>
+      <input
+        type="file"
+        name="serverPicture"
+        ref={ inputref }
+        accept="image/*"
+      />
+    </button>
   )
 }
 

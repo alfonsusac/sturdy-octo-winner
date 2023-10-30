@@ -15,9 +15,9 @@ export default function ProfilePicture(p: {
 
   const { setLoading, setError, loading, error } = p
   return (
-    <div className="h-24 w-24 rounded-full overflow-hidden relative shadow-lg shadow-black/40">
+    <div className="h-16 w-16 rounded-full overflow-hidden relative shadow-lg shadow-black/40">
       {
-        loading && <div className="h-24 w-24 absolute bg-black/40 top-0 left-0 flex flex-col items-center justify-center">
+        loading && <div className="h-16 w-16 absolute bg-black/40 top-0 left-0 flex flex-col items-center justify-center">
           {
             !error && <SvgSpinners180RingWithBg className="text-4xl opacity-60" />
           }
@@ -33,7 +33,7 @@ export default function ProfilePicture(p: {
       }
       <img
         className={ cn(
-          "h-24 w-24 absolulte text-transparent z-10",
+          "h-16 w-16 absolulte text-transparent z-10",
           error && "opacity-0",
         ) }
         src={ p.pictureLink.length ? p.pictureLink : p.defaultPictureLink }

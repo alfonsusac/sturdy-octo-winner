@@ -47,6 +47,7 @@ export const authOption: AuthOptions = {
   }
 }
 
+
 export const getSession = cache(async () => {
   const session = await getServerSession(authOption)
   if (!session) redirect('/auth')
@@ -59,7 +60,7 @@ export const getSession = cache(async () => {
     name: session.user.name,
     image: session.user.image,
     expiryDate: session.expires,
-    provider: session.user.provider as unknown as AcccountProvider[],
+    provider: session.user.provider as unknown as AcccountProvider,
   }
 })
 

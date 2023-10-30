@@ -4,27 +4,27 @@ import { delay } from "@/lib/util"
 import { redirect } from "next/navigation"
 import prisma from "@/lib/prisma"
 import { zfd } from "zod-form-data"
+import { getUserDefaultImage } from "@/controller/user"
 
 /**
  *  The Register Page should:
  *  - ✅ redirect user to /auth if not logged in
  *  - ✅ prefill the form with oauth profile
  *  - ✅ submit new user to the database
+ *  - ✅ redirect to app if 
  */
 
 export default async function Page() {
 
   const { email, name, image } = await getSession()
 
+  // Check if user already exist in the database. Since this page is only for new users
+  const user = await prisma.user.findUnique({ where: { email } })
+  if (user) redirect("/app")
+
   // idempotent:
   // find existing id if not exist then create
-  const user = await prisma.userDefaultImage.findUnique({ 
-    where: { email }
-  })
-  if (!user) await prisma.userDefaultImage.create({
-    data:{email }
-  })
-
+  const userDefaultImage = await getUserDefaultImage(email)
 
   async function registerNewUser(formData: FormData) {
     "use server"
@@ -42,18 +42,19 @@ export default async function Page() {
       // Create user
       await prisma.user.create({
         data: {
-          provider,
+          provider: [provider],
           email,
           username: username,
           displayName: displayname,
           profilePicture: profilepicture,
-          bio: ""
-        }
+        },
       })
-      redirect("/app")
     } catch (error: any) {
-      redirect(`/register?error=${error.message}`)
+      console.log("Error Occured")
+      console.error(error)
+      redirect(`/register?error=${encodeURIComponent(error.message)}`)
     }
+    redirect("/app")
   }
 
   return (
@@ -70,7 +71,7 @@ export default async function Page() {
           defaultDisplayname={ name ?? "" }
           defaultUsername={ email.split('@')[0] ?? "" }
           // https://www.dicebear.com/styles/bottts-neutral/
-          defaultProfilepicture={ `https://api.dicebear.com/7.x/bottts-neutral/svg?seed=${user?.id}` }
+          defaultProfilepicture={ `https://api.dicebear.com/7.x/bottts-neutral/svg?seed=${userDefaultImage?.id}` }
           suggestProfilepicture={ image ?? "" }
         />
       </div>

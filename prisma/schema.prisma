@@ -13,12 +13,11 @@ datasource db {
 
 enum AcccountProvider {
   google
-  github
 }
 
 model User {
   id             String             @id @default(uuid())
-  email          String
+  email          String             @unique
   provider       AcccountProvider[] @default([])
   username       String
   displayName    String
@@ -28,9 +27,7 @@ model User {
   friendRequest  FriendRequest[]
   server         ServerMember[]
   createdAt      DateTime           @default(now())
-  bio            String?
-
-  @@unique([email, provider])
+  bio            String @default("")
 }
 
 model UserDefaultImage {

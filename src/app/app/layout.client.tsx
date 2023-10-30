@@ -28,7 +28,7 @@ export function SidebarItem(p: {
   link?: string | string[]
   strict?: boolean
 } & ComponentProps<"button">) {
-  const {icon, label, link, strict, children, ...rest} = p
+  const {icon, label, link, strict, children, className, ...rest} = p
 
   const path = usePathname()
   const selected = p.strict ? (
@@ -42,10 +42,13 @@ export function SidebarItem(p: {
       "w-auto aspect-square rounded-xl",
       "flex flex-row justify-center items-center",
       "text-lg",
+      "p-0",
       style.buttonListItem,
+      className,
     ) }
       data-state={ selected ? "active" : "" }
-      {...rest}
+      { ...rest }
+      title="Add New Server"
     >
       { p.icon }
     </button>
@@ -97,6 +100,7 @@ export function UserStatus(p: {
           "text-lg",
           "text-indigo-200/40",
           "hover:bg-indigo-400/10",
+          "p-0",
         ) }>
           <FluentSettings28Filled className="text-lg" />
         </button>
