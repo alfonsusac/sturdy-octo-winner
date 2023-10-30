@@ -1,10 +1,11 @@
+/* eslint-disable @next/next/no-img-element */
 "use client"
 
 import { useForm, SubmitHandler } from "react-hook-form"
 import { generateSlug } from "random-word-slugs"
 import { cn } from "@/lib/tailwind"
 import { style } from "@/style"
-import { SVGProps, useRef } from "react"
+import { ComponentProps, MutableRefObject, RefCallback, RefObject, SVGProps, useRef } from "react"
 import { generate } from "random-words"
 
 type Inputs = {
@@ -15,7 +16,7 @@ type Inputs = {
 export default function CreateServerForm(p: {
   toBack: () => void
 }) {
-  const { register, handleSubmit, formState } = useForm<Inputs>({
+  const { register, handleSubmit, formState,  } = useForm<Inputs>({
     mode: "onChange",
   })
 
@@ -23,6 +24,11 @@ export default function CreateServerForm(p: {
     console.log(data)
   }
 
+  // https://www.youtube.com/watch?v=PEGUFi9Sx-U  TUTORIAL HOW TO UPLOAD FILE
+
+  const { ref, ...rest } = register('serverPicture');
+  const inputpfpref = useRef<HTMLInputElement | null>(null)
+  const imagepfpref = useRef<HTMLImageElement>(null)
 
   return (
     <form
@@ -32,18 +38,48 @@ export default function CreateServerForm(p: {
       ) }
     >
       <div className="flex flex-col p-4 items-stretch">
-        <UploadImageButton />
+        <UploadImageButton
+          inputref={ inputpfpref }
+          imgref={ imagepfpref }
+        />
 
-        <fieldset className="mt-4 flex flex-col items-stretch">
+        {/* <fieldset className="mt-4 flex flex-col items-stretch">
           <label className={ cn(style.inputLabel) }>
             Server Profile Picture
           </label>
 
-          {/* https://www.youtube.com/watch?v=PEGUFi9Sx-U  TUTORIAL HOW TO UPLOAD FILE */}
           <input { ...register("serverPicture") } type="file" name="serverPicture"
             className={ cn(style.fileInput) }
           />
-        </fieldset>
+        </fieldset> */}
+
+        <input
+          { ...rest }
+          ref={ (e) => {
+            ref(e)
+            inputpfpref.current = e
+          }}
+          type="file"
+          name="serverPicture"
+          accept="image/*"
+          className="hidden"
+          onChange={ (e) => {
+            console.log(e.target.value)
+            const fileReader = new FileReader()
+            const file = e.target.files?.[0]
+            if (!file) return
+            fileReader.readAsDataURL(file)
+            fileReader.onloadend = (e2) => {
+              const result = e2.target?.result
+              if (!result)
+                console.warn("PFPInput OnloadEnd: Result not found??")
+              else if(imagepfpref.current)
+                imagepfpref.current.src = result?.toString()
+              else 
+                console.warn("Input something went wrong?")
+            }
+          } }
+        />
 
         <fieldset className="mt-4 flex flex-col items-stretch">
           <label className={ cn(style.inputLabel) }>
@@ -82,7 +118,10 @@ export default function CreateServerForm(p: {
   )
 }
 
-function UploadImageButton() {
+function UploadImageButton(p: {
+  inputref: MutableRefObject<HTMLInputElement | null>
+  imgref: RefObject<HTMLImageElement>
+}) {
   const inputref = useRef<HTMLInputElement>(null)
 
   return (
@@ -95,16 +134,15 @@ function UploadImageButton() {
       "flex flex-row items-center justify-center",
       "text-3xl",
       "text-indigo-200/80",
+      "p-0",
+      "overflow-hidden",
     ) }
-      onClick={() => inputref.current?.click()}
+      onClick={() => p.inputref.current?.click()}
     >
+      <img ref={ p.imgref } className={ cn(
+        "w-full h-full object-cover"
+      )} />
       <FluentImageAdd20Filled />
-      <input
-        type="file"
-        name="serverPicture"
-        ref={ inputref }
-        accept="image/*"
-      />
     </button>
   )
 }
