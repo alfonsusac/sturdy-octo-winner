@@ -1,4 +1,4 @@
-import { getSession } from "@/lib/next-auth"
+import { getSession } from "@/lib/auth/next-auth"
 import RegisterForm from "./form"
 import { delay } from "@/lib/util"
 import { redirect } from "next/navigation"

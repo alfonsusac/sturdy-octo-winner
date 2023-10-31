@@ -1,4 +1,4 @@
-import { getSession } from "@/lib/next-auth"
+import { getSession } from "@/lib/auth/next-auth"
 import { Providers, BaseScreen, SidebarItem, UserStatus } from "./layout.client"
 import { cn } from "@/lib/tailwind"
 import { style } from "@/style"

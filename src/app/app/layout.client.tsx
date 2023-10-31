@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 "use client"
 
-import { useSession } from "@/lib/next-auth.client"
+import { useSession } from "@/lib/auth/next-auth.client"
 import { cn } from "@/lib/tailwind"
 import { Session } from "next-auth"
 import { SessionProvider } from "next-auth/react"

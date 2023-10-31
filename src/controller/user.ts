@@ -1,4 +1,4 @@
-import { getSession } from "@/lib/next-auth"
+import { getSession } from "@/lib/auth/next-auth"
 import prisma from "@/lib/prisma"
 import { redirect } from "next/navigation"
 import { memoize } from "nextjs-better-unstable-cache"

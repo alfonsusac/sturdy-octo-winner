@@ -1,6 +1,6 @@
 import { AuthOptions, Session, getServerSession } from "next-auth"
 import GoogleProvider from "next-auth/providers/google"
-import { env } from "./env"
+import { env } from "../env"
 import { redirect } from "next/navigation"
 import { cache } from "react"
 import { JWT } from "next-auth/jwt"
