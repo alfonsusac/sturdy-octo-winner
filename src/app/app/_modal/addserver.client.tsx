@@ -61,8 +61,8 @@ export function AddServerDialog(p: {
           "transition-all",
           "duration-200",
           state === states.index && "h-52",
-          state === states.create && "h-[23rem]",
-          state === states.join && "h-[16.5rem]",
+          state === states.create && "h-[26rem]",
+          state === states.join && "h-[17.5rem]",
         )
       } }
       onOpen={ () => { setState(states.index)}}
