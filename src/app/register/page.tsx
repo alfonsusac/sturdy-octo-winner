@@ -1,8 +1,8 @@
 import { getSession } from "@/lib/auth/next-auth"
 import RegisterForm from "./form"
-import { delay } from "@/lib/util"
+import { delay } from "@/lib/devutil"
 import { redirect } from "next/navigation"
-import prisma from "@/lib/prisma"
+import prisma from "@/lib/db/prisma"
 import { zfd } from "zod-form-data"
 import { getUserDefaultImage } from "@/controller/user"
 

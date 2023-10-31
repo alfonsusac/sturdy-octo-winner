@@ -100,18 +100,28 @@ export interface Database {
           id: string
           name: string
           profilePicture: string
+          userId: string
         }
         Insert: {
           id: string
           name: string
           profilePicture: string
+          userId: string
         }
         Update: {
           id?: string
           name?: string
           profilePicture?: string
+          userId?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "Server_userId_fkey"
+            columns: ["userId"]
+            referencedRelation: "User"
+            referencedColumns: ["id"]
+          }
+        ]
       }
       ServerMember: {
         Row: {

@@ -1,6 +1,6 @@
 "use server"
 
-import prisma from "@/lib/prisma"
+import prisma from "@/lib/db/prisma"
 import { getUserData } from "./user"
 import { redirect } from "next/navigation"
 import { Server } from "@prisma/client"
