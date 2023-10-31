@@ -27,7 +27,8 @@ model User {
   friendRequest  FriendRequest[]
   server         ServerMember[]
   createdAt      DateTime           @default(now())
-  bio            String @default("")
+  bio            String             @default("")
+  ownedServer    Server[]
 }
 
 model UserDefaultImage {
@@ -52,7 +53,9 @@ model Server {
   id             String         @id @default(uuid())
   name           String
   profilePicture String
+  owner          User           @relation(fields: [userId], references: [id])
   members        ServerMember[]
+  userId         String
 }
 
 model ServerMember {

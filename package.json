@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "migrate": "prisma migrate dev && supabase gen types typescript --project-id svaopfqdgpdysvqijgee > src/lib/database.types.ts",
+    "migrate": "prisma migrate dev && supabase gen types typescript --project-id svaopfqdgpdysvqijgee > src/lib/db/database.types.ts",
     "types": "supabase gen types typescript --project-id svaopfqdgpdysvqijgee > src/lib/database.types.ts",
     "postinstall": "prisma generate"
   },
