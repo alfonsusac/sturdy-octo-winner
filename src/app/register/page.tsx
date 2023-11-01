@@ -52,8 +52,10 @@ export default async function Page() {
     } catch (error: any) {
       console.log("Error Occured")
       console.error(error)
+      // Show server error message
       redirect(`/register?error=${encodeURIComponent(error.message)}`)
     }
+    // Go to app if succesfully
     redirect("/app")
   }
 
