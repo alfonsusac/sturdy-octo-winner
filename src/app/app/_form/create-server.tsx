@@ -24,6 +24,7 @@ export default function CreateServerForm(p: {
   // https://www.youtube.com/watch?v=PEGUFi9Sx-U  TUTORIAL HOW TO UPLOAD FILE
 
   const onSubmit: SubmitHandler<CreateServerInputs> = async (_, event) => {
+    
     p.onSubmit(new FormData(event?.target)) // <- Server Action <- Works :/
   }
 
