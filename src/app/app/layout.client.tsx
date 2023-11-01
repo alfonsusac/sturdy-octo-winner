@@ -6,7 +6,7 @@ import { cn } from "@/lib/tailwind"
 import { Session } from "next-auth"
 import { SessionProvider } from "next-auth/react"
 import { usePathname } from "next/navigation"
-import { ComponentProps, MutableRefObject, RefObject, SVGProps, createContext, useContext, useRef, useState } from "react"
+import { ComponentProps, MutableRefObject, RefObject, SVGProps, createContext, useContext, useEffect, useRef, useState } from "react"
 import UserSettingView from "./_settings/user"
 import { style } from "@/style"
 import { User } from "@prisma/client"
@@ -61,6 +61,9 @@ export function UserStatus(p: {
   user: User
 }) {
   const session = useSession()
+
+  // console.log("Session Logging :)")
+  // console.log(session)
 
   return (
     <div className={ cn(
@@ -157,4 +160,17 @@ export function BaseScreen(p: {
       </div>
     </screen.Provider>
   )
+}
+
+export function SessionUpdater(p: {
+  user: User
+  children: React.ReactNode
+}) {
+  const { update } = useSession()
+
+  useEffect(() => {
+    
+  }, [])
+
+  return p.children
 }
