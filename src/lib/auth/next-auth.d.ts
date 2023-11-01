@@ -1,0 +1,1 @@
+// Next-auth.d.ts only works in `types` folder. GO THERE not here
