@@ -6,6 +6,9 @@ import { generateSlug } from "random-word-slugs"
 import { cn } from "@/lib/tailwind"
 import { style } from "@/style"
 import { MutableRefObject, RefObject, SVGProps, useRef } from "react"
+import { useSession } from "next-auth/react"
+import { generatePresignedUrl } from "./create-server.action"
+import { User } from "@prisma/client"
 
 export type CreateServerInputs = {
   serverName: string
@@ -16,16 +19,22 @@ export type CreateServerFormSubmitHandler = (data: FormData) => void
 
 export default function CreateServerForm(p: {
   toBack: () => void
-  onSubmit: (data: FormData) => void
+  user: User
 }) {
   const { register, handleSubmit, formState,  } = useForm<CreateServerInputs>({
     mode: "onChange",
   })
-  // https://www.youtube.com/watch?v=PEGUFi9Sx-U  TUTORIAL HOW TO UPLOAD FILE
+  // https://www.youtube.com/watch?v=PEGUFi9Sx-U  TUTORIAL HOW TO UPLOAD FILE ✅
 
   const onSubmit: SubmitHandler<CreateServerInputs> = async (_, event) => {
-    
-    p.onSubmit(new FormData(event?.target)) // <- Server Action <- Works :/
+    const data = new FormData(event?.target)
+    const file = data.get("serverPicture") as File
+    console.log(file)
+    const { key, signedUploadUrl } = await generatePresignedUrl(p.user.id, file.name, file.type) // Server Action
+
+    // https://www.youtube.com/watch?v=wbNyipJw9rI TUTORIAL HOW TO USE S3 to GENERATE LINK
+
+    // p.onSubmit(data) // <- Server Action <- Works :/
   }
 
 

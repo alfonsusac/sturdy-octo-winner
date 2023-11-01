@@ -8,11 +8,11 @@ import { CloseModalButton } from "./buttons"
 import { ComponentProps, SVGProps, useEffect, useState } from "react"
 import CreateServerForm, { CreateServerFormSubmitHandler } from "../_form/create-server"
 import JoinServerForm from "../_form/join-server"
+import { User } from "@prisma/client"
 
 export function AddServerDialog(p: {
   children: React.ReactNode
-  onCreate: CreateServerFormSubmitHandler
-  onJoin: (data: FormData) => void
+  user: User
 }) {
   enum states {
     index,
@@ -92,18 +92,36 @@ export function AddServerDialog(p: {
         data-animation-state={ animationState }
         data-isidle={ animationState === "idle" }
       >
-
-
-
         <SlidingModalContent
           // show={true}
           show={ state === states.index }
           position={ left === states.index ? "left" : right === states.index ? "right" : "center" }
         >
-          <Index
-            toJoin={ () => goTo(states.join) }
-            toCreate={ () => goTo(states.create) }
-          />
+          <div>
+            <div className={ cn("text-center", "p-4") }>
+              <ModalTitle>
+                Add a New Server
+              </ModalTitle>
+              <ModalDescription>
+                Your server is where you and your firends hand out. Make yours and start talking.
+              </ModalDescription>
+            </div>
+            <div className={ cn(style.dialogFooter, "grid grid-cols-2") }>
+              <button className={ cn(style.dialogButton, "h-16") }
+                onClick={ () => goTo(states.join) }
+              >
+                <small className="text-indigo-300/60 leading-[0.6]">
+                  Have an invite? <br />
+                </small>
+                Join Server
+              </button>
+              <button className={ cn(style.dialogButton, "h-16") }
+                onClick={ () => goTo(states.create) }
+              >
+                Create My Own
+              </button>
+            </div>
+          </div>
         </SlidingModalContent>
 
         <SlidingModalContent
@@ -111,10 +129,22 @@ export function AddServerDialog(p: {
           show={ state === states.create }
           position={ left === states.create ? "left" : right === states.create ? "right" : "center" }
         >
-          <CreateServerModalContent
-            goBack={ () => goBack(states.index) }
-            onCreate={ p.onCreate }
-          />
+          <div>
+            <div className={ cn("text-center", "p-4 pb-0",
+              "flex flex-col items-center"
+            ) }>
+              <ModalTitle>
+                Create a New Server
+              </ModalTitle>
+              <ModalDescription>
+                Give your new server a personality with a name and an icon. You can always change it later.
+              </ModalDescription>
+            </div>
+            <CreateServerForm
+              toBack={ () => goBack(states.index) }
+              user={ p.user }
+            />
+          </div>
         </SlidingModalContent>
 
         <SlidingModalContent
@@ -122,7 +152,19 @@ export function AddServerDialog(p: {
           show={ state === states.join }
           position={ left === states.join ? "left" : right === states.join ? "right" : "center" }
         >
-          <JoinServerModalContent go_back={ () => goBack(states.index) } />
+          <div>
+            <div className={ cn("text-center", "p-4 pb-0",
+              "flex flex-col items-center"
+            ) }>
+              <ModalTitle>
+                Join a Server
+              </ModalTitle>
+              <ModalDescription>
+                Enter an invite below to join an existing server
+              </ModalDescription>
+            </div>
+            <JoinServerForm toBack={ () => goBack(states.index) } />
+          </div>
         </SlidingModalContent>
       </div>
       <CloseModalButton />
@@ -130,6 +172,10 @@ export function AddServerDialog(p: {
   )
 }
 
+/**
+ * Reusable Content Component for any steps.
+ * This is just a template
+ */
 function SlidingModalContent(p: ComponentProps<"div"> & {
   show: boolean,
   position: "left" | "right" | "center"
@@ -168,79 +214,6 @@ function SlidingModalContent(p: ComponentProps<"div"> & {
   )
 }
 
-function Index(p: ComponentProps<"div"> & {
-  toJoin: () => void,
-  toCreate: () => void,
-}) {
-  const { toJoin, toCreate, ...props } = p
-
-  return (
-    <div { ...props }>
-      <div className={ cn("text-center", "p-4") }>
-        <ModalTitle>
-          Add a New Server
-        </ModalTitle>
-        <ModalDescription>
-          Your server is where you and your firends hand out. Make yours and start talking.
-        </ModalDescription>
-      </div>
-      <div className={ cn(style.dialogFooter, "grid grid-cols-2") }>
-        <button className={ cn(style.dialogButton, "h-16") }
-          onClick={ () => toJoin() }
-        >
-          <small className="text-indigo-300/60 leading-[0.6]">
-            Have an invite? <br />
-          </small>
-          Join Server
-        </button>
-        <button className={ cn(style.dialogButton, "h-16") }
-          onClick={ () => toCreate() }
-        >
-          Create My Own
-        </button>
-      </div>
-    </div>
-  )
-}
-
-function CreateServerModalContent(p: ComponentProps<"div"> & {
-  goBack: () => void
-  onCreate: CreateServerFormSubmitHandler
-}) {
-  const { goBack, onCreate, ...props } = p
-  return (
-    <div { ...props }>
-      <div className={ cn("text-center", "p-4 pb-0",
-        "flex flex-col items-center"
-      ) }>
-        <ModalTitle>
-          Create a New Server
-        </ModalTitle>
-        <ModalDescription>
-          Give your new server a personality with a name and an icon. You can always change it later.
-        </ModalDescription>
-      </div>
-      <CreateServerForm toBack={ goBack } onSubmit={ onCreate } />
-    </div>
-  )
-}
-function JoinServerModalContent(p: ComponentProps<"div"> & {
-  go_back: () => void
-}) {
-  const { go_back: goBack, ...props } = p
-  return (
-    <div { ...props }>
-      <div className={ cn("text-center", "p-4 pb-0",
-        "flex flex-col items-center"
-      ) }>
-        <ModalTitle>
-          Join a Server
-        </ModalTitle>
-        <ModalDescription>
-          Enter an invite below to join an existing server
-        </ModalDescription>
-      </div>
-      <JoinServerForm toBack={ goBack } />
-    </div>
-  )
-}
+/**
+ * Content item that is rapped by slidingModalContent.
+ */

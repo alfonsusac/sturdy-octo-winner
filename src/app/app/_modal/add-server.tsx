@@ -1,23 +1,17 @@
+import { getUserData } from "@/controller/user"
+import { AddServerDialog } from "./add-server.client"
 import { SVGProps } from "react"
-import { AddServerDialog } from "./addserver.client"
 import { SidebarItem } from "../layout.client"
 import { CreateServerInputs } from "../_form/create-server"
 
-export default function AddServer() {
+export default async function AddServer() {
+  const user = await getUserData()
+
   return (
-    <AddServerDialog
-      onCreate={ async (raw) => {
-        "use server"
-        const data = Object.fromEntries(raw) as CreateServerInputs
-        console.log(data)
-        const buffer = await data.serverPicture.arrayBuffer()
-        console.log(buffer)
-      } }
-      onJoin={ async () => {
-        "use server"
-      }}
+    <AddServerDialog // "use client"
+      user={user}
     >
-      <SidebarItem
+      <SidebarItem // "use client"
         icon={ <FluentAdd16Filled className="text-2xl" /> }
         label={ <>Add New Server</> }
       />

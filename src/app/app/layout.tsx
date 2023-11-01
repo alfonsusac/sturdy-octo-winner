@@ -1,11 +1,11 @@
 import { getSession } from "@/lib/auth/next-auth"
-import { Providers, BaseScreen, SidebarItem, UserStatus } from "./layout.client"
+import * as client from "./layout.client"
 import { cn } from "@/lib/tailwind"
 import { style } from "@/style"
 import { ComponentProps, SVGProps } from "react"
-import { AddServerDialog } from "./_modal/addserver.client"
+import { AddServerDialog } from "./_modal/add-server.client"
 import { getUserData } from "@/controller/user"
-import AddServer from "./_modal/addserver"
+import AddServer from "./_modal/add-server"
 
 export default async function AppLayout(p: {
   children: React.ReactNode
@@ -14,9 +14,10 @@ export default async function AppLayout(p: {
 }) {
   const { session } = await getSession()
   const user = await getUserData()
+
   return (
-    <Providers session={ session }>
-      <BaseScreen>
+    <client.Providers session={ session }>
+      <client.BaseScreen>
         
         <Sidebar>
           <HomeMenuItem />
@@ -28,7 +29,7 @@ export default async function AppLayout(p: {
           <div className="min-h-0 flex flex-col">
             { p.innersidebar }
           </div>
-          <UserStatus user={user} />
+          <client.UserStatus user={user} />
         </SubSidebar>
 
         <div className={ cn(style.cardbg, "grid grid-flow-row",
@@ -39,8 +40,8 @@ export default async function AppLayout(p: {
           { p.children }
         </div>
         
-      </BaseScreen>
-    </Providers>
+      </client.BaseScreen>
+    </client.Providers>
   )
 }
 
@@ -60,7 +61,7 @@ function Sidebar(p: {
 }
 
 function HomeMenuItem() {
-  return <SidebarItem
+  return <client.SidebarItem
     icon={ <FluentHome12Filled /> }
     label={ <>Home</> }
     link={ ["/app", "/app/premium", "/app/message_request"] }
