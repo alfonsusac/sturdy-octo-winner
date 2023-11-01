@@ -1,10 +1,10 @@
-import { AuthOptions, Session, getServerSession } from "next-auth"
+import { AuthOptions, getServerSession } from "next-auth"
 import GoogleProvider from "next-auth/providers/google"
 import { env } from "../env"
 import { redirect } from "next/navigation"
 import { cache } from "react"
-import { JWT } from "next-auth/jwt"
 import { AcccountProvider } from "@prisma/client"
+import { logAuth } from "../devutil"
 
 
 export const authOption: AuthOptions = {
@@ -24,19 +24,18 @@ export const authOption: AuthOptions = {
       session,
       trigger
     }) {
-      // console.log("JWT callback")
-      // console.log(account)
-      // console.log(token)
-      if (account) // On Sign in, store provider in token
+      logAuth("Checking JWT")
+      if (account) { // provider is set during signin
         token['provider'] = account.provider
+      }
       return token
     },
 
     async session({ newSession, session, token, trigger, user }) {
-      // console.log("Session callback")
-      // console.log(session)
-      if (session.user)
-        session.user['provider'] = token['provider']
+      // Session is retrieved from token. 
+      // if using jwt, it seems that sessino is retrieved from token only returning default properties. (name, email, emage)
+      logAuth("Checking Session")
+      session.user['provider'] = token['provider']
       return session
     },
 
