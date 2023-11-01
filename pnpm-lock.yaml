@@ -8,6 +8,9 @@ dependencies:
   '@aws-sdk/client-s3':
     specifier: ^3.438.0
     version: 3.438.0
+  '@aws-sdk/s3-request-presigner':
+    specifier: ^3.440.0
+    version: 3.440.0
   '@prisma/client':
     specifier: 5.5.2
     version: 5.5.2(prisma@5.5.2)
@@ -32,6 +35,9 @@ dependencies:
   bcrypt:
     specifier: ^5.1.1
     version: 5.1.1
+  chalk:
+    specifier: ^5.3.0
+    version: 5.3.0
   class-variance-authority:
     specifier: ^0.7.0
     version: 0.7.0
@@ -41,6 +47,9 @@ dependencies:
   cryptr:
     specifier: ^6.3.0
     version: 6.3.0
+  nanoid:
+    specifier: ^5.0.2
+    version: 5.0.2
   next:
     specifier: 14.0.1-canary.2
     version: 14.0.1-canary.2(react-dom@18.2.0)(react@18.2.0)
@@ -603,6 +612,20 @@ packages:
       tslib: 2.6.2
     dev: false
 
+  /@aws-sdk/s3-request-presigner@3.440.0:
+    resolution: {integrity: sha512-DajqR67+YaOXbYE5dOtlNDAXMtF6NCX13dBs5J2o0UyqfMKtuc0DG8xqQBLiti/hUkFQc6eUkh5sbJYMVfJwZw==}
+    engines: {node: '>=14.0.0'}
+    dependencies:
+      '@aws-sdk/signature-v4-multi-region': 3.437.0
+      '@aws-sdk/types': 3.433.0
+      '@aws-sdk/util-format-url': 3.433.0
+      '@smithy/middleware-endpoint': 2.1.3
+      '@smithy/protocol-http': 3.0.8
+      '@smithy/smithy-client': 2.1.12
+      '@smithy/types': 2.4.0
+      tslib: 2.6.2
+    dev: false
+
   /@aws-sdk/signature-v4-multi-region@3.437.0:
     resolution: {integrity: sha512-MmrqudssOs87JgVg7HGVdvJws/t4kcOrJJd+975ki+DPeSoyK2U4zBDfDkJ+n0tFuZBs3sLwLh0QXE7BV28rRA==}
     engines: {node: '>=14.0.0'}
@@ -680,6 +703,16 @@ packages:
     dependencies:
       '@aws-sdk/types': 3.433.0
       '@smithy/util-endpoints': 1.0.2
+      tslib: 2.6.2
+    dev: false
+
+  /@aws-sdk/util-format-url@3.433.0:
+    resolution: {integrity: sha512-Z6T7I4hELoQ4eeIuKIKx+52B9bc3SCPhjgMcFAFQeesjmHAr0drHyoGNJIat6ckvgI6zzFaeaBZTvWDA2hyDkA==}
+    engines: {node: '>=14.0.0'}
+    dependencies:
+      '@aws-sdk/types': 3.433.0
+      '@smithy/querystring-builder': 2.0.12
+      '@smithy/types': 2.4.0
       tslib: 2.6.2
     dev: false
 
@@ -2435,6 +2468,11 @@ packages:
     dependencies:
       ansi-styles: 4.3.0
       supports-color: 7.2.0
+
+  /chalk@5.3.0:
+    resolution: {integrity: sha512-dLitG79d+GV1Nb/VYcCDFivJeK1hiukt9QjRNVOsUtTy1rR1YJsmpGGTZ3qJos+uw7WmWF4wUwBd9jxjocFC2w==}
+    engines: {node: ^12.17.0 || ^14.13 || >=16.0.0}
+    dev: false
 
   /chokidar@3.5.3:
     resolution: {integrity: sha512-Dr3sfKRP6oTcjf2JmUmFJfeVMvXBdegxB0iVQ5eb2V10uFJUCAS8OByZdVAyVb8xXNz3GjjTgj9kLWsZTqE6kw==}
