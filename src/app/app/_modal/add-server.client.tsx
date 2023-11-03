@@ -1,7 +1,6 @@
 "use client"
 
 import { cn } from "@/lib/tailwind"
-import BaseModal from "./base"
 import { ModalDescription, ModalTitle } from "./basecomponents"
 import { style } from "@/style"
 import { CloseModalButton } from "./buttons"
@@ -9,6 +8,7 @@ import { ComponentProps, SVGProps, useEffect, useState } from "react"
 import CreateServerForm, { CreateServerFormSubmitHandler } from "../_form/create-server"
 import JoinServerForm from "../_form/join-server"
 import { User } from "@prisma/client"
+import { Modal } from "@/components/ui/modal"
 
 export function AddServerDialog(p: {
   children: React.ReactNode
@@ -51,7 +51,7 @@ export function AddServerDialog(p: {
   }, [animationState])
 
   return (
-    <BaseModal
+    <Modal.Base
       trigger={ p.children }
       className={ {
         content: cn(
@@ -168,7 +168,7 @@ export function AddServerDialog(p: {
         </SlidingModalContent>
       </div>
       <CloseModalButton />
-    </BaseModal>
+    </Modal.Base>
   )
 }
 
