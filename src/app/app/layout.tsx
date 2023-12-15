@@ -6,6 +6,8 @@ import { ComponentProps, SVGProps } from "react"
 import { AddServerDialog } from "./_modal/add-server.client"
 import { getUserData } from "@/controller/user"
 import AddServer from "./_modal/add-server"
+import { Inter } from "next/font/google"
+
 
 export default async function AppLayout(p: {
   children: React.ReactNode

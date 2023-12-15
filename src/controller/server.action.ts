@@ -18,28 +18,28 @@ export const createNewServer = async (
   // Get Link from Bucket
 
   // Create Server
-  try {
-    server = await prisma.server.create({
-      data: {
-        name,
-        profilePicture: "",
-        members: {
-          create: {
-            user: {
-              connect: {
-                email: user.email
-              }
-            }
-          }
-        }
-      }
-    })
-  } catch (error) {
-    console.log(error)
-    return "Unknown Prisma Error"
-  }
+  // try {
+  //   server = await prisma.server.create({
+  //     data: {
+  //       name,
+  //       profilePicture: "",
+  //       members: {
+  //         create: {
+  //           user: {
+  //             connect: {
+  //               email: user.email
+  //             }
+  //           }
+  //         }
+  //       }
+  //     }
+  //   })
+  // } catch (error) {
+  //   console.log(error)
+  //   return "Unknown Prisma Error"
+  // }
 
   // If successfull
-  redirect(`/app/server/${server.id}`)
+  // redirect(`/app/server/${server.id}`)
 
 }

@@ -1,6 +1,4 @@
-import { unstable_cache } from 'next/cache'
 import type { Config } from 'tailwindcss'
-import colors from "tailwindcss/colors"
 
 const config: Config = {
   content: [
@@ -12,7 +10,8 @@ const config: Config = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['var(--font-open-sans)', "Open Sans", 'ui-sans-serif', 'system-ui']
+        sans: ['var(--font-open-sans)', "Open Sans", 'ui-sans-serif', 'system-ui'],
+        logo: ['var(--font-logo)']
       },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
@@ -34,5 +33,3 @@ const config: Config = {
   ],
 }
 export default config
-
-unstable_cache

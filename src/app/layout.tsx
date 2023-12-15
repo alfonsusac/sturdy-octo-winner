@@ -1,12 +1,16 @@
 import type { Metadata } from 'next'
-import { Open_Sans } from 'next/font/google'
+import { Inter, Open_Sans, Outfit } from 'next/font/google'
 import './globals.css'
 import { cn } from '@/lib/tailwind'
 
-const sans = Open_Sans({
+const sans = Inter({
   subsets: ['latin'],
   variable: '--font-open-sans',
-  fallback: ['Open Sans']
+})
+
+const logo = Outfit({
+  subsets: ['latin'],
+  variable: '--font-logo',
 })
 
 export const metadata: Metadata = {
@@ -23,10 +27,14 @@ export default function RootLayout({
     <html lang="en">
       <body className={ cn(
         sans.variable,
+        logo.variable,
         "font-sans",
         "bg-black",
         "text-indigo-100/90",
-      ) }>{ children }</body>
+        "bg-gradient-to-b from-indigo-200/10 to-indigo-500/20"
+      ) }>
+        { children }
+      </body>
     </html>
   )
 }

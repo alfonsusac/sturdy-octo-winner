@@ -4,55 +4,63 @@ import Image from 'next/image'
 
 export default function Home() {
   return (
-    <main className="min-h-screen w-full flex items-center justify-center">
+    <main className="
+    min-h-screen
+    w-full max-w-screen-lg mx-auto
+    ">
+      <header className="p-8 flex items-center justify-between">
+        <AppLogo className="text-xl " />
+        <a className={ cn(
+          "py-1.5 px-5 text-black rounded-lg text-sm",
+          "transition-all",
+          "duration-100",
+          "bg-white",
+          "hover:bg-white/80",
+          "shadow-lg",
+          "font-semibold",
+          // "hover:shadow-xl",
+          "shadow-white/10",
+          "hover:shadow-white/5",
+        ) }
+          href="/auth"
+        >
+          Login
+        </a>
+      </header>
       <div className={ cn(
         "text-center",
         "flex flex-col items-center",
         "m-8"
       ) }>
-        
-        <AppLogo className={ cn(
-          "text-2xl",
-          "drop-shadow-lg"
-        ) } />
-
-        <h1 className="mt-8 text-4xl font-bold text-white">
+        <h1 className="
+        mt-8 text-7xl font-bold
+        text-transparent bg-clip-text bg-gradient-to-tr from-white/60 via-white to-white
+        max-w-xl
+        ">
           Yet Another Discord Clone
         </h1>
-
-        <p className="mt-4">
+        <p className="mt-4 max-w-md text-xl">
           A free text chat app that&apos;s is used to talk and hang out with friends and communities.
         </p>
-
-        <div className="mt-8 flex flex-row items-center gap-2">
+        <div className="mt-12 flex flex-row items-center gap-2">
           <a className={ cn(
-            "py-4 px-6 text-white rounded-lg",
-            "cursor-pointer",
+            "py-2.5 min-w-[20rem] text-white rounded-lg",
             "transition-all",
             "duration-100",
             "bg-indigo-500/80",
             "hover:bg-indigo-500/70",
             "shadow-2xl",
+            "font-medium",
             // "hover:shadow-xl",
             "shadow-indigo-500/80",
             "hover:shadow-indigo-500/50",
           ) }
             href="/auth"
           >
-            Sign Up Now
+            Join Now
           </a>
-
-          <span>
-            or <a className="underline">
-              login
-            </a>
-          </span>
-
         </div>
-
       </div>
-
-      
     </main>
   )
 }
