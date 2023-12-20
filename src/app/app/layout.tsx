@@ -1,4 +1,3 @@
-import { getSession } from "@/lib/auth/next-auth"
 import * as client from "./layout.client"
 import { cn } from "@/lib/tailwind"
 import { style } from "@/style"
@@ -7,6 +6,7 @@ import { AddServerDialog } from "./_modal/add-server.client"
 import { getUserData } from "@/controller/user"
 import AddServer from "./_modal/add-server"
 import { Inter } from "next/font/google"
+import { Auth } from "@/lib/auth/next-auth"
 
 
 export default async function AppLayout(p: {
@@ -14,7 +14,7 @@ export default async function AppLayout(p: {
   innersidebar: React.ReactNode
   header: React.ReactNode
 }) {
-  const { session } = await getSession()
+  const { session } = await Auth.getSession()
   const user = await getUserData()
 
   return (

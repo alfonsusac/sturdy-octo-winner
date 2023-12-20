@@ -46,20 +46,20 @@ export const authOption: AuthOptions = {
   }
 }
 
-
-export const getSession = cache(async () => {
-  const session = await getServerSession(authOption)
-  if (!session) redirect('/auth')
-  if (!session.user) redirect('/auth')
-  if (!session.user.email) redirect('/auth')
-  if (!session.user.provider) redirect('/auth')
-  return {
-    session,
-    email: session.user.email,
-    name: session.user.name,
-    image: session.user.image,
-    expiryDate: session.expires,
-    provider: session.user.provider as unknown as AcccountProvider,
-  }
-})
-
+export namespace Auth {
+  export const getSession = cache(async () => {
+    const session = await getServerSession(authOption)
+    if (!session) redirect('/auth')
+    if (!session.user) redirect('/auth')
+    if (!session.user.email) redirect('/auth')
+    if (!session.user.provider) redirect('/auth')
+    return {
+      session,
+      email: session.user.email,
+      name: session.user.name,
+      image: session.user.image,
+      expiryDate: session.expires,
+      provider: session.user.provider as unknown as AcccountProvider,
+    }
+  })
+}

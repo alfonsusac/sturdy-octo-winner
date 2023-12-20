@@ -1,10 +1,9 @@
-import { getSession } from "@/lib/auth/next-auth"
 import RegisterForm from "./form"
-import { delay } from "@/lib/devutil"
 import { redirect } from "next/navigation"
 import prisma from "@/lib/db/prisma"
 import { zfd } from "zod-form-data"
 import { getUserDefaultImage } from "@/controller/user"
+import { Auth } from "@/lib/auth/next-auth"
 
 /**
  *  The Register Page should:
@@ -16,7 +15,7 @@ import { getUserDefaultImage } from "@/controller/user"
 
 export default async function Page() {
 
-  const { email, name, image } = await getSession()
+  const { email, name, image } = await Auth.getSession()
 
   // Check if user already exist in the database. Since this page is only for new users
   const user = await prisma.user.findUnique({ where: { email } })
@@ -29,7 +28,7 @@ export default async function Page() {
   async function registerNewUser(formData: FormData) {
     "use server"
     try {
-      const { email, provider } = await getSession()
+      const { email, provider } = await Auth.getSession()
 
       //Validate user input
       const schema = zfd.formData({

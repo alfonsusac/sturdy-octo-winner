@@ -1,4 +1,4 @@
-import { getSession } from "@/lib/auth/next-auth"
+import { Auth } from "@/lib/auth/next-auth"
 import prisma from "@/lib/db/prisma"
 import { logFunc } from "@/lib/devutil"
 import { redirect } from "next/navigation"
@@ -12,7 +12,7 @@ import "server-only"
 export const getUserData = cache(async () => {
   logFunc("Getting User Data")
 
-  const { email } = await getSession()
+  const { email } = await Auth.getSession()
   const user = await findUserByEmail(email)
   
   if (!user) redirect('/register')

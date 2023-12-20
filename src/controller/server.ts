@@ -1,4 +1,4 @@
-import { getSession } from "@/lib/auth/next-auth"
+import { Auth } from "@/lib/auth/next-auth"
 import prisma from "@/lib/db/prisma"
 import "server-only"
 
@@ -11,7 +11,7 @@ export async function createServer({ name, profilePicture }: {
   ownerID: string
 }) {
 
-  const { email } = await getSession()
+  const { email } = await Auth.getSession()
   const newServer = await prisma.server.create({
     data: {
       name,
