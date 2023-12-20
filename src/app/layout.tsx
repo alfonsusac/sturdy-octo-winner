@@ -31,7 +31,8 @@ export default function RootLayout({
         "font-sans",
         "bg-black",
         "text-indigo-100/90",
-        "bg-gradient-to-b from-indigo-200/10 to-indigo-500/20"
+        "bg-gradient-to-b from-indigo-200/10 to-indigo-500/20",
+        "selection:bg-green-800"
       ) }>
         { children }
       </body>

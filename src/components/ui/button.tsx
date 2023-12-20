@@ -81,7 +81,7 @@ export function ButtonBase(p: React.ComponentProps<"button"> & {
 
     secondary && [
       "font-semibold",
-      "bg-neutral-800",
+      "bg-indigo-100/10",
       loading && [
         'bg-white/10'
       ]

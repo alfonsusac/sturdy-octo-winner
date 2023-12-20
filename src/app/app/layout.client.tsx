@@ -133,12 +133,12 @@ export function BaseScreen(p: {
     <screen.Provider value={ ref }>
       <div className={ cn(
         "w-screen h-screen",
-        "bg-indigo-300/20",
+        "bg-black"
       ) }
-        // ref={ ref }
       >
         <div className={ cn(
           "w-screen h-screen",
+          "bg-indigo-300/20",
           "grid grid-flow-row",
           "grid-cols-[3rem_13rem_minmax(0,_1fr)]",
           "p-2 gap-2",

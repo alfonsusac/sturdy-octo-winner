@@ -46,7 +46,7 @@ export const style = {
     "uppercase",
     "select-none",
   ),
-  cardbg: cn(
+   : cn(
     'rounded-lg bg-indigo-300/5'
   ),
   inputLabel: cn(
