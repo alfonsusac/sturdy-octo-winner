@@ -5,6 +5,7 @@ import { SidebarItem } from "../layout.client"
 
 export default async function AddServer() {
   const user = await getUserData()
+
   return (
     <AddServerDialog // "use client"
       user={user}

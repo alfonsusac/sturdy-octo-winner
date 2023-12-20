@@ -4,31 +4,29 @@ import { useForm, SubmitHandler } from "react-hook-form"
 import { cn } from "@/lib/tailwind"
 import { style } from "@/style"
 import { SVGProps } from "react"
+import { joinServer } from "@/app/actions/join-server"
 
-type Inputs = {
+export type JoinServerInputs = {
   invite: string
 }
 
 export default function JoinServerForm(p: {
   toBack: () => void
 }) {
-  const { register, handleSubmit, formState } = useForm<Inputs>({
+  const { register, handleSubmit, formState } = useForm<JoinServerInputs>({
     mode: "onChange",
   })
-
-  const onSubmit: SubmitHandler<Inputs> = (data) => {
+  const onSubmit: SubmitHandler<JoinServerInputs> = async (data) => {
     console.log(data)
+    const res = await joinServer(data)
   }
-
-
   return (
-    <form
-      onSubmit={ handleSubmit(onSubmit) }
+    <form onSubmit={ handleSubmit(onSubmit) }
       className={ cn(
         "flex flex-col"
       ) }
     >
-      <div className="flex flex-col p-4 items-stretch">
+      <div className="flex flex-col p-4 pt-0 items-stretch">
         <fieldset className="mt-4 flex flex-col items-stretch">
           <label className={ cn(style.inputLabel) }>
             Invite Link
@@ -45,21 +43,19 @@ export default function JoinServerForm(p: {
             maxLength={ 8 }
           />
         </fieldset>
-
       </div>
-
       <div className={ cn(style.dialogFooter) }>
         <button
-          className={ cn(style.dialogButton) }
-          onClick={ p.toBack }
           type="button"
+          onClick={ p.toBack }
+          className={ cn(style.dialogButton) }
         >
           Back
         </button>
         <button
-          className={ cn(style.dialogButton) }
-          disabled={ !formState.isValid }
           type="submit"
+          disabled={ !formState.isValid }
+          className={ cn(style.dialogButton, "bg-indigo-600") }
         >
           Join Server
         </button>

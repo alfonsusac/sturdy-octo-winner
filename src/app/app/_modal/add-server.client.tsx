@@ -14,11 +14,7 @@ export function AddServerDialog(p: {
   children: React.ReactNode
   user: User
 }) {
-  enum states {
-    index,
-    create,
-    join
-  }
+  enum states { index, create, join }
   const [state, setState] = useState(states.index)
   const [left, setLeft] = useState<states>()
   const [right, setRight] = useState<states>()
@@ -62,10 +58,10 @@ export function AddServerDialog(p: {
           "duration-200",
           state === states.index && "h-52",
           state === states.create && "h-[26rem]",
-          state === states.join && "h-[17.5rem]",
+          state === states.join && "h-[16.5rem]",
         )
       } }
-      onOpen={ () => { setState(states.index)}}
+      onOpen={ () => { setState(states.index) } }
     >
       <div className={ cn(
         "relative w-full items-center",
@@ -124,22 +120,15 @@ export function AddServerDialog(p: {
           </div>
         </SlidingModalContent>
 
-        <SlidingModalContent
-          // show={true}
+        <SlidingModalContent // show={true}
           show={ state === states.create }
           position={ left === states.create ? "left" : right === states.create ? "right" : "center" }
         >
           <div>
-            <div className={ cn("text-center", "p-4 pb-0",
-              "flex flex-col items-center"
-            ) }>
-              <ModalTitle>
-                Create a New Server
-              </ModalTitle>
-              <ModalDescription>
-                Give your new server a personality with a name and an icon. You can always change it later.
-              </ModalDescription>
-            </div>
+            <header className="text-center p-4 pb-0 flex flex-col items-center">
+              <ModalTitle>Create a New Server</ModalTitle>
+              <ModalDescription>Give your new server a personality with a name and an icon. You can always change it later.</ModalDescription>
+            </header>
             <CreateServerForm
               toBack={ () => goBack(states.index) }
               user={ p.user }
@@ -147,22 +136,15 @@ export function AddServerDialog(p: {
           </div>
         </SlidingModalContent>
 
-        <SlidingModalContent
-          // show={true}
+        <SlidingModalContent // show={true}
           show={ state === states.join }
           position={ left === states.join ? "left" : right === states.join ? "right" : "center" }
         >
           <div>
-            <div className={ cn("text-center", "p-4 pb-0",
-              "flex flex-col items-center"
-            ) }>
-              <ModalTitle>
-                Join a Server
-              </ModalTitle>
-              <ModalDescription>
-                Enter an invite below to join an existing server
-              </ModalDescription>
-            </div>
+            <header className="text-center p-4 pb-0 flex flex-col items-center">
+              <ModalTitle>Join a Server</ModalTitle>
+              <ModalDescription>Enter an invite below to join an existing server</ModalDescription>
+            </header>
             <JoinServerForm toBack={ () => goBack(states.index) } />
           </div>
         </SlidingModalContent>
@@ -215,5 +197,5 @@ function SlidingModalContent(p: ComponentProps<"div"> & {
 }
 
 /**
- * Content item that is rapped by slidingModalContent.
+ * Content item that is Wrapped by slidingModalContent.
  */
