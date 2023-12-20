@@ -2,11 +2,9 @@ import { getUserData } from "@/controller/user"
 import { AddServerDialog } from "./add-server.client"
 import { SVGProps } from "react"
 import { SidebarItem } from "../layout.client"
-import { CreateServerInputs } from "../_form/create-server"
 
 export default async function AddServer() {
   const user = await getUserData()
-
   return (
     <AddServerDialog // "use client"
       user={user}
