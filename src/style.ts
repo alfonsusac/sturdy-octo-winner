@@ -29,7 +29,7 @@ export const style = {
     "transition-all",
     "rounded-md py-2 px-4 bg-indigo-300/20",
     "hover:bg-indigo-700",
-    "hover:shadow-md", 
+    "hover:shadow-md",
 
 
     "disabled:saturate-50",
@@ -46,7 +46,7 @@ export const style = {
     "uppercase",
     "select-none",
   ),
-   : cn(
+  cardbg: cn(
     'rounded-lg bg-indigo-300/5'
   ),
   inputLabel: cn(
@@ -59,7 +59,7 @@ export const style = {
     "bg-black/30",
   ),
   fileInput: cn(
-    "transition-all", 
+    "transition-all",
     "file:bg-indigo-300/20 file:font-semibold",
     "file:hover:bg-indigo-700",
     "file:hover:shadow-md",
