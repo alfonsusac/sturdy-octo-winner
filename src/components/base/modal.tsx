@@ -56,6 +56,7 @@ export function ModalBase(p: {
           "fixed",
 
           "focus:outline-none",
+          "bg-[#272B3C]",
           "flex flex-row justify-center items-stretch",
 
           "w-full",
@@ -93,6 +94,8 @@ export function ModalBase(p: {
 function DialogOverlay(p: { className?: string, isOpen?: boolean }) {
   return <Dialog.Overlay data-state-transition={ p.isOpen }  className={ cn(
       "fixed inset-0",
+      // "bg-red-500",
+      "bg-black",
       "transition-all duration-300",
       "opacity-0",
       "data-[state-transition=true]:opacity-70",

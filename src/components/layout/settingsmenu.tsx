@@ -23,7 +23,7 @@ export namespace SettingsMenu {
         trigger={ p.trigger }
         className={ {
           content: cn(
-            // "bg-indigo-300/20",
+            "bg-[#212432]",
             "flex flex-row justify-center items-stretch",
             "sm:p-8",
             // Remove Center Offset
@@ -39,6 +39,7 @@ export namespace SettingsMenu {
             "data-[state-transition=true]:scale-100",
           ),
           overlay: cn(
+            "bg-[#212432]",
             "opacity-0",
             "data-[state-transition=true]:opacity-100",
           ),

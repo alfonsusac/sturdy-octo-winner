@@ -8,7 +8,6 @@ import { ComponentProps, SVGProps, useEffect, useState } from "react"
 import CreateServerForm, { CreateServerFormSubmitHandler } from "../_form/create-server"
 import JoinServerForm from "../_form/join-server"
 import { User } from "@prisma/client"
-import { Modal } from "@/components/ui/modal"
 import { ModalBase } from "@/components/base/modal"
 
 export function AddServerDialog(p: {
