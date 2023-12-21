@@ -4,7 +4,7 @@ import * as Dialog from '@radix-ui/react-dialog'
 import * as Tabs from '@radix-ui/react-tabs'
 import { useScreen } from '@/app/app/layout.client'
 import { CloseModalButton } from '@/app/app/_modal/buttons'
-import { Modal } from '../ui/modal'
+import { ModalBase } from '../base/modal'
 
 export namespace SettingsMenu {
   export function Base(p: {
@@ -17,40 +17,30 @@ export namespace SettingsMenu {
     const screenRef = useScreen()
 
     return (
-      <Modal.Base
-        onOpenTransitionStart={ () => {
-          screenRef?.current?.setAttribute("data-transition-setting", "true")
-        } }
-        onCloseTransitionStart={ () => {
-          screenRef?.current?.setAttribute("data-transition-setting", "false")
-        } }
+      <ModalBase
+        onOpen={ () => { screenRef?.current?.setAttribute("data-transition-setting", "true") } }
+        onClose={ () => { screenRef?.current?.setAttribute("data-transition-setting", "false") } }
         trigger={ p.trigger }
         className={ {
           content: cn(
-            "bg-indigo-300/20",
+            // "bg-indigo-300/20",
             "flex flex-row justify-center items-stretch",
             "sm:p-8",
-
             // Remove Center Offset
             "translate-x-0 translate-y-0",
             "inset-0",
             "max-w-none",
             "rounded-none",
-
             // Transition
             "transition-all duration-300",
             "opacity-0",
-            "data-[state-transition=false]:opacity-0",
             "data-[state-transition=true]:opacity-100",
-
             "scale-110",
             "data-[state-transition=true]:scale-100",
-
           ),
           overlay: cn(
             "opacity-0",
-            "data-[state-transition=false]:opacity-0",
-            "data-[state-transition=true]:opacity-100"
+            "data-[state-transition=true]:opacity-100",
           ),
         } }
       >
@@ -76,9 +66,7 @@ export namespace SettingsMenu {
             "sm:w-44",
             "p-2",
             "flex flex-col items-stretch gap-0.5",
-          ) }
-            aria-label={ p.title }
-          >
+          ) } aria-label={ p.title }>
             <Dialog.Title className={ cn(
               style.categoryTitle,
               "mt-4 mb-1",
@@ -96,7 +84,7 @@ export namespace SettingsMenu {
           </div>
 
         </Tabs.Root>
-      </Modal.Base>
+      </ModalBase>
     )
   }
 
@@ -112,21 +100,16 @@ export namespace SettingsMenu {
     value: string
     disabled?: boolean
   }) {
-    return (
-      <Tabs.Trigger value={ p.value }
-        className={ tabTriggerStyle }
-      >
-        { p.children }
-      </Tabs.Trigger>
-    )
+    return <Tabs.Trigger value={ p.value } className={ tabTriggerStyle }>
+      { p.children }
+    </Tabs.Trigger>
+
   }
   export function TabContent(p: {
     children: React.ReactNode
     value: string
   }) {
-    return (
-      <Tabs.Content value={ p.value }></Tabs.Content>
-    )
+    return <Tabs.Content value={ p.value }></Tabs.Content>
   }
 
 }

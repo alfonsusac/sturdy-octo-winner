@@ -133,12 +133,11 @@ export function BaseScreen(p: {
     <screen.Provider value={ ref }>
       <div className={ cn(
         "w-screen h-screen",
-        "bg-black"
+        "bg-[#212432]"
       ) }
       >
         <div className={ cn(
           "w-screen h-screen",
-          "bg-indigo-300/20",
           "grid grid-flow-row",
           "grid-cols-[3rem_13rem_minmax(0,_1fr)]",
           "p-2 gap-2",
@@ -148,7 +147,7 @@ export function BaseScreen(p: {
           "data-[transition-setting=true]:transition-all",
           "data-[transition-setting=true]:duration-150",
           "data-[transition-setting=true]:scale-90",
-          "data-[transition-setting=true]:opacity-50",
+          "data-[transition-setting=true]:opacity-0",
 
           "data-[transition-setting=false]:transition-all",
           "data-[transition-setting=false]:duration-150",

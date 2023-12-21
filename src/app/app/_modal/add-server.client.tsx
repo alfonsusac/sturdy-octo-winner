@@ -9,6 +9,7 @@ import CreateServerForm, { CreateServerFormSubmitHandler } from "../_form/create
 import JoinServerForm from "../_form/join-server"
 import { User } from "@prisma/client"
 import { Modal } from "@/components/ui/modal"
+import { ModalBase } from "@/components/base/modal"
 
 export function AddServerDialog(p: {
   children: React.ReactNode
@@ -47,7 +48,7 @@ export function AddServerDialog(p: {
   }, [animationState])
 
   return (
-    <Modal.Base
+    <ModalBase
       trigger={ p.children }
       className={ {
         content: cn(
@@ -150,7 +151,7 @@ export function AddServerDialog(p: {
         </SlidingModalContent>
       </div>
       <CloseModalButton />
-    </Modal.Base>
+    </ModalBase>
   )
 }
 
