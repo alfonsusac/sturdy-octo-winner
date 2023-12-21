@@ -7,7 +7,7 @@ import { cn } from "@/lib/tailwind"
 import { style } from "@/style"
 import { MutableRefObject, RefObject, SVGProps, useRef } from "react"
 import { User } from "@prisma/client"
-import { generatePresignedUrl } from "../../actions/create-server"
+import { generatePresignedUrl } from "../../../actions/create-server"
 
 export type CreateServerInputs = {
   serverName: string

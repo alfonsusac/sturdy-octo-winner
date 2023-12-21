@@ -1,11 +1,9 @@
 import * as client from "./layout.client"
 import { cn } from "@/lib/tailwind"
 import { style } from "@/style"
-import { ComponentProps, SVGProps } from "react"
-import { AddServerDialog } from "./_modal/add-server.client"
+import { SVGProps } from "react"
 import { getUserData } from "@/controller/user"
 import AddServer from "./_modal/add-server"
-import { Inter } from "next/font/google"
 import { Auth } from "@/lib/auth/next-auth"
 
 
@@ -22,15 +20,13 @@ export default async function AppLayout(p: {
       <client.BaseScreen>
         
         <Sidebar>
-          <HomeMenuItem />
-          <div className="w-1/2 h-0.5 bg-indigo-300/20 self-center my-2" />
+          <Home />
+          <div className="w-1/2 h-px bg-indigo-300/20 self-center my-2" />
           <AddServer />
         </Sidebar>
 
         <SubSidebar>
-          <div className="min-h-0 flex flex-col">
-            { p.innersidebar }
-          </div>
+          <div className="min-h-0 flex flex-col">{ p.innersidebar }</div>
           <client.UserStatus user={user} />
         </SubSidebar>
 
@@ -62,7 +58,7 @@ function Sidebar(p: {
   )
 }
 
-function HomeMenuItem() {
+function Home() {
   return <client.SidebarItem
     icon={ <FluentHome12Filled /> }
     label={ <>Home</> }

@@ -4,7 +4,7 @@ import { useForm, SubmitHandler } from "react-hook-form"
 import { cn } from "@/lib/tailwind"
 import { style } from "@/style"
 import { SVGProps } from "react"
-import { joinServer } from "@/app/actions/join-server"
+import { joinServer } from "@/actions/join-server"
 
 export type JoinServerInputs = {
   invite: string
@@ -21,16 +21,10 @@ export default function JoinServerForm(p: {
     const res = await joinServer(data)
   }
   return (
-    <form onSubmit={ handleSubmit(onSubmit) }
-      className={ cn(
-        "flex flex-col"
-      ) }
-    >
+    <form onSubmit={ handleSubmit(onSubmit) } className="flex flex-col">
       <div className="flex flex-col p-4 pt-0 items-stretch">
         <fieldset className="mt-4 flex flex-col items-stretch">
-          <label className={ cn(style.inputLabel) }>
-            Invite Link
-          </label>
+          <label className={ cn(style.inputLabel) }>Invite Link</label>
           <input
             className={ cn(style.textInput) }
             placeholder={ `hTKzmaks` }
@@ -45,15 +39,13 @@ export default function JoinServerForm(p: {
         </fieldset>
       </div>
       <div className={ cn(style.dialogFooter) }>
-        <button
-          type="button"
+        <button type="button"
           onClick={ p.toBack }
           className={ cn(style.dialogButton) }
         >
           Back
         </button>
-        <button
-          type="submit"
+        <button type="submit"
           disabled={ !formState.isValid }
           className={ cn(style.dialogButton, "bg-indigo-600") }
         >
