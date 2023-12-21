@@ -2,7 +2,20 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Scrollbars */
+/*
+  Global Styles
+  
+  - scroll bars
+  - anchor tag apply pointer cursor
+  - flex and grid apply 0 min width and height
+  - 
+
+
+*/
+
+/*                         */
+/* Scrollbars              */
+
 :root {
   color-scheme: dark;
   accent-color: #000;
@@ -12,28 +25,27 @@
 * {
   scrollbar-width: thin;
   scrollbar-color: var(--thumbBG) var(--scrollbarBG);
+  &::web-webkit-scrollbar { width: 8px; }
+  &::-webkit-scrollbar-track { background: transparent; }
+  &::-webkit-scrollbar-thumb { background-color: var(--thumbBG); }
 }
-*::-webkit-scrollbar { width: 8px; }
-*::-webkit-scrollbar-track { background: transparent; }
-*::-webkit-scrollbar-thumb { background-color: var(--thumbBG); }
 
-
+/*                         */
+/* Layouts                 */
 
 a{
   cursor: pointer;
   transition-property: all;
 }
-flex > * {
-  min-height: 0;
-  min-width: 0;
-}
-grid > * {
-  min-height: 0;
-  min-width: 0;
-}
+flex > * { min-height: 0; min-width: 0; }
+grid > * { min-height: 0; min-width: 0; }
+
 *:focus-visible {
   outline: #818cf833 3px solid;
 }
+
+/*                         */
+/* Forms                   */
 
 label {
   font-size: 0.7rem;
