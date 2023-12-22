@@ -11,8 +11,11 @@ export const style = {
 
     "data-[state=active]:bg-indigo-300/20",
     "data-[state=active]:text-indigo-100/90",
-    "data-[state=active]:shadow-md",
-    "data-[state=active]:shadow-black/10",
+    // "data-[state=active]:shadow-md",
+    // "data-[state=active]:shadow-black/10",
+
+    "data-[state=active]:hover:bg-indigo-300/20",
+    "data-[state=active]:hover:text-indigo-100/90",
 
     "active:brightness-90",
   ),

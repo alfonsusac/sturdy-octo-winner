@@ -14,103 +14,64 @@ export namespace SettingsMenu {
     title?: string
     tabs?: React.ReactNode
   }) {
-    const screenRef = useScreen()
-
+    const baseScreenRef = useScreen()
     return (
       <ModalBase
-        onOpen={ () => { screenRef?.current?.setAttribute("data-transition-setting", "true") } }
-        onClose={ () => { screenRef?.current?.setAttribute("data-transition-setting", "false") } }
+        onOpen={ () => { baseScreenRef?.current?.setAttribute("data-transition-setting", "true") } }
+        onClose={ () => { baseScreenRef?.current?.setAttribute("data-transition-setting", "false") } }
         trigger={ p.trigger }
         className={ {
           content: cn(
-            "bg-[#212432]",
-            "flex flex-row justify-center items-stretch",
-            "sm:p-8",
+            "bg-transparent flex flex-row justify-center items-stretch",
             // Remove Center Offset
-            "translate-x-0 translate-y-0",
-            "inset-0",
-            "max-w-none",
-            "rounded-none",
+            "top-0 bottom-0 h-full translate-y-0 max-w-none overflow-visible",
             // Transition
-            "transition-all duration-300",
-            "opacity-0",
+            "transition-all duration-300 opacity-0 scale-110",
             "data-[state-transition=true]:opacity-100",
-            "scale-110",
             "data-[state-transition=true]:scale-100",
           ),
-          overlay: cn(
-            "bg-[#212432]",
-            "opacity-0",
-            "data-[state-transition=true]:opacity-100",
-          ),
+          overlay: "bg-[#212432] opacity-0 data-[state-transition=true]:opacity-100",
         } }
       >
         <Tabs.Root
           orientation="vertical"
           defaultValue={ p.firstValue }
-          className={ cn(
-            "max-w-2xl",
-            "bg-indigo-300/10",
-            "grow",
-            "relative",
-
-            "overflow-clip",
-            "flex flex-row",
-            "sm:rounded-3xl",
-
-            "text-sm",
-          ) }
+          className={ cn("max-w-2xl grow relative text-sm flex flex-row sm:rounded-3xl sm:m-8") }
         >
-          <Tabs.List className={ cn(
-            "bg-black/10",
-            "w-20",
-            "sm:w-44",
-            "p-2",
-            "flex flex-col items-stretch gap-0.5",
-          ) } aria-label={ p.title }>
-            <Dialog.Title className={ cn(
-              style.categoryTitle,
-              "mt-4 mb-1",
-              "ml-3",
-              "font-semibold",
-            ) }>
+          <Tabs.List className="bg-[#212432] w-56 p-2 flex flex-col items-stretch gap-0.5" aria-label={ p.title }>
+            <Dialog.Title className={ cn( style.categoryTitle, "font-semibold mt-4 mb-1 ml-3") }>
               { p.title }
             </Dialog.Title>
             { p.tabs }
           </Tabs.List>
-
-          <div className="p-8">
+          <div className="p-8 bg-[#272B3C] w-full overflow-visible relative before:top-0 before:left-0 before:absolute before:w-full before:h-full before:bg-[#272B3C] before:origin-[center_left] before:scale-[1000]">
             { p.children }
             <CloseModalButton />
           </div>
-
         </Tabs.Root>
       </ModalBase>
     )
   }
 
+  // For buttons 
   export const tabTriggerStyle = cn(
-    "px-3 py-1.5",
-    "rounded-md",
-    "font-medium",
-    style.buttonListItem,
+    "px-3 py-2 rounded-[0.25rem] font-medium h-7",
     "flex flex-row items-center justify-between",
+    style.buttonListItem,
   )
   export function TabTrigger(p: {
     children: React.ReactNode
-    value: string
-    disabled?: boolean
+    value?: string
   }) {
-    return <Tabs.Trigger value={ p.value } className={ tabTriggerStyle }>
+    return <Tabs.Trigger value={ p.value ?? "" } className={ tabTriggerStyle }>
       { p.children }
     </Tabs.Trigger>
-
   }
   export function TabContent(p: {
     children: React.ReactNode
     value: string
   }) {
-    return <Tabs.Content value={ p.value }></Tabs.Content>
+    return <Tabs.Content value={ p.value }>{ p.children }</Tabs.Content>
   }
 
 }

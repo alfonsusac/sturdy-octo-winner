@@ -43,8 +43,8 @@ function useCloseAnimation(duration = 200, events?: {
 }
 
 export function ModalBase(p: {
-  trigger: React.ReactNode
-  children: React.ReactNode
+  trigger?: React.ReactNode
+  children?: React.ReactNode
   className?: {
     overlay?: string,
     content?: string,
@@ -58,7 +58,7 @@ export function ModalBase(p: {
     <Dialog.Portal>
       <Overlay isOpen={ isOpen } className={ p.className?.overlay } />
       <Content isOpen={ isOpen } className={ p.className?.content }>
-        { isVisible && p.children }
+        { p.children }
       </Content>
     </Dialog.Portal>
   </Dialog.Root>
