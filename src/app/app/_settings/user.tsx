@@ -1,9 +1,10 @@
+import { TabContent, TabTrigger } from "@/components/base/settings"
 import { SettingsMenu } from "@/components/layout/settingsmenu"
 import LogoutButton from "@/components/ui/logout"
 import { SVGProps } from "react"
 
 export default function UserSettingView(p: {
-  children:React.ReactNode
+  children: React.ReactNode
 }) {
   return (
     <SettingsMenu.Base
@@ -12,32 +13,32 @@ export default function UserSettingView(p: {
       firstValue="My Account"
       tabs={
         <>
-          <SettingsMenu.TabTrigger value="My Account">My Account</SettingsMenu.TabTrigger>
-          <SettingsMenu.TabTrigger value="Profile">Profile</SettingsMenu.TabTrigger>
-          <SettingsMenu.TabTrigger value="Appearance">Appearance</SettingsMenu.TabTrigger>
-          <SettingsMenu.TabTrigger value="Language">Language</SettingsMenu.TabTrigger>
+          <TabTrigger value="My Account">My Account</TabTrigger>
+          <TabTrigger value="Profile">Profile</TabTrigger>
+          <TabTrigger value="Appearance">Appearance</TabTrigger>
+          <TabTrigger value="Language">Language</TabTrigger>
           <div className="h-px bg-indigo-300/10 mx-2 my-2" />
           <LogoutButton>
             <button className={ SettingsMenu.tabTriggerStyle }>
               Log Out
-              <FluentSignOut20Filled className="text-lg"/>
+              <FluentSignOut20Filled className="text-lg" />
             </button>
           </LogoutButton>
-          </>
+        </>
       }
     >
-      <SettingsMenu.TabContent value="My Account">
-         My Account
-      </SettingsMenu.TabContent>
-      <SettingsMenu.TabContent value="Profile">
-         Profile
-      </SettingsMenu.TabContent>
-      <SettingsMenu.TabContent value="Appearance">
-         Appearance
-      </SettingsMenu.TabContent>
-      <SettingsMenu.TabContent value="Language">
-         Language
-      </SettingsMenu.TabContent>
+      <TabContent value="My Account">
+        My Account
+      </TabContent>
+      <TabContent value="Profile">
+        Profile
+      </TabContent>
+      <TabContent value="Appearance">
+        Appearance
+      </TabContent>
+      <TabContent value="Language">
+        Language
+      </TabContent>
 
     </SettingsMenu.Base>
   )
