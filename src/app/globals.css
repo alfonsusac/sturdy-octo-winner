@@ -40,9 +40,9 @@ a{
 flex > * { min-height: 0; min-width: 0; }
 grid > * { min-height: 0; min-width: 0; }
 
-*:focus-visible {
+/* *:focus-visible {
   outline: #818cf833 3px solid;
-}
+} */
 
 /*                         */
 /* Forms                   */
