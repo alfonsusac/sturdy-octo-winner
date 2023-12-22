@@ -7,10 +7,8 @@ export default async function AddServer() {
   const user = await getUserData()
 
   return (
-    <AddServerDialog // "use client"
-      user={user}
-    >
-      <SidebarItem // "use client"
+    <AddServerDialog user={user} /** use client */>
+      <SidebarItem 
         icon={ <FluentAdd16Filled className="text-2xl" /> }
         label={ <>Add New Server</> }
       />

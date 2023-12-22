@@ -1,5 +1,4 @@
-import { TabContent, TabTrigger } from "@/components/base/settings"
-import { SettingsMenu } from "@/components/layout/settingsmenu"
+import { SettingPage, TabContent, TabTrigger, tabTriggerStyle } from "@/components/base/settings"
 import LogoutButton from "@/components/ui/logout"
 import { SVGProps } from "react"
 
@@ -7,7 +6,7 @@ export default function UserSettingView(p: {
   children: React.ReactNode
 }) {
   return (
-    <SettingsMenu.Base
+    <SettingPage
       trigger={ p.children }
       title="User Settings"
       firstValue="My Account"
@@ -19,7 +18,7 @@ export default function UserSettingView(p: {
           <TabTrigger value="Language">Language</TabTrigger>
           <div className="h-px bg-indigo-300/10 mx-2 my-2" />
           <LogoutButton>
-            <button className={ SettingsMenu.tabTriggerStyle }>
+            <button className={ tabTriggerStyle }>
               Log Out
               <FluentSignOut20Filled className="text-lg" />
             </button>
@@ -39,8 +38,7 @@ export default function UserSettingView(p: {
       <TabContent value="Language">
         Language
       </TabContent>
-
-    </SettingsMenu.Base>
+    </SettingPage>
   )
 }
 

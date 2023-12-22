@@ -7,7 +7,6 @@ export function Slot({ children, render, className, ...rest }: {
   className?: string,
 } & DOMAttributes<any>) {
 
-  // Can't have more than one children
   const maxIndex = React.Children.count(children) - 1
   const min = Math.min
 
@@ -27,18 +26,4 @@ export function Slot({ children, render, className, ...rest }: {
   })
 
   return Comp
-
-  // If valid element, then clone element
-  // if (React.Children.count(children) > 1) {
-  //   throw new Error("This Component can't contain more than one children!")
-  // }
-
-  // if (React.isValidElement(children)) {
-  //   return React.cloneElement(children, {
-  //     className: cn(children.props.className, className),
-  //     ...rest
-  //   } as any)
-  // }
-
-  return null
 }

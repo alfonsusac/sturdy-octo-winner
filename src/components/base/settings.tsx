@@ -3,9 +3,9 @@ import { ModalBase } from "./modal"
 import { cn } from "@/lib/tailwind"
 import * as Dialog from '@radix-ui/react-dialog'
 import * as Tabs from '@radix-ui/react-tabs'
-import { useScreen } from "@/app/app/layout.client"
 import { style } from "@/style"
 import { CloseModalButton } from "@/app/app/_modal/buttons"
+import { useScreen } from "@/app/app/screen"
 
 export function SettingPage(p: {
   trigger: React.ReactNode

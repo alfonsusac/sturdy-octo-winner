@@ -6,7 +6,7 @@ import { cn } from "@/lib/tailwind"
 import { Session } from "next-auth"
 import { SessionProvider } from "next-auth/react"
 import { usePathname } from "next/navigation"
-import { ComponentProps, MutableRefObject, RefObject, SVGProps, createContext, useContext, useEffect, useRef, useState } from "react"
+import { ComponentProps, RefObject, SVGProps, createContext, forwardRef, useContext, useRef } from "react"
 import UserSettingView from "./_settings/user"
 import { style } from "@/style"
 import { User } from "@prisma/client"
@@ -22,13 +22,22 @@ export function Providers(p: {
   )
 }
 
-export function SidebarItem(p: {
+
+interface Props {
   icon: React.ReactNode
   label: React.ReactNode
   link?: string | string[]
   strict?: boolean
-} & ComponentProps<"button">) {
-  const {icon, label, link, strict, children, className, ...rest} = p
+  className?: string
+}
+export const SidebarItem = forwardRef<HTMLButtonElement, Props>(function SidebarItem(p: {
+  icon: React.ReactNode
+  label: React.ReactNode
+  link?: string | string[]
+  strict?: boolean
+  className?: string
+}, ref) {
+  const { icon, label, link, strict, className, ...rest } = p
 
   const path = usePathname()
   const selected = p.strict ? (
@@ -48,12 +57,13 @@ export function SidebarItem(p: {
     ) }
       data-state={ selected ? "active" : "" }
       { ...rest }
+      ref={ref}
       title="Add New Server"
     >
       { p.icon }
     </button>
   )
-}
+})
 
 
 
@@ -121,55 +131,3 @@ export function FluentSettings28Filled(props: SVGProps<SVGSVGElement>) {
 }
 
 
-const screen = createContext(undefined as RefObject<HTMLDivElement> | undefined)
-export const useScreen = () => useContext(screen)
-
-export function BaseScreen(p: {
-  children: React.ReactNode
-}) {
-  const ref = useRef<HTMLDivElement>(null)
-
-  return (
-    <screen.Provider value={ ref }>
-      <div className={ cn(
-        "w-screen h-screen",
-        "bg-[#212432]"
-      ) }
-      >
-        <div className={ cn(
-          "w-screen h-screen",
-          "grid grid-flow-row",
-          "grid-cols-[3rem_13rem_minmax(0,_1fr)]",
-          "p-2 gap-2",
-
-          "scale-100",
-
-          "data-[transition-setting=true]:transition-all",
-          "data-[transition-setting=true]:duration-150",
-          "data-[transition-setting=true]:scale-90",
-          "data-[transition-setting=true]:opacity-0",
-
-          "data-[transition-setting=false]:transition-all",
-          "data-[transition-setting=false]:duration-150",
-        ) }
-          ref={ ref }
-        >
-          { p.children }
-        </div>
-      </div>
-    </screen.Provider>
-  )
-}
-
-export function SessionUpdater(p: {
-  user: User
-  children: React.ReactNode
-}) {
-  const { update } = useSession()
-
-  useEffect(() => {
-    
-  }, [])
-
-  return p.children
-}

@@ -11,7 +11,7 @@ import { User } from "@prisma/client"
 import { ModalBase } from "@/components/base/modal"
 
 export function AddServerDialog(p: {
-  children: React.ReactNode
+  children?: React.ReactNode
   user: User
 }) {
   enum states { index, create, join }
