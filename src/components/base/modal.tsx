@@ -5,10 +5,19 @@ import * as Dialog from '@radix-ui/react-dialog'
 import { ReactNode, useEffect, useState } from "react"
 
 /**
-  Modal Base Component
-
-  - On open, sets transition to true, wait for 200ms, sets transition to false
+ ※ Modal Base Component
   
+  - On open, sets isVisible to true, then as a side effect of useEffect,
+  - isOpen is also set to true after a frame
+  - then data-[state-transition] selector will trigger its transition
+  
+  - On close, isOpen is set to false, a 200s timer is also set to set isVisible to false (later)
+  - data-[state-transition] selector will trigger its transition back to [original state]
+  - but only 200s later, the component will be fully unmounted.
+
+  component using this:
+  - [dialog]: a pop up box prompting to talk to user
+  - [settings]: a page that covers the entire page for settings menu
  
  */
 
