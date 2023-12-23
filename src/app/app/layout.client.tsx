@@ -22,6 +22,12 @@ export function Providers(p: {
   )
 }
 
+function useActivePath(pattern: string) {
+  const path = usePathname()
+
+  
+}
+
 
 interface Props {
   icon: React.ReactNode
@@ -37,6 +43,7 @@ export const SidebarItem = forwardRef<HTMLButtonElement, Props>(function Sidebar
   strict?: boolean
   className?: string
 }, ref) {
+
   const { icon, label, link, strict, className, ...rest } = p
 
   const path = usePathname()

@@ -21,6 +21,7 @@ export default async function AppLayout(p: {
   return (
     <Providers session={ session }>
       <BaseScreen>
+        
         <Sidebar className="h-auto flex flex-col">
           <HomeButton />
           <div className="w-1/2 h-px bg-indigo-300/20 self-center my-2" />
@@ -32,14 +33,10 @@ export default async function AppLayout(p: {
           <UserStatus user={user} />
         </SubSidebar>
 
-        <div className={ cn(style.cardbg, "grid grid-flow-row",
-          "grid-rows-[2.75rem_1fr]",
-          "text-sm",
-          "min-h-0",
-        ) }>
+        <div className={ cn(style.cardbg, "grid grid-flow-row grid-rows-[2.75rem_1fr] text-sm min-h-0") }>
           { p.children }
         </div>
-        
+
       </BaseScreen>
     </Providers>
   )
