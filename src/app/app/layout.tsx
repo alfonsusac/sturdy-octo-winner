@@ -3,9 +3,10 @@ import { style } from "@/style"
 import { SVGProps } from "react"
 import { getUserData } from "@/controller/user"
 import { Auth } from "@/lib/auth/next-auth"
-import { Providers, SidebarItem, UserStatus } from "./layout.client"
+import { Providers, UserStatus } from "./client"
 import { BaseScreen } from "./screen"
-import { AddServerDialog } from "./_modal/add-server.client"
+import { AddServerDialog } from "../../components/modal/add-server"
+import { SidebarItem } from "@/components/sidebar-item"
 
 
 export default async function AppLayout(p: {
@@ -37,7 +38,7 @@ export default async function AppLayout(p: {
           { p.children }
         </div>
 
-      </BaseScreen>
+      </BaseScreen> 
     </Providers>
   )
 }
@@ -46,12 +47,9 @@ export default async function AppLayout(p: {
 //  thats on the Sidebar
 
 function HomeButton() {
-  return <SidebarItem
-    icon={ <FluentHome12Filled /> }
-    label={ <>Home</> }
-    link={ ["/app", "/app/premium", "/app/message_request"] }
-    strict={ true }
-  />
+  return <SidebarItem label="Home" urlpattern="/app*">
+    <FluentHome12Filled />
+  </SidebarItem>
 }
 function FluentHome12Filled(props: SVGProps<SVGSVGElement>) {
   return (<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 12 12" { ...props }><path fill="currentColor" d="M5.37 1.222a1 1 0 0 1 1.26 0l3.814 3.09A1.5 1.5 0 0 1 11 5.476V10a1 1 0 0 1-1 1H8.5a1 1 0 0 1-1-1V7.5A.5.5 0 0 0 7 7H5a.5.5 0 0 0-.5.5V10a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V5.477a1.5 1.5 0 0 1 .556-1.166l3.815-3.089Z"></path></svg>)
@@ -64,10 +62,9 @@ async function AddServerButton() {
   const user = await getUserData()
   return (
     <AddServerDialog user={ user } /** use client */>
-      <SidebarItem
-        icon={ <FluentAdd16Filled className="text-2xl" /> }
-        label={ <>Add New Server</> }
-      />
+      <SidebarItem label={ <>Add New Server</> }>
+        <FluentAdd16Filled className="text-2xl" />
+      </SidebarItem>
     </AddServerDialog>
   )
 }

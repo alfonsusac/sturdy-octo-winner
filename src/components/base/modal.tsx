@@ -3,7 +3,7 @@
 import { cn } from '@/lib/tailwind'
 import { style } from '@/style'
 import * as Dialog from '@radix-ui/react-dialog'
-import { ReactNode, SVGProps, useEffect, useState } from "react"
+import { ReactNode, Ref, SVGProps, forwardRef, useEffect, useState } from "react"
 
 /**
  
@@ -62,13 +62,14 @@ export function ModalBase(p: {
     content?: string,
   },
   onChange?: (open?: boolean) => void,
+  contentRef?: Ref<HTMLDivElement>
 }) {
   const { isVisible, isOpen, handleOpenChange } = useCloseAnimation(200, p.onChange)
   return <Dialog.Root open={ isVisible } onOpenChange={ handleOpenChange }>
     <Dialog.Trigger asChild>{ p.trigger }</Dialog.Trigger>
     <Dialog.Portal>
       <Overlay isOpen={ isOpen } className={ p.className?.overlay } />
-      <Content isOpen={ isOpen } className={ p.className?.content }>
+      <Content isOpen={ isOpen } className={ p.className?.content } ref={p.contentRef}>
         { p.children }
       </Content>
     </Dialog.Portal>
@@ -92,17 +93,19 @@ export function FluentDismiss12Filled(props: SVGProps<SVGSVGElement>) {
 
 
 
-function Overlay(p: { className?: string, isOpen?: boolean }) {
+const Overlay = forwardRef(function Overlay(p: { className?: string, isOpen?: boolean }, ref: Ref<HTMLDivElement>) {
   return <Dialog.Overlay data-state-transition={ p.isOpen } className={ cn(
     "fixed inset-0 bg-black",
     "transition-all duration-300",
     "opacity-0",
     "data-[state-transition=true]:opacity-70",
     p?.className,
-  ) } />
-}
+  ) }
+    ref={ ref }
+  />
+})
 
-function Content(p: { className?: string, isOpen?: boolean, children: ReactNode }) {
+const Content = forwardRef(function Content(p: { className?: string, isOpen?: boolean, children: ReactNode}, ref: Ref<HTMLDivElement>) {
   return <Dialog.Content data-state-transition={ p.isOpen } className={ cn(
     "fixed outline-none",
     "top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2", //Center
@@ -121,6 +124,6 @@ function Content(p: { className?: string, isOpen?: boolean, children: ReactNode 
     "data-[state-transition=true]:opacity-100",
     "data-[state-transition=true]:scale-100",
     p.className
-  ) }>{ p.children }</Dialog.Content>
-}
+  ) } ref={ref}>{ p.children }</Dialog.Content>
+})
 
