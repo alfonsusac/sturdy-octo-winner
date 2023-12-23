@@ -2,7 +2,7 @@
 
 import { cn } from "@/lib/tailwind"
 import { style } from "@/style"
-import { ComponentProps, ReactNode, SVGProps, createContext, useContext, useEffect, useRef, useState } from "react"
+import { ComponentProps, ReactNode, SVGProps, createContext, useCallback, useContext, useEffect, useRef, useState } from "react"
 import CreateServerForm, { CreateServerFormSubmitHandler } from "../../app/app/_form/create-server"
 import JoinServerForm from "../../app/app/_form/join-server"
 import { User } from "@prisma/client"
@@ -10,14 +10,26 @@ import { CloseModalButton, ModalBase } from "@/components/base/modal"
 import { Description, Title } from "@/components/base/dialog"
 
 
-function createSlidingWindow<S extends string[], T = S[number]>(duration:number, ...states: S) {
+function createSlidingWindow<S extends string[], T = S[number]>(duration: number, ...states: S) {
 
   function useSlidingWindowContainer() {
     const [state, setState] = useState<T>(states[0] as T)
     const [leftSide, setLeftSide] = useState<T>()
     const [rightSide, setRightSide] = useState<T>()
     const [animationState, setAnimationState] = useState<"left" | "right" | undefined>(undefined)
-    const parentContainerRef = useRef<HTMLDivElement>(null)
+    // const parentContainerRef = useRef<HTMLDivElement>(null)
+    const parentContainerRef = useCallback((node: HTMLDivElement) => {
+      if (node === null) {
+        // DOM node referenced by ref has been unmounted
+      } else {
+        // DOM node referenced by ref has changed and exists
+        if (state) {
+          node.style.height = '30rem'
+        } else {
+          node.style.height = "30rem"
+        }
+      }
+    }, [state])
 
     const goTo = (dest: T) => {
       setState(dest)
@@ -45,13 +57,9 @@ function createSlidingWindow<S extends string[], T = S[number]>(duration:number,
       }
     }, [animationState])
 
-    useEffect(() => {
-      if (parentContainerRef.current) {
-        parentContainerRef.current.style.height = "15rem"
-      }
-    }, [state])
-
-    const resetState = () => setState(states[0] as T)
+    const resetState = () => {
+      setState(states[0] as T)
+    }
 
     return { state, leftSide, rightSide, goTo, goBack, resetState, animationState, parentContainerRef }
   }
@@ -152,7 +160,7 @@ export function AddServerDialog(p: {
   return (
     <ModalBase onChange={ open => open && resetState() } trigger={ p.children }
       className={ {
-        content: cn( "flex flex-col transition-all focus:outline-none duration-200",
+        content: cn("flex flex-col transition-all focus:outline-none duration-200",
           // "overflow-visible", // uncomment this to see Behind The Scenes
           // state === "index" && "h-52",
           // state === "create" && "h-[26rem]",
@@ -161,48 +169,50 @@ export function AddServerDialog(p: {
       } }
       contentRef={ parentContainerRef }
     >
-      <SlidingWindowProvider currentState={ state } leftSide={ leftSide } rightSide={ rightSide } animationState={ animationState }>
-        <SlidingModalPage state="index">
-          <div>
-            <div className="text-center p-4">
-              <Title>Add a New Server</Title>
-              <Description>Your server is where you and your firends hand out. Make yours and start talking.</Description>
+      <div className="">
+        <SlidingWindowProvider currentState={ state } leftSide={ leftSide } rightSide={ rightSide } animationState={ animationState }>
+          <SlidingModalPage state="index">
+            <div>
+              <div className="text-center p-4">
+                <Title>Add a New Server</Title>
+                <Description>Your server is where you and your firends hand out. Make yours and start talking.</Description>
+              </div>
+              <div className={ cn(style.dialogFooter, "grid grid-cols-2") }>
+                <button onClick={ () => goTo("join") } className={ cn(style.dialogButton, "h-16") } >
+                  <small className="text-indigo-300/60 leading-[0.6]">
+                    Have an invite? <br />
+                  </small>
+                  Join Server
+                </button>
+                <button onClick={ () => goTo("create") } className={ cn(style.dialogButton, "h-16") }>
+                  Create My Own
+                </button>
+              </div>
             </div>
-            <div className={ cn(style.dialogFooter, "grid grid-cols-2") }>
-              <button onClick={ () => goTo("join") } className={ cn(style.dialogButton, "h-16") } >
-                <small className="text-indigo-300/60 leading-[0.6]">
-                  Have an invite? <br />
-                </small>
-                Join Server
-              </button>
-              <button onClick={ () => goTo("create") } className={ cn(style.dialogButton, "h-16") }>
-                Create My Own
-              </button>
-            </div>
-          </div>
-        </SlidingModalPage>
+          </SlidingModalPage>
 
-        <SlidingModalPage state="create">
-          <header className="text-center p-4 pb-0 flex flex-col items-center">
-            <Title>Create a New Server</Title>
-            <Description>Give your new server a personality with a name and an icon. You can always change it later.</Description>
-          </header>
-          <CreateServerForm
-            toBack={ () => goBack("index") }
-            user={ p.user }
-          />
-        </SlidingModalPage>
+          <SlidingModalPage state="create">
+            <header className="text-center p-4 pb-0 flex flex-col items-center">
+              <Title>Create a New Server</Title>
+              <Description>Give your new server a personality with a name and an icon. You can always change it later.</Description>
+            </header>
+            <CreateServerForm
+              toBack={ () => goBack("index") }
+              user={ p.user }
+            />
+          </SlidingModalPage>
 
-        <SlidingModalPage state="join">
-          <header className="text-center p-4 pb-0 flex flex-col items-center">
-            <Title>Join a Server</Title>
-            <Description>Enter an invite below to join an existing server</Description>
-          </header>
-          <JoinServerForm toBack={ () => goBack("index") } />
-        </SlidingModalPage>
+          <SlidingModalPage state="join">
+            <header className="text-center p-4 pb-0 flex flex-col items-center">
+              <Title>Join a Server</Title>
+              <Description>Enter an invite below to join an existing server</Description>
+            </header>
+            <JoinServerForm toBack={ () => goBack("index") } />
+          </SlidingModalPage>
 
-      </SlidingWindowProvider>
-      <CloseModalButton />
+        </SlidingWindowProvider>
+        <CloseModalButton />
+      </div>
     </ModalBase>
   )
 }

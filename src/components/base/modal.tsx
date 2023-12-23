@@ -3,7 +3,7 @@
 import { cn } from '@/lib/tailwind'
 import { style } from '@/style'
 import * as Dialog from '@radix-ui/react-dialog'
-import { ReactNode, Ref, SVGProps, forwardRef, useEffect, useState } from "react"
+import { CSSProperties, ReactNode, Ref, SVGProps, forwardRef, useEffect, useState } from "react"
 
 /**
  
@@ -61,6 +61,9 @@ export function ModalBase(p: {
     overlay?: string,
     content?: string,
   },
+  style?: {
+    content?: CSSProperties,
+  }
   onChange?: (open?: boolean) => void,
   contentRef?: Ref<HTMLDivElement>
 }) {
@@ -69,7 +72,7 @@ export function ModalBase(p: {
     <Dialog.Trigger asChild>{ p.trigger }</Dialog.Trigger>
     <Dialog.Portal>
       <Overlay isOpen={ isOpen } className={ p.className?.overlay } />
-      <Content isOpen={ isOpen } className={ p.className?.content } ref={p.contentRef}>
+      <Content isOpen={ isOpen } className={ p.className?.content } ref={p.contentRef} style={p.style?.content}>
         { p.children }
       </Content>
     </Dialog.Portal>
@@ -105,7 +108,7 @@ const Overlay = forwardRef(function Overlay(p: { className?: string, isOpen?: bo
   />
 })
 
-const Content = forwardRef(function Content(p: { className?: string, isOpen?: boolean, children: ReactNode}, ref: Ref<HTMLDivElement>) {
+const Content = forwardRef(function Content(p: { className?: string, isOpen?: boolean, children: ReactNode, style?: CSSProperties}, ref: Ref<HTMLDivElement>) {
   return <Dialog.Content data-state-transition={ p.isOpen } className={ cn(
     "fixed outline-none",
     "top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2", //Center
@@ -124,6 +127,6 @@ const Content = forwardRef(function Content(p: { className?: string, isOpen?: bo
     "data-[state-transition=true]:opacity-100",
     "data-[state-transition=true]:scale-100",
     p.className
-  ) } ref={ref}>{ p.children }</Dialog.Content>
+  ) } ref={ref} style={p.style}>{ p.children }</Dialog.Content>
 })
 
