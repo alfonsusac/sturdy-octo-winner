@@ -1,14 +1,13 @@
 "use client"
 
 import { cn } from "@/lib/tailwind"
-import { ModalDescription, ModalTitle } from "./basecomponents"
 import { style } from "@/style"
-import { CloseModalButton } from "./buttons"
 import { ComponentProps, SVGProps, useEffect, useState } from "react"
 import CreateServerForm, { CreateServerFormSubmitHandler } from "../_form/create-server"
 import JoinServerForm from "../_form/join-server"
 import { User } from "@prisma/client"
-import { ModalBase } from "@/components/base/modal"
+import { CloseModalButton, ModalBase } from "@/components/base/modal"
+import { Description, Title } from "@/components/base/dialog"
 
 export function AddServerDialog(p: {
   children?: React.ReactNode
@@ -48,6 +47,7 @@ export function AddServerDialog(p: {
 
   return (
     <ModalBase
+      onChange={ (open) => { open && setState(states.index) } }
       trigger={ p.children }
       className={ {
         content: cn(
@@ -61,7 +61,6 @@ export function AddServerDialog(p: {
           state === states.join && "h-[16.5rem]",
         )
       } }
-      onOpen={ () => { setState(states.index) } }
     >
       <div className={ cn(
         "relative w-full items-center",
@@ -95,12 +94,12 @@ export function AddServerDialog(p: {
         >
           <div>
             <div className={ cn("text-center", "p-4") }>
-              <ModalTitle>
+              <Title>
                 Add a New Server
-              </ModalTitle>
-              <ModalDescription>
+              </Title>
+              <Description>
                 Your server is where you and your firends hand out. Make yours and start talking.
-              </ModalDescription>
+              </Description>
             </div>
             <div className={ cn(style.dialogFooter, "grid grid-cols-2") }>
               <button className={ cn(style.dialogButton, "h-16") }
@@ -126,8 +125,8 @@ export function AddServerDialog(p: {
         >
           <div>
             <header className="text-center p-4 pb-0 flex flex-col items-center">
-              <ModalTitle>Create a New Server</ModalTitle>
-              <ModalDescription>Give your new server a personality with a name and an icon. You can always change it later.</ModalDescription>
+              <Title>Create a New Server</Title>
+              <Description>Give your new server a personality with a name and an icon. You can always change it later.</Description>
             </header>
             <CreateServerForm
               toBack={ () => goBack(states.index) }
@@ -142,8 +141,8 @@ export function AddServerDialog(p: {
         >
           <div>
             <header className="text-center p-4 pb-0 flex flex-col items-center">
-              <ModalTitle>Join a Server</ModalTitle>
-              <ModalDescription>Enter an invite below to join an existing server</ModalDescription>
+              <Title>Join a Server</Title>
+              <Description>Enter an invite below to join an existing server</Description>
             </header>
             <JoinServerForm toBack={ () => goBack(states.index) } />
           </div>

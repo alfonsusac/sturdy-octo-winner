@@ -2,6 +2,16 @@ import { ReactNode } from "react"
 import { ModalBase } from "./modal"
 import { DialogContent } from "@radix-ui/react-dialog"
 import { cn } from "@/lib/tailwind"
+import * as Dialog from '@radix-ui/react-dialog'
+
+/**
+ 
+ ※ Dialog Base Component
+  
+  - Extends from the Dialog Component
+
+ 
+ */
 
 export function DialogBase(p: {
   children?: ReactNode
@@ -12,6 +22,14 @@ export function DialogBase(p: {
   }}>
       {p.children}
   </ModalBase>
+}
+
+export function Title({ className, ...p }: Dialog.DialogTitleProps) {
+  return <Dialog.Title className={ cn("text-lg my-2 font-semibold", className) } { ...p } />
+}
+
+export function Description({ className, ...p }: Dialog.DialogDescriptionProps) {
+  return <Dialog.Description className={ cn("text-indigo-300/50", className) } { ...p }/>
 }
 
 function Content(p: { className?: string, isOpen?: boolean, children?: ReactNode }) {

@@ -1,11 +1,21 @@
 import { ReactNode } from "react"
-import { ModalBase } from "./modal"
+import { CloseModalButton, ModalBase } from "./modal"
 import { cn } from "@/lib/tailwind"
 import * as Dialog from '@radix-ui/react-dialog'
 import * as Tabs from '@radix-ui/react-tabs'
 import { style } from "@/style"
-import { CloseModalButton } from "@/app/app/_modal/buttons"
 import { useScreen } from "@/app/app/screen"
+
+/**
+ 
+ ※ Modal Base Component
+  extends from [modal] component, has tabs.
+  
+  onOpen/Close
+  - calls screen to trigger settings page transition
+  - covers the whole screen
+ 
+ */
 
 export function SettingPage(p: {
   trigger: React.ReactNode
