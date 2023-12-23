@@ -12,11 +12,7 @@ import { ReactNode, useEffect, useState } from "react"
  
  */
 
-function useCloseAnimation(duration = 200, events?: {
-  onOpen?: () => void,
-  onClose?: () => void,
-  duration?: number
-}) {
+function useCloseAnimation(duration = 200, onChange?:(open?:boolean)=>void) {
   const [isVisible, setVisible] = useState(false)
   const [isOpen, setOpen] = useState(false)
 
@@ -24,11 +20,11 @@ function useCloseAnimation(duration = 200, events?: {
   const handleOpenChange = (open: boolean) => {
     if (open) {
       setVisible(true)
-      events?.onOpen?.()
+      onChange?.(true)
     }
     if (!open) {
       setOpen(false)
-      events?.onClose?.()
+      onChange?.(false)
       setTimeout(() => setVisible(false), duration)
     }
   }
@@ -49,10 +45,9 @@ export function ModalBase(p: {
     overlay?: string,
     content?: string,
   },
-  onClose?: () => void,
-  onOpen?: () => void,
+  onChange?: (open?: boolean) => void,
 }) {
-  const { isVisible, isOpen, handleOpenChange } = useCloseAnimation(200, p)
+  const { isVisible, isOpen, handleOpenChange } = useCloseAnimation(200, p.onChange)
   return <Dialog.Root open={ isVisible } onOpenChange={ handleOpenChange }>
     <Dialog.Trigger asChild>{ p.trigger }</Dialog.Trigger>
     <Dialog.Portal>

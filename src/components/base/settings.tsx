@@ -17,8 +17,7 @@ export function SettingPage(p: {
   const baseScreenRef = useScreen()
   return (
     <ModalBase
-      onOpen={ () => { baseScreenRef?.current?.setAttribute("data-transition-setting", "true") } }
-      onClose={ () => { baseScreenRef?.current?.setAttribute("data-transition-setting", "false") } }
+      onChange={ (open) => { baseScreenRef?.current?.setAttribute("data-transition-setting", open ? "true" : "false") } }
       trigger={ p.trigger }
       className={ {
         content: cn(
@@ -26,7 +25,7 @@ export function SettingPage(p: {
           // Remove Center Offset
           "top-0 bottom-0 h-full translate-y-0 max-w-none overflow-visible",
           // Transition
-          "transition-all duration-300 opacity-0 scale-110",
+          "transition-all duration-200 opacity-0 scale-110",
           "data-[state-transition=true]:opacity-100",
           "data-[state-transition=true]:scale-100",
         ),

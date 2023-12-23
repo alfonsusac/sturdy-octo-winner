@@ -34,7 +34,7 @@ export function BaseScreen(p: {
           "data-[transition-setting=false]:transition-all",
           "data-[transition-setting=false]:duration-150",
         ) }
-        // ref={ ref }
+        ref={ ref }
         >
           { p.children }
         </div>
