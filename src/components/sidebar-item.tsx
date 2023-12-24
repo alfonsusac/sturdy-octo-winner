@@ -5,16 +5,7 @@ import { style } from "@/style"
 import { usePathname } from "next/navigation"
 import { ReactNode, forwardRef } from "react"
 import { URLPattern } from "urlpattern-polyfill/urlpattern"
-
-// ※ Sidebar (client component)
-//   - [useActivePath]: hook to determine whether to highlight or not
-
-function useActivePath(pattern: string) {
-  const path = usePathname()
-  // dummy link coz urlpattern cant work without base url
-  const urlpattern = new URLPattern(pattern, "https://www.a.com")
-  return urlpattern.test(path, "https://www.a.com")
-}
+import { useActivePath } from "./lib/use-active-path"
 
 //   - [SidebarItem]: forwardRef'd sidebarItem of sidebar
 export const SidebarItem = forwardRef<HTMLButtonElement, {

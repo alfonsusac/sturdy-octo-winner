@@ -2,14 +2,12 @@
 
 import { cn } from "@/lib/tailwind"
 import { style } from "@/style"
-import { ComponentProps, ReactNode, useCallback, useEffect, useId, useRef, useState } from "react"
 import CreateServerForm from "../../app/app/_form/create-server"
 import JoinServerForm from "../../app/app/_form/join-server"
 import { User } from "@prisma/client"
 import { CloseModalButton, ModalBase } from "@/components/base/modal"
 import { Description, Title } from "@/components/base/dialog"
-import { createReactContext } from "../lib/context"
-import { createSlidingWindow } from "../lib/sliding-window"
+import { createSlidingWindow } from "../lib/create-sliding-window"
 
 
 const {

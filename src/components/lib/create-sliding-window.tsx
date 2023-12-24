@@ -1,43 +1,53 @@
 import { ComponentProps, ReactNode, useCallback, useEffect, useId, useRef, useState } from "react"
-import { createReactContext } from "./context"
+import { createReactContext } from "./create-context"
 import { cn } from "@/lib/tailwind"
 
 // ※ Sliding Window API
 //  trigger dynamic adaptive height transition when switching pages from left/right
-// 
+//
 //  how tf does it work:
 //  - the [use sliding window container] hook returns function to navigate backward and from (goTo, goBack, reset)
 //  - when those function is invoked, set necessary states to create the "sliding" effects
-//  - the [use sliding window container] also returns a ref [parentContainerRef] that 
+//  - the [use sliding window container] also returns a ref [parentContainerRef] that
 //     needs to be passed to parent container to set their height based on child pages.
-//  - the [parentContainerRef] has a callback that triggers when the node is mounted.
+
 //  - Parent Container is rendered first before the child compoenenbt
 //  - therefore, a setter is passed down using [setParentHeightRef]
+
+//  - the [parentContainerRef] has a callback that triggers when the node of parent is mounted.
 //  - on parent node mounted, get div size and set as height in styles.
 //  - on parent node mounted, set the [setParentHeightRef] to modify the parent node's height style.
 //  - on child node mounted, set the parent height using [setParentHeightRef] to whatever this child's height is.
 //
-// anatomy
 /** 
+
+# Anatomy
+
 ```tsx
 const {
   useSlidingWindowContainer,
   SlidingWindowProvider,
   SlidingPage,
-} = createSlidingWindow(<duration>, ...<states>)
+} = createSlidingWindow(<duration>, "state1", "state2", ...)
 
 export const Page(){
   const { goTo, goBack, resetState, parentContainerRef, states } = useSlidingWindowContainer()
 
   return (
     <div ref={parentContainerRef}>
-    
+      <SlidingWindowProvider states={states}>
+        <SlidingPage state="states1">
+          ...
+        </SlidingPage>
+        <SlidingPage state="states2">
+          ...
+        </SlidingPage>
+      </SlidingWindowProvider>
     </div>
   )
-
-
 }
 ```
+
 */
 export function createSlidingWindow<S extends Readonly<string[]>>(duration: number, ...states: S) {
   type T = S[number]
@@ -61,15 +71,15 @@ export function createSlidingWindow<S extends Readonly<string[]>>(duration: numb
 
     const goTo = (dest: T) => {
       setState(dest)
-      setLeftSide(state) // curr to left
-      setRightSide(dest) // new from right
+      setLeftSide(state) // <-- [curr, dest]
+      setRightSide(dest) 
       setAnimationState("right")
     }
 
     const goBack = (dest: T) => {
       setState(dest)
-      setLeftSide(dest) // new form left
-      setRightSide(state) // curr to right
+      setLeftSide(dest) // [dest, curr] -->
+      setRightSide(state) 
       setAnimationState("left")
     }
 
@@ -96,10 +106,10 @@ export function createSlidingWindow<S extends Readonly<string[]>>(duration: numb
   // Setting Context to avoid prop drilling
   type contextType = ReturnType<typeof useSlidingWindowContainer>['states']
 
-  const [ slidingWindowContainer, useSlidingWindowContext] = createReactContext<contextType | undefined>(undefined)
+  const [ Provider, useSlidingWindowContext] = createReactContext<contextType | undefined>(undefined)
 
   function SlidingWindowProvider({ children, states }: { children: ReactNode, states: contextType }) {
-    return <slidingWindowContainer.Provider value={ states }>
+    return <Provider value={ states }>
       <div className={ cn(
         "relative w-full items-center transition-none", // transition-none important
         states.animationState && cn(
@@ -110,7 +120,7 @@ export function createSlidingWindow<S extends Readonly<string[]>>(duration: numb
       ) }>
         { children }
       </div>
-    </slidingWindowContainer.Provider>
+    </Provider>
   }
 
   // Child Component
