@@ -2,21 +2,25 @@
 
 import { cn } from "@/lib/tailwind"
 import { style } from "@/style"
-import { ComponentProps, ReactNode, SVGProps, createContext, useCallback, useContext, useEffect, useRef, useState } from "react"
+import { ComponentProps, MutableRefObject, ReactNode, Ref, SVGProps, createContext, useCallback, useContext, useEffect, useId, useRef, useState } from "react"
 import CreateServerForm, { CreateServerFormSubmitHandler } from "../../app/app/_form/create-server"
 import JoinServerForm from "../../app/app/_form/join-server"
 import { User } from "@prisma/client"
 import { CloseModalButton, ModalBase } from "@/components/base/modal"
 import { Description, Title } from "@/components/base/dialog"
 
+type RefMap<T extends string[number]> = { [key in T]?: Ref<HTMLDivElement> }
+type RefMapRef<T extends string[number]> = MutableRefObject<RefMap<T>>
 
-function createSlidingWindow<S extends string[], T = S[number]>(duration: number, ...states: S) {
-
+function createSlidingWindow<S extends Readonly<string[]>>(duration: number, ...states: S) {
+  type T = S[number]
   function useSlidingWindowContainer() {
     const [state, setState] = useState<T>(states[0] as T)
     const [leftSide, setLeftSide] = useState<T>()
     const [rightSide, setRightSide] = useState<T>()
     const [animationState, setAnimationState] = useState<"left" | "right" | undefined>(undefined)
+    const childRefs = useRef<RefMap<S[number]>>({})
+
     // const parentContainerRef = useRef<HTMLDivElement>(null)
     const parentContainerRef = useCallback((node: HTMLDivElement) => {
       if (node === null) {
@@ -61,18 +65,19 @@ function createSlidingWindow<S extends string[], T = S[number]>(duration: number
       setState(states[0] as T)
     }
 
-    return { state, leftSide, rightSide, goTo, goBack, resetState, animationState, parentContainerRef }
+    return { state, leftSide, rightSide, goTo, goBack, resetState, animationState, parentContainerRef, childRefs }
   }
 
   const slidingWindowContainer = createContext<{
     currentState: T,
     leftSide?: T,
     rightSide?: T,
-    animationState?: "left" | "right"
+    animationState?: "left" | "right",
+    childRefs: RefMapRef<T>
   } | undefined>(undefined)
   const useSlidingWindow = () => useContext(slidingWindowContainer)
 
-  function SlidingWindowProvider(p: { children: ReactNode, currentState: T, leftSide?: T, rightSide?: T, animationState?: "left" | "right" }) {
+  function SlidingWindowProvider(p: { children: ReactNode, currentState: T, leftSide?: T, rightSide?: T, animationState?: "left" | "right", childRefs: RefMapRef<T> }) {
     const { children, ...rest } = p
     return <slidingWindowContainer.Provider value={ rest }>
       <div className={ cn(
@@ -95,9 +100,10 @@ function createSlidingWindow<S extends string[], T = S[number]>(duration: number
 
   function SlidingModalPage({ state, className, ...props }: ComponentProps<"div"> & { state: T }) {
 
-    const { currentState, leftSide, rightSide } = useSlidingWindow()!
+    const { currentState, leftSide, rightSide, childRefs } = useSlidingWindow()!
     const show = currentState === state
     const position = leftSide === state ? "left" : rightSide === state ? "right" : "center"
+    const pageId = useId()
 
     // This section delays when finished is turned to true
     const [hidden, setHidden] = useState(!show)
@@ -113,9 +119,22 @@ function createSlidingWindow<S extends string[], T = S[number]>(duration: number
       // If received instruciton to show, then immediately un-hide it.
       if (show) setHidden(false)
     }, [show, hidden])
+    
+    const ref = useRef<HTMLDivElement>(null)
+
+    useEffect(() => {
+      // To check hopefully that data-state-id only occurs once in the document
+      if (childRefs.current[state]) {
+        console.log("This element is already registered")
+      } else {
+        console.log("Registered!")
+        childRefs.current[state] = ref
+      }
+    }, [])
 
     return (
       !hidden && <div
+        id={ pageId }
         className={ cn(
           className,
           "transition-all",
@@ -125,6 +144,7 @@ function createSlidingWindow<S extends string[], T = S[number]>(duration: number
           "data-[position=right]:col-start-2 col-end-2 row-start-1 row-end-1",
         ) }
         data-position={ position }
+        data-state-id={ state }
         { ...props } />
     )
   }
@@ -155,7 +175,7 @@ export function AddServerDialog(p: {
   user: User
 }) {
 
-  const { goTo, goBack, state, leftSide, rightSide, resetState, animationState, parentContainerRef } = useSlidingWindowContainer()
+  const { goTo, goBack, state, leftSide, rightSide, resetState, animationState, parentContainerRef, childRefs } = useSlidingWindowContainer()
 
   return (
     <ModalBase onChange={ open => open && resetState() } trigger={ p.children }
@@ -170,7 +190,7 @@ export function AddServerDialog(p: {
       contentRef={ parentContainerRef }
     >
       <div className="">
-        <SlidingWindowProvider currentState={ state } leftSide={ leftSide } rightSide={ rightSide } animationState={ animationState }>
+        <SlidingWindowProvider currentState={ state } leftSide={ leftSide } rightSide={ rightSide } animationState={ animationState } childRefs={ childRefs }>
           <SlidingModalPage state="index">
             <div>
               <div className="text-center p-4">
@@ -208,6 +228,10 @@ export function AddServerDialog(p: {
               <Description>Enter an invite below to join an existing server</Description>
             </header>
             <JoinServerForm toBack={ () => goBack("index") } />
+          </SlidingModalPage>
+
+          <SlidingModalPage state="join">
+            <div>Hello</div>
           </SlidingModalPage>
 
         </SlidingWindowProvider>
