@@ -81,7 +81,7 @@ export function ModalBase(p: {
 }
 export function CloseModalButton() {
   return (
-    <Dialog.Close asChild className={ cn("absolute top-4 right-4 p-2 rounded-lg", style.buttonListItem) }>
+    <Dialog.Close asChild className={ cn("absolute top-4 right-4 p-2 rounded-lg z-10", style.buttonListItem) }>
       <button><FluentDismiss12Filled /></button>
     </Dialog.Close>
   )
