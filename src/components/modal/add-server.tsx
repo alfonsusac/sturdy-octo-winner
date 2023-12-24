@@ -8,9 +8,8 @@ import JoinServerForm from "../../app/app/_form/join-server"
 import { User } from "@prisma/client"
 import { CloseModalButton, ModalBase } from "@/components/base/modal"
 import { Description, Title } from "@/components/base/dialog"
+import { createReactContext } from "../lib/context"
 
-type RefMap<T extends string[number]> = { [key in T]?: Ref<HTMLDivElement> }
-type RefMapRef<T extends string[number]> = MutableRefObject<RefMap<T>>
 
 function createSlidingWindow<S extends Readonly<string[]>>(duration: number, ...states: S) {
   type T = S[number]
@@ -19,21 +18,18 @@ function createSlidingWindow<S extends Readonly<string[]>>(duration: number, ...
     const [leftSide, setLeftSide] = useState<T>()
     const [rightSide, setRightSide] = useState<T>()
     const [animationState, setAnimationState] = useState<"left" | "right" | undefined>(undefined)
-    const childRefs = useRef<RefMap<S[number]>>({})
+    let setParentHeightRef = useRef<(height: number) => void>()
 
-    // const parentContainerRef = useRef<HTMLDivElement>(null)
     const parentContainerRef = useCallback((node: HTMLDivElement) => {
-      if (node === null) {
-        // DOM node referenced by ref has been unmounted
-      } else {
-        // DOM node referenced by ref has changed and exists
-        if (state) {
-          node.style.height = '30rem'
-        } else {
-          node.style.height = "30rem"
-        }
-      }
-    }, [state])
+      if (node === null) return
+      // On parent container mount, 
+
+      // set current height as style heigh (if its empty)
+      if (node.style.height === "") node.style.height = node.clientHeight + "px"
+
+      // set the parent setter to a ref variable (to be distributed to child context and used in child)
+      setParentHeightRef.current = (height) => node.style.height = `${height}px`
+    }, [])
 
     const goTo = (dest: T) => {
       setState(dest)
@@ -50,8 +46,6 @@ function createSlidingWindow<S extends Readonly<string[]>>(duration: number, ...
     }
 
     useEffect(() => {
-
-
       if (animationState !== undefined) {
         setTimeout(() => {
           setAnimationState(undefined)
@@ -65,30 +59,39 @@ function createSlidingWindow<S extends Readonly<string[]>>(duration: number, ...
       setState(states[0] as T)
     }
 
-    return { state, leftSide, rightSide, goTo, goBack, resetState, animationState, parentContainerRef, childRefs }
+    return {
+      states: {
+        state,
+        leftSide,
+        rightSide,
+        animationState,
+        setParentHeightRef
+      },
+      goTo,
+      goBack,
+      resetState,
+      parentContainerRef,
+    }
   }
 
-  const slidingWindowContainer = createContext<{
-    currentState: T,
-    leftSide?: T,
-    rightSide?: T,
-    animationState?: "left" | "right",
-    childRefs: RefMapRef<T>
-  } | undefined>(undefined)
-  const useSlidingWindow = () => useContext(slidingWindowContainer)
+  type contextType = ReturnType<typeof useSlidingWindowContainer>['states']
 
-  function SlidingWindowProvider(p: { children: ReactNode, currentState: T, leftSide?: T, rightSide?: T, animationState?: "left" | "right", childRefs: RefMapRef<T> }) {
-    const { children, ...rest } = p
-    return <slidingWindowContainer.Provider value={ rest }>
+  const [
+    slidingWindowContainer,
+    useSlidingWindow
+  ] = createReactContext<contextType | undefined>(undefined)
+
+  function SlidingWindowProvider({ children, states }: { children: ReactNode, states: contextType }) {
+    return <slidingWindowContainer.Provider value={ states }>
       <div className={ cn(
         "relative w-full items-center",
         "transition-none", // important
-        rest.animationState && cn(
+        states.animationState && cn(
           "transition-transform duration-500 w-[200%] grid grid-cols-2 pointer-events-none",
-          rest.animationState === "right" && cn(
+          states.animationState === "right" && cn(
             "-translate-x-1/2" // Start from left most to mid
           ),
-          rest.animationState === "left" && cn(
+          states.animationState === "left" && cn(
             "-left-full translate-x-1/2" // Start from mid (not left most) to left most
           )
         ),
@@ -100,9 +103,10 @@ function createSlidingWindow<S extends Readonly<string[]>>(duration: number, ...
 
   function SlidingModalPage({ state, className, ...props }: ComponentProps<"div"> & { state: T }) {
 
-    const { currentState, leftSide, rightSide, childRefs } = useSlidingWindow()!
-    const show = currentState === state
-    const position = leftSide === state ? "left" : rightSide === state ? "right" : "center"
+    const { state: currentWindowState, leftSide, rightSide, setParentHeightRef } = useSlidingWindow()!
+    const show = currentWindowState === state
+    enum pos { left = "left", right = "right" }
+    const position = leftSide === state ? pos.left : rightSide === state ? pos.right : undefined
     const pageId = useId()
 
     // This section delays when finished is turned to true
@@ -119,33 +123,23 @@ function createSlidingWindow<S extends Readonly<string[]>>(duration: number, ...
       // If received instruciton to show, then immediately un-hide it.
       if (show) setHidden(false)
     }, [show, hidden])
-    
-    const ref = useRef<HTMLDivElement>(null)
 
-    useEffect(() => {
-      // To check hopefully that data-state-id only occurs once in the document
-      if (childRefs.current[state]) {
-        console.log("This element is already registered")
-      } else {
-        console.log("Registered!")
-        childRefs.current[state] = ref
+
+    const ref = useCallback((node: HTMLDivElement) => {
+      if (node !== null) {
+        // When child page is mounted,
+        // - set the parent container to the size of the child.
+        setParentHeightRef.current?.(node.clientHeight)
       }
-    }, [])
+    }, [setParentHeightRef])
 
     return (
-      !hidden && <div
-        id={ pageId }
-        className={ cn(
-          className,
-          "transition-all",
-          "duration-500",
+      !hidden && <div id={ pageId } data-state-id={ state } ref={ ref }
+        className={ cn( className, "transition-all duration-500",
           // Swaps the grid placement to be the correct order
-          "data-[position=left]:col-start-1 col-end-1 row-start-1 row-end-1",
-          "data-[position=right]:col-start-2 col-end-2 row-start-1 row-end-1",
-        ) }
-        data-position={ position }
-        data-state-id={ state }
-        { ...props } />
+          position === pos.left && "col-start-1 col-end-1 row-start-1 row-end-1",
+          position === pos.right && "col-start-2 col-end-2 row-start-1 row-end-1",
+        ) } { ...props } />
     )
   }
 
@@ -159,11 +153,6 @@ function createSlidingWindow<S extends Readonly<string[]>>(duration: number, ...
 }
 
 
-
-
-
-
-
 const {
   useSlidingWindowContainer,
   SlidingWindowProvider,
@@ -175,22 +164,16 @@ export function AddServerDialog(p: {
   user: User
 }) {
 
-  const { goTo, goBack, state, leftSide, rightSide, resetState, animationState, parentContainerRef, childRefs } = useSlidingWindowContainer()
+  const { goTo, goBack, resetState, parentContainerRef, states } = useSlidingWindowContainer()
 
   return (
     <ModalBase onChange={ open => open && resetState() } trigger={ p.children }
-      className={ {
-        content: cn("flex flex-col transition-all focus:outline-none duration-200",
-          // "overflow-visible", // uncomment this to see Behind The Scenes
-          // state === "index" && "h-52",
-          // state === "create" && "h-[26rem]",
-          // state === "join" && "h-[16.5rem]",
-        )
-      } }
+      className={ { content: "flex flex-col transition-all focus:outline-none duration-200" } }
       contentRef={ parentContainerRef }
     >
       <div className="">
-        <SlidingWindowProvider currentState={ state } leftSide={ leftSide } rightSide={ rightSide } animationState={ animationState } childRefs={ childRefs }>
+        <SlidingWindowProvider states={ states }>
+          
           <SlidingModalPage state="index">
             <div>
               <div className="text-center p-4">
@@ -216,10 +199,7 @@ export function AddServerDialog(p: {
               <Title>Create a New Server</Title>
               <Description>Give your new server a personality with a name and an icon. You can always change it later.</Description>
             </header>
-            <CreateServerForm
-              toBack={ () => goBack("index") }
-              user={ p.user }
-            />
+            <CreateServerForm toBack={ () => goBack("index") } user={ p.user }/>
           </SlidingModalPage>
 
           <SlidingModalPage state="join">
@@ -230,13 +210,10 @@ export function AddServerDialog(p: {
             <JoinServerForm toBack={ () => goBack("index") } />
           </SlidingModalPage>
 
-          <SlidingModalPage state="join">
-            <div>Hello</div>
-          </SlidingModalPage>
 
         </SlidingWindowProvider>
         <CloseModalButton />
       </div>
-    </ModalBase>
+    </ModalBase >
   )
 }
