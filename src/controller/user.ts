@@ -41,7 +41,7 @@ export const getUserDefaultImage = memoize(
   async (email: string) => {
     const userDefaultImage = await prisma.userDefaultImage.findUnique({ where: { email } })
     if (!userDefaultImage)
-      await prisma.userDefaultImage.create({ data: { email } })
+      return await prisma.userDefaultImage.create({ data: { email } })
     else return userDefaultImage
   },
 
