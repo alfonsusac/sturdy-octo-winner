@@ -1,4 +1,5 @@
 import { usePathname } from "next/navigation"
+import { URLPattern } from "urlpattern-polyfill/urlpattern"
 
 // ※ useActivePath (client component hook)
 //  hook to decide whether to highlight current component or not

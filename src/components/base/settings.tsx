@@ -57,7 +57,7 @@ export function SettingPage(p: {
           {/* List of Tabs is passed to here */ }
           { p.tabs }
         </Tabs.List>
-        <div className="p-8 bg-[#272B3C] w-full overflow-visible relative before:top-0 before:left-0 before:absolute before:w-full before:h-full before:bg-[#272B3C] before:origin-[center_left] before:scale-[1000]">
+        <div className="p-8 bg-[#272B3C] w-full overflow-visible relative before:-z-10 before:top-0 before:left-0 before:absolute before:w-full before:h-full before:bg-[#272B3C] before:origin-[center_left] before:scale-[1000]">
           {/* List of Tab Content is passed to here */ }
           { p.children }
           <CloseModalButton />
