@@ -11,14 +11,11 @@ datasource db {
   directUrl = env("PROD_DB_URL")
 }
 
-enum AcccountProvider {
-  google
-}
 
 model User {
   id             String             @id @default(uuid())
   email          String             @unique
-  provider       AcccountProvider[] @default([])
+  accounts       Account[]
   username       String
   displayName    String
   profilePicture String
@@ -29,6 +26,20 @@ model User {
   createdAt      DateTime           @default(now())
   bio            String             @default("")
   ownedServer    Server[]
+}
+
+
+enum AcccountProvider {
+  google
+}
+
+model Account {
+  id                String           @id @default(uuid())
+  userId            String
+  user              User             @relation(fields: [userId], references: [id])
+  providerType      AcccountProvider
+  providerAccountId String           
+  @@unique([providerAccountId, providerType], name: "providerData")
 }
 
 model UserDefaultImage {

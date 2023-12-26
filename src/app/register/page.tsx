@@ -1,9 +1,11 @@
 import RegisterForm from "./form"
-import { redirect } from "next/navigation"
 import prisma from "@/lib/db/prisma"
 import { zfd } from "zod-form-data"
 import { getUserDefaultImage } from "@/controller/user"
-import { Auth } from "@/lib/auth/next-auth"
+import { Auth } from "@/lib/auth/auth-setup"
+import { AcccountProvider } from "@prisma/client"
+import redirect from "@/lib/navigation"
+import { SessionProvider } from "@/lib/auth/next-auth.client"
 
 /**
  *  The Register Page should:
@@ -15,20 +17,33 @@ import { Auth } from "@/lib/auth/next-auth"
 
 export default async function Page() {
 
-  const { email, name, image } = await Auth.getSession()
+  const session = await Auth.getSession()
+  if (!session.provider || !session.sub) redirect('/auth', "No Session Found")
 
   // Check if user already exist in the database. Since this page is only for new users
-  const user = await prisma.user.findUnique({ where: { email } })
-  if (user) redirect("/app")
+  // const account = await prisma.user.find
+
+  const account = await prisma.account.findUnique({
+    where: {
+      providerData: {
+        providerType: session.provider as AcccountProvider,
+        providerAccountId: session.sub
+      }
+    }
+  })
+  if (account) redirect('/app', "Account already registered")
+  // if (account) console.log("ALREADY HAS ACCOUNT!")
+  // console.log(session)
 
   // idempotent:
   // find existing id if not exist then create
-  const userDefaultImage = await getUserDefaultImage(email)
+  const userDefaultImage = await getUserDefaultImage(session.sub)
 
   async function registerNewUser(formData: FormData) {
     "use server"
     try {
-      const { email, provider } = await Auth.getSession()
+      const session = await Auth.getSession()
+      if (!session.provider || !session.sub) redirect('/auth')
 
       //Validate user input
       const schema = zfd.formData({
@@ -39,23 +54,38 @@ export default async function Page() {
       const { username, displayname, profilepicture } = schema.parse(formData)
 
       // Create user
-      await prisma.user.create({
+      const user = await prisma.user.create({
         data: {
-          provider: [provider],
-          email,
+          accounts: {
+            create: {
+              providerAccountId: session.sub,
+              providerType: session.provider as AcccountProvider
+            }
+          },
+          email: session.email!,
           username: username,
           displayName: displayname,
           profilePicture: profilepicture,
         },
       })
+
+      return {
+        error: undefined,
+        success: true,
+        data: {
+          user,
+          providerId: session.sub,
+          provider: session.provider
+        }
+      }
+
     } catch (error: any) {
       console.log("Error Occured")
       console.error(error)
+      return { error: "Error Occured", success: undefined }
       // Show server error message
-      redirect(`/register?error=${encodeURIComponent(error.message)}`)
+      // redirect(`/register?error=${encodeURIComponent(error.message)}`)
     }
-    // Go to app if succesfully
-    redirect("/app")
   }
 
   return (
@@ -67,14 +97,16 @@ export default async function Page() {
         <p className="rounded-md mb-4">
           Before we let you in, we need to know what you want to be called
         </p>
-        <RegisterForm
-          action={ registerNewUser }
-          defaultDisplayname={ name ?? "" }
-          defaultUsername={ email.split('@')[0] ?? "" }
-          // https://www.dicebear.com/styles/bottts-neutral/
-          defaultProfilepicture={ `https://api.dicebear.com/7.x/bottts-neutral/svg?seed=${userDefaultImage?.id}` }
-          suggestProfilepicture={ image ?? "" }
-        />
+        <SessionProvider session={session}>
+          <RegisterForm
+            action={ registerNewUser }
+            defaultDisplayname={ session.name ?? "" }
+            defaultUsername={ session.email?.split('@')[0] ?? "" }
+            // https://www.dicebear.com/styles/bottts-neutral/
+            defaultProfilepicture={ `https://api.dicebear.com/7.x/bottts-neutral/svg?seed=${userDefaultImage?.id}` }
+            suggestProfilepicture={ "" }
+          />
+        </SessionProvider>
       </div>
     </div>
   )

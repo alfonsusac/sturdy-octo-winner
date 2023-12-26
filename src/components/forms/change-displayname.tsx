@@ -2,6 +2,10 @@
 
 import { SubmitHandler, useForm } from "react-hook-form"
 import { Field, Form } from "../base/form"
+import { FormLabel } from "../base/form-field"
+import { Input } from "../base/input"
+import { FormControl } from "@radix-ui/react-form"
+import { useSession } from "next-auth/react"
 
 type Inputs = {
   displayname: string
@@ -9,21 +13,28 @@ type Inputs = {
 
 export default function ChangeDisplaynameForm() {
 
-  const form = useForm<Inputs>()
+  const session = useSession()
+
+  const form = useForm<Inputs>({
+    defaultValues: {
+      displayname: session.data?.user.name ?? ""
+    }
+  })
   const onSubmit: SubmitHandler<Inputs> = (data) => {
-    console.log(data)
+    session.update({ name: data.displayname })
   }
 
   return (
     <Form { ...form } onSubmit={ onSubmit }>
       <Field name="displayname" render={
         ({ field }) => <>
-        
+          <FormLabel>Display Name</FormLabel>
+          <Input { ...field } />
         </>
       } />
-      <label htmlFor="displayname" className="block text-[0.65rem] uppercase font-semibold opacity-80">Display Name</label>
-      <input id="displayname" { ...form.register("displayname", { required: "This field is required" }) } />
-      <button type="submit">Submit</button>
+      <button type="submit" className="text-xs bg-indigo-600 h-7 py-0 px-6 mt-2 font-medium rounded-sm"
+        disabled={ !form.formState.isDirty }>Save</button>
+      {/* <input id="displayname" { ...form.register("displayname", { required: "This field is required" }) } /> */ }
     </Form>
   )
 

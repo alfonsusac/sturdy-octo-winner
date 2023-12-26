@@ -2,47 +2,72 @@
 "use client"
 
 import { cn } from "@/lib/tailwind"
-import { useSearchParams } from "next/navigation"
-import { InputHTMLAttributes, SVGProps, useRef, useState } from "react"
+import { useRouter, useSearchParams } from "next/navigation"
+import { useRef, useState } from "react"
 import { useFormStatus } from "react-dom"
 import { useDebouncedCallback } from "use-debounce"
 import ProfilePicture from "./pfp"
+import { useSession } from "next-auth/react"
+import { User } from "@prisma/client"
+import { JWTUpdateParam } from "@/lib/auth/on-register"
 
 export default function RegisterForm(p: {
-  action: (formData: FormData) => any
+  action: (formData: FormData) => Promise<{
+    error?: string,
+    success?: boolean,
+    data?: { user: User, providerId: string, provider: string }
+  }>
   defaultUsername: string
   defaultDisplayname: string
   defaultProfilepicture: string
   suggestProfilepicture: string
 }) {
+  const session = useSession()
+  const router = useRouter()
 
   const [picturelink, setPicturelink] = useState(p.suggestProfilepicture)
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState(false)
+  const [pfpError, setPfpError] = useState(false)
+  const [errorMessage, setErrorMessage] = useState<string>()
   const debounced = useDebouncedCallback((value) => { setPicturelink(value) }, 1000)
 
   const dref = useRef<HTMLDivElement>(null)
   const uref = useRef<HTMLDivElement>(null)
   const uinputref = useRef<HTMLInputElement>(null)
 
-  return (
-    <form className="w-full mt-4" action={ p.action }>
-      <ServerErrorCallout />
+  async function onSubmit(data: FormData) {
+    const res = await p.action(data)
+    if (res.error) { setErrorMessage(res.error); return }
+    if (!res.data) { setErrorMessage(res.error ?? "Unknown Error"); return }
+    await session.update({
+      purpose: "register",
+      data: {
+        name: res.data.user.displayName,
+        username: res.data.user.username,
+        email: res.data.user.email,
+        picture: res.data.user.profilePicture,
+        userid: res.data.user.id,
+        provider: res.data.provider,
+      }
+    } satisfies JWTUpdateParam)
+    router.replace('/app')
+  }
 
-      <div className="flex flex-row justify-center items-center my-4 gap-4">
+  return (
+    <form className="w-full " action={ onSubmit }>
+      <ServerErrorCallout errorMessage={ errorMessage } />
+
+      <div className="flex flex-row justify-center items-center mt-4 mb-8 gap-4">
         <ProfilePicture
-          error={ error }
+          error={ pfpError }
           loading={ loading }
           pictureLink={ picturelink ?? "" }
-          setError={ setError }
+          setError={ setPfpError }
           setLoading={ setLoading }
           defaultPictureLink={ p.defaultProfilepicture }
         />
-        <div className="flex flex-col">
-          <div
-            className="text-xl"
-            ref={ dref }
-          >
+        <div className="flex flex-col  ">
+          <div className="text-xl h-6 text-ellipsis overflow-hidden whitespace-nowrap max-w-56" ref={ dref }>
             { p.defaultDisplayname }
           </div>
           <div
@@ -57,7 +82,7 @@ export default function RegisterForm(p: {
           </div>
         </div>
       </div>
-
+      {/* 
       <fieldset>
         <label htmlFor="displaypicture">Display Picture</label>
         <input
@@ -70,7 +95,7 @@ export default function RegisterForm(p: {
           } }
           defaultValue={ p.suggestProfilepicture }
         />
-      </fieldset>
+      </fieldset> */}
 
       <fieldset>
         <label htmlFor="displayname">Display Name<span className="text-red-500/80">*</span></label>
@@ -104,6 +129,10 @@ export default function RegisterForm(p: {
       </fieldset>
 
       <FormSubmitButton />
+
+      <pre>
+        { JSON.stringify(session.data, null, 1) }
+      </pre>
     </form>
   )
 }
@@ -116,8 +145,11 @@ function FormSubmitButton() {
 }
 
 
-export function ServerErrorCallout() {
-  const error = useSearchParams().get('error')
+export function ServerErrorCallout(p: {
+  errorMessage?: string
+}) {
+  const spError = useSearchParams().get('error')
+  const error = p.errorMessage ?? spError
   const { pending } = useFormStatus()
 
   return <div className={ cn(

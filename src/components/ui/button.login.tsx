@@ -6,9 +6,7 @@ import { ButtonBase } from "./button"
 export function LoginGoogleButton(p: React.ComponentProps<typeof ButtonBase>) {
   return (
     <ButtonBase { ...p } onClick={ () => {
-      signIn("google", {
-        callbackUrl: '/app',
-      })
+      signIn("google", { callbackUrl: '/app' })
     } } >
       <GoogleLogo />
       Login via Google

@@ -15,7 +15,7 @@ export default function ProfilePicture(p: {
 
   const { setLoading, setError, loading, error } = p
   return (
-    <div className="h-16 w-16 rounded-full overflow-hidden relative shadow-lg shadow-black/40">
+    <div className="h-16 w-16 rounded-full overflow-hidden relative">
       {
         loading && <div className="h-16 w-16 absolute bg-black/40 top-0 left-0 flex flex-col items-center justify-center">
           {

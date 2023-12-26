@@ -14,9 +14,12 @@ export function getExt(filename: string) {
   }
 }
 
-export function logFunc(obj: any) {
-  console.log(chalk.white(obj))
+export function logFunc(...obj: any) {
+  console.log(chalk.white(...obj))
 }
-export function logAuth(obj: any) {
-  console.log(chalk.yellow(obj))
+export function logAuth(...obj: any) {
+  console.log(chalk.yellow(...obj))
+}
+export function strObj(obj: any) {
+  return JSON.stringify(obj, null, 2)?.replaceAll(/[{}"]/g, "").replace(/\n$/, '').replaceAll(/\s+,\n/g, '\n')
 }
