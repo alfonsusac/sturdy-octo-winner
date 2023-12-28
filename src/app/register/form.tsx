@@ -10,6 +10,7 @@ import ProfilePicture from "./pfp"
 import { useSession } from "next-auth/react"
 import { User } from "@prisma/client"
 import { JWTUpdateParam } from "@/lib/auth/on-register"
+import { registerUser } from "@/actions/session/register-user"
 
 export default function RegisterForm(p: {
   action: (formData: FormData) => Promise<{
@@ -36,21 +37,12 @@ export default function RegisterForm(p: {
   const uinputref = useRef<HTMLInputElement>(null)
 
   async function onSubmit(data: FormData) {
-    const res = await p.action(data)
-    if (res.error) { setErrorMessage(res.error); return }
-    if (!res.data) { setErrorMessage(res.error ?? "Unknown Error"); return }
-    await session.update({
-      purpose: "register",
-      data: {
-        name: res.data.user.displayName,
-        username: res.data.user.username,
-        email: res.data.user.email,
-        picture: res.data.user.profilePicture,
-        userid: res.data.user.id,
-        provider: res.data.provider,
+    return registerUser(data, session,
+      {
+        onError: (msg) => setErrorMessage(msg),
+        onSuccess: () => router.replace('/app')
       }
-    } satisfies JWTUpdateParam)
-    router.replace('/app')
+    )
   }
 
   return (

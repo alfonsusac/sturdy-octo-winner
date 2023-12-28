@@ -6,9 +6,9 @@ import { AcccountProvider } from "@prisma/client"
 import prisma from "../db/prisma"
 import { JWT } from "next-auth/jwt"
 import redirect from "../navigation"
-import { JWTofRegisteredUser } from "@/types/next-auth"
 import { getJWTfromOAuth } from "./on-login"
 import { registerUserHandler } from "./on-register"
+import { onUpdateHandler } from "./on-update"
 
 
 export const authOption: AuthOptions = {
@@ -45,6 +45,8 @@ export const authOption: AuthOptions = {
 
       if (trigger === "update" && session && session.purpose === "register") {
         return await registerUserHandler(session, token) as JWT
+      } else if (trigger === "update") {
+        return await onUpdateHandler(session, token) as JWT
       }
 
       if (trigger === "signIn" && account) { // provider is set during signin
@@ -100,7 +102,6 @@ export namespace Auth {
     if (!session.user) redirect('/auth')
     if (!session.user.email) redirect('/auth')
     if (!session.user.provider) redirect('/auth')
-    console.log(session)
     return {
       ...session.user,
       expires: session.expires,

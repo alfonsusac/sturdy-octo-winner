@@ -6,17 +6,19 @@ import redirect from "@/lib/navigation"
 import { AcccountProvider } from "@prisma/client"
 import { zfd } from "zod-form-data"
 
+const schema = zfd.formData({
+  username: zfd.text(),
+  displayname: zfd.text(),
+  profilepicture: zfd.text(),
+})
+
 export async function registerUserToDB(formData: FormData) {
   try {
     const session = await Auth.getSession()
     if (!session.provider || !session.sub) redirect('/auth')
 
     //Validate user input
-    const schema = zfd.formData({
-      username: zfd.text(),
-      displayname: zfd.text(),
-      profilepicture: zfd.text(),
-    })
+
     const { username, displayname, profilepicture } = schema.parse(formData)
 
     // Create user
