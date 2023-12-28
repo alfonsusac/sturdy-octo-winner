@@ -23,41 +23,15 @@ export function ButtonBase(p: React.ComponentProps<"button"> & {
   const regular = !large && !small
 
   return <button className={ cn(
-    [
-      "relative",
-      "leading-none",
-      "rounded-[0.25rem]",
-      "font-semibold text-white/90",
-      "flex flex-row items-center justify-center gap-1.5",
-      "border border-transparent",
-      block && "w-full",
+    "relative leading-none rounded-[0.25rem] font-medium text-white/90 flex flex-row items-center justify-center gap-1.5 border border-transparent",
+    block && "w-full",
 
-      regular && [
-        "text-md",
-        "h-10",
-        "min-w-[2.5rem]",
-        !square && "px-5",
-      ],
-
-      small && [
-        "text-sm",
-        "h-8",
-        "min-w-[2rem]",
-        !square && "px-2.5"
-      ],
-
-      large && [
-        "text-md",
-        "h-12",
-        "min-w-[3rem]",
-        !square && "px-6"
-      ],
-
-      "select-none",
-    ],
+    regular && ["text-md h-9 min-w-[2.5rem]", !square && "px-5"],
+    small && ["text-sm h-8 min-w-[2rem]", !square && "px-2.5"],
+    large && ["text-md h-12 min-w-[3rem]", !square && "px-6"],
+    "select-none",
 
     ghost && [
-      // "border-neutral-200/10",
       "text-white/60",
       idle && [
         "hover:bg-white/10",
@@ -70,12 +44,12 @@ export function ButtonBase(p: React.ComponentProps<"button"> & {
 
     primary && [
       "font-semibold",
-      "bg-blue-600",
+      "bg-indigo-600",
       idle && [
-        "border-blue-800"
+        "border-indigo-800"
       ],
       loading && [
-        "bg-blue-800"
+        "bg-indigo-800"
       ],
     ],
 
@@ -94,15 +68,12 @@ export function ButtonBase(p: React.ComponentProps<"button"> & {
       "text-white/0",
     ],
 
-    loading && [
-      "cursor-wait"
-    ],
+    loading &&   "pointer-events-none",
     success && [
-      "cursor-default",
-      "bg-transparent"
-    ]
-  ) }
-    {...rest}
+      "bg-transparent",
+      "pointer-events-none",
+    ]) }
+    { ...rest }
   >
     { p.children }
     <div className={ cn(
@@ -132,13 +103,6 @@ export function ButtonBase(p: React.ComponentProps<"button"> & {
       }
     </div>
   </button>
-}
-
-
-export function DummyButton(p: {
-  children: React.ReactNode
-}) {
-  const [] = useState()
 }
 
 
