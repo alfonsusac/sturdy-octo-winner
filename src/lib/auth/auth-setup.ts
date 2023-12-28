@@ -9,15 +9,28 @@ import redirect from "../navigation"
 import { getJWTfromOAuth } from "./on-login"
 import { registerUserHandler } from "./on-register"
 import { onUpdateHandler } from "./on-update"
+import CredentialsProvider from "next-auth/providers/credentials"
+
+const googleProvider = GoogleProvider({
+  clientId: env('GOOGLE_CLIENT_ID'),
+  clientSecret: env('GOOGLE_CLIENT_SECRET'),
+})
+
+const localProvider = CredentialsProvider({
+  name: 'Offline',
+  credentials: {},
+  async authorize(credentials, req) {
+    return {
+      id: 'aabbccdd-eeff-gghh-iijj-kkllmmnnoo',
+      name: 'AnyaForger',
+      email: 'anya.forger@yorfam.com',
+    }
+  },
+})
 
 
 export const authOption: AuthOptions = {
-  providers: [
-    GoogleProvider({
-      clientId: env('GOOGLE_CLIENT_ID'),
-      clientSecret: env('GOOGLE_CLIENT_SECRET'),
-    })
-  ],
+  providers: process.env.NODE_ENV === "development" ? [googleProvider, localProvider] : [googleProvider],
   callbacks: {
 
     async jwt({ token, account, user, profile, session, trigger }) {

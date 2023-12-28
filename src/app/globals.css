@@ -71,13 +71,16 @@ fieldset {
   align-items: stretch;
   margin-block: 1rem;
 }
+
+/* BUTTON MAIN CSS!!!  */
+
 button {
   font-size: 0.875rem /* 14px */;
   line-height: 1;
   font-weight: 400;
   transition-property: all;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  transition-duration: 150ms;
+  transition-duration: 100ms;
   border-radius: 0.375rem;
   padding-block: 0.75rem;
   padding-inline: 1rem;
@@ -89,6 +92,9 @@ button:hover {
   box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
   --tw-bg-opacity: 1;
   background-color: rgb(67 56 202 / var(--tw-bg-opacity));
+}
+button:active{
+  filter: brightness(90%)
 }
 
 button:disabled, [type='button']:disabled, [type='reset']:disabled, [type='submit']:disabled {

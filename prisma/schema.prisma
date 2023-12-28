@@ -31,6 +31,7 @@ model User {
 
 enum AcccountProvider {
   google
+  credentials
 }
 
 model Account {

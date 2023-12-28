@@ -1,8 +1,8 @@
 import { Account } from "next-auth"
 import prisma from "../db/prisma"
-import { AcccountProvider } from "@prisma/client"
 import { JWT } from "next-auth/jwt"
 import { JWTofRegisteredUser } from "@/types/next-auth"
+import { AcccountProvider } from "@prisma/client"
 
 export async function getJWTfromOAuth(oauthAccount: Account, defaultToken: JWT) {
   const accountFromDB = await prisma.account.findUnique({
