@@ -32,8 +32,6 @@ export default async function Page() {
     }
   })
   if (account) redirect('/app', "Account already registered")
-  // if (account) console.log("ALREADY HAS ACCOUNT!")
-  // console.log(session)
 
   // idempotent:
   // find existing id if not exist then create

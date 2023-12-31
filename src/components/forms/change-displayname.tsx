@@ -1,7 +1,7 @@
 "use client"
 
 import { SubmitHandler, useForm } from "react-hook-form"
-import { Field, Form } from "../base/form"
+import { FieldSet, Form } from "../base/form"
 import { FormLabel } from "../base/form-field"
 import { Input } from "../base/input"
 import { FormControl } from "@radix-ui/react-form"
@@ -32,7 +32,7 @@ export default function ChangeDisplaynameForm() {
 
   return (
     <Form { ...form } onSubmit={ onSubmit }>
-      <Field name="displayname" render={
+      <FieldSet name="displayname" render={
         ({ field }) => <>
           <FormLabel>Display Name</FormLabel>
           <Input { ...field } />

@@ -23,3 +23,5 @@ export function logAuth(...obj: any) {
 export function strObj(obj: any) {
   return JSON.stringify(obj, null, 2)?.replaceAll(/[{}"]/g, "").replace(/\n$/, '').replaceAll(/\s+,\n/g, '\n')
 }
+
+export const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms))

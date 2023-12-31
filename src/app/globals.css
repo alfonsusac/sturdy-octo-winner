@@ -46,19 +46,27 @@ grid > * { min-height: 0; min-width: 0; }
 /* Forms                   */
 
 label {
-  font-size: 0.7rem;
+  display: block;
+  font-size: 0.75rem;
+  opacity: 0.8;
   font-weight: 600;
   margin-block: 0.375rem;
   text-transform: uppercase;
+  transition: all 150ms;
 }
+input,
 input[type="text"],
 input[type="password"],
 input[type="url"]
 {
-  padding: 0.625rem;
-  padding-inline: 0.75rem;
+  width: 100%;
+  font-weight: 300;
+  font-size: 0.9rem;
+  display: block;
+  padding: 0.5rem;
+  padding-inline: 0.6rem;
   background-color: rgb(0 0 0 / 0.3);
-  border-radius: 0.375rem;
+  border-radius: 0.2rem;
 }
 input:invalid {
   outline: red;
@@ -74,18 +82,37 @@ fieldset {
 
 /* BUTTON MAIN CSS!!!  */
 
-button {
+button, [type='button'], [type='reset'], [type='submit'] {
   font-size: 0.875rem /* 14px */;
   line-height: 1;
   font-weight: 400;
   transition-property: all;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   transition-duration: 100ms;
-  border-radius: 0.375rem;
-  padding-block: 0.75rem;
-  padding-inline: 1rem;
-  background-color: rgb(165 180 252 / 0.2);
+  border-radius: 0.2rem;
+  /* padding-block: 0.75rem; */
+  /* padding-inline: 1rem; */
+
+
+  /* background-color: rgb(165 180 252 / 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem; */
 }
+form {
+  & button, [type='button'], [type='reset'], [type='submit'] {
+    padding-block: 0.6rem;
+    padding-inline: 1rem;
+    font-size: 0.8rem;
+    background-color: rgb(165 180 252 / 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+}
+
 button:hover {
   --tw-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
   --tw-shadow-colored: 0 4px 6px -1px var(--tw-shadow-color), 0 2px 4px -2px var(--tw-shadow-color);

@@ -12,13 +12,13 @@ export default function AuthPage() {
         </h1>
         <div className="flex w-full gap-2 flex-col">
           <LoginViaGoogle>
-            <button className="w-full flex items-center gap-2 justify-center h-10">
+            <button className="w-full h-10">
               <GoogleLogo/>
               Login via Google
             </button>
           </LoginViaGoogle>
           <LoginLocalDev>
-            <button className="w-full flex items-center gap-2 justify-center h-10">
+            <button className="w-full h-10">
               Login via Local Dev
             </button>
           </LoginLocalDev>

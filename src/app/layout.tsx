@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Inter, Open_Sans, Outfit } from 'next/font/google'
 import './globals.css'
 import { cn } from '@/lib/tailwind'
+import { Toaster } from 'sonner'
 
 const sans = Inter({
   subsets: ['latin'],
@@ -32,8 +33,24 @@ export default function RootLayout({
         "bg-black",
         "text-indigo-100/90",
         "bg-gradient-to-b from-indigo-200/10 to-indigo-500/20",
-        "selection:bg-green-800"
+        "selection:bg-green-800 data-[sonner-toast]:!font-normal"
       ) }>
+        <Toaster toastOptions={ {
+          duration: 100000,
+          unstyled: true,
+          style: {
+            fontWeight: 400,
+          },
+          classNames: {
+            toast: " p-4 rounded-md text-sm w-full font-normal flex gap-2 items-center",
+            title: "!font-normal data-[sonner-toast]:!font-normal",
+            default: "bg-[#343850]",
+            success: "bg-green-300/15 [&_[data-icon]]:text-green-300/80",
+            // description: "font-normal",
+            // info: "font-normal"
+          },
+          // className:"font-normal"
+        } } />
         { children }
       </body>
     </html>
