@@ -36,20 +36,17 @@ export default function RootLayout({
         "selection:bg-green-800 data-[sonner-toast]:!font-normal"
       ) }>
         <Toaster toastOptions={ {
-          duration: 100000,
+          // duration: 50000,
           unstyled: true,
           style: {
             fontWeight: 400,
           },
           classNames: {
-            toast: " p-4 rounded-md text-sm w-full font-normal flex gap-2 items-center",
+            toast: " p-4 rounded-md text-sm w-full font-normal flex gap-2 items-center shadow-[0_0_4px_2px_#0004]",
             title: "!font-normal data-[sonner-toast]:!font-normal",
             default: "bg-[#343850]",
-            success: "bg-green-300/15 [&_[data-icon]]:text-green-300/80",
-            // description: "font-normal",
-            // info: "font-normal"
+            success: "bg-[#37474D] [&_[data-icon]]:text-green-300/80",
           },
-          // className:"font-normal"
         } } />
         { children }
       </body>

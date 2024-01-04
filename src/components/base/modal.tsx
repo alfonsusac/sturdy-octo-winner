@@ -28,7 +28,7 @@ import { CSSProperties, ReactNode, Ref, SVGProps, forwardRef, useEffect, useStat
  
  */
 
-function useCloseAnimation(duration = 200, onChange?:(open?:boolean)=>void) {
+function useCloseAnimation(duration = 200, onChange?: (open?: boolean) => void) {
   const [isVisible, setVisible] = useState(false)
   const [isOpen, setOpen] = useState(false)
 
@@ -65,14 +65,24 @@ export function ModalBase(p: {
     content?: CSSProperties,
   }
   onChange?: (open?: boolean) => void,
-  contentRef?: Ref<HTMLDivElement>
+  contentRef?: Ref<HTMLDivElement>,
+  open?: boolean,
+  onOpenChange?: (open: boolean) => void
 }) {
   const { isVisible, isOpen, handleOpenChange } = useCloseAnimation(200, p.onChange)
-  return <Dialog.Root open={ isVisible } onOpenChange={ handleOpenChange }>
+  useEffect(() => {
+    if (p.open !== undefined) {
+      handleOpenChange(p.open)
+    }
+  }, [p.open, handleOpenChange])
+  return <Dialog.Root open={ isVisible } onOpenChange={ (open) => {
+    handleOpenChange(open)
+    p.onOpenChange?.(open)
+  } }>
     <Dialog.Trigger asChild>{ p.trigger }</Dialog.Trigger>
     <Dialog.Portal>
       <Overlay isOpen={ isOpen } className={ p.className?.overlay } />
-      <Content isOpen={ isOpen } className={ p.className?.content } ref={p.contentRef} style={p.style?.content}>
+      <Content isOpen={ isOpen } className={ p.className?.content } ref={ p.contentRef } style={ p.style?.content }>
         { p.children }
       </Content>
     </Dialog.Portal>
@@ -108,7 +118,7 @@ const Overlay = forwardRef(function Overlay(p: { className?: string, isOpen?: bo
   />
 })
 
-const Content = forwardRef(function Content(p: { className?: string, isOpen?: boolean, children: ReactNode, style?: CSSProperties}, ref: Ref<HTMLDivElement>) {
+const Content = forwardRef(function Content(p: { className?: string, isOpen?: boolean, children: ReactNode, style?: CSSProperties }, ref: Ref<HTMLDivElement>) {
   return <Dialog.Content data-state-transition={ p.isOpen } className={ cn(
     "fixed outline-none",
     "top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2", //Center
@@ -127,6 +137,6 @@ const Content = forwardRef(function Content(p: { className?: string, isOpen?: bo
     "data-[state-transition=true]:opacity-100",
     "data-[state-transition=true]:scale-100",
     p.className
-  ) } ref={ref} style={p.style}>{ p.children }</Dialog.Content>
+  ) } ref={ ref } style={ p.style }>{ p.children }</Dialog.Content>
 })
 

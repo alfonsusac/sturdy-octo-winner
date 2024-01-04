@@ -10,6 +10,8 @@ import { getJWTfromOAuth } from "./on-login"
 import { registerUserHandler } from "./on-register"
 import { onUpdateHandler } from "./on-update"
 import CredentialsProvider from "next-auth/providers/credentials"
+import chalk from "chalk"
+import { strObj } from "../devutil"
 
 const googleProvider = GoogleProvider({
   clientId: env('GOOGLE_CLIENT_ID'),
@@ -77,7 +79,7 @@ export const authOption: AuthOptions = {
       // Session is retrieved from token.
       // if using jwt, it seems that sessino is retrieved from token only returning default properties. (name, email, emage)
       // logAuth(`Checking Session | Trigger: ${trigger ?? "check"}`)
-      // console.log(chalk.blue(" Session:"), strObj(session))
+      console.log(chalk.blue(" Session:"), strObj(session))
       // console.log(chalk.blue(" NewSession:"), strObj(newSession))
       // console.log(chalk.blue(" Token:"), strObj(token))
       // console.log(chalk.blue(" User:"), strObj(user))
@@ -87,7 +89,13 @@ export const authOption: AuthOptions = {
       // }
       // session.user['provider'] = token['provider']
 
-      return {
+      // Mutate data for getServerSessions
+      session.user.username = token.username ?? undefined
+      session.user.provider = token.provider ?? undefined
+      session.user.userid = token.userid ?? undefined
+      session.user.sub = token.sub ?? undefined
+
+      const newNewSession = {
         ...session,
         user: {
           ...session.user,
@@ -100,6 +108,11 @@ export const authOption: AuthOptions = {
           sub: token.sub,
         }
       } satisfies Session
+
+      console.log(newNewSession)
+
+      // Return session for useSession
+      return newNewSession
     },
 
     async redirect({ baseUrl, url }) {

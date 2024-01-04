@@ -1,10 +1,8 @@
-import { Title } from "@/components/base/dialog"
-import { ModalBase } from "@/components/base/modal"
 import { SettingPage, TabContent, TabTrigger, tabTriggerStyle } from "@/components/base/settings"
 import ChangeDisplaynameForm from "@/components/forms/change-displayname"
+import ImageCropper from "@/components/modal/image-cropper"
 import LogoutButton from "@/components/ui/logout"
 import { useSession } from "next-auth/react"
-import Image from "next/image"
 import { SVGProps } from "react"
 
 export default function UserSettingView(p: {
@@ -42,8 +40,13 @@ export default function UserSettingView(p: {
           <div className="bg-[#171a24] p-4 ">
             <div className="flex gap-2 items-start relative h-10">
               <div className="bg-[#171a24] w-20 h-20 rounded-full overflow-hidden p-1.5 absolute  bottom-0">
-                <Image unoptimized src={ session.data?.user.image ?? "" }
-                  alt="Profile Picutre" width={ 68 } height={ 68 } className="rounded-full" />
+                {/* <Image unoptimized src={ session.data?.user.image ?? "" }
+                    alt="Profile Picutre" width={ 68 } height={ 68 } className="rounded-full" /> */}
+                <ImageCropper
+                  width={ 1024 }
+                  defaultValue={ session.data?.user.image }
+                  className="rounded-full"
+                />
               </div>
               <div className="font-medium text-base pl-20 ml-2">{ session.data?.user.name }</div>
             </div>

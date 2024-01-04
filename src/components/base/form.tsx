@@ -177,6 +177,7 @@ export const Input = forwardRef(
           : `${formDescriptionId} ${formMessageId}`
       }
       aria-invalid={ !!error }
+      autoComplete="off"
       { ...register() }
       { ...props }
     />
@@ -192,8 +193,8 @@ export const Button = forwardRef(
     const { formState, error } = useFormField()
     return <button
       ref={ref}
-      className={ cn(className) }
-      disabled={ formState.isSubmitting || !!error }
+      className={ cn(formState && "mt-3", className) }
+      disabled={ formState.isSubmitting || !!error || !formState.isDirty }
       type={type ?? 'submit'}
       { ...rest }
     >

@@ -26,7 +26,7 @@ export const style = {
     "flex flex-row justify-end gap-2"
   ),
   dialogButton: cn(
-    "text-sm",
+    "text-[0.8rem]",
     "font-medium",
 
     "transition-all",

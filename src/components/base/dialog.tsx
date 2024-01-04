@@ -1,8 +1,9 @@
-import { ReactNode } from "react"
-import { ModalBase } from "./modal"
+import { ComponentPropsWithoutRef, ReactNode } from "react"
+import { CloseModalButton, ModalBase } from "./modal"
 import { DialogContent } from "@radix-ui/react-dialog"
 import { cn } from "@/lib/tailwind"
 import * as Dialog from '@radix-ui/react-dialog'
+import { style } from "@/style"
 
 /**
  
@@ -13,14 +14,18 @@ import * as Dialog from '@radix-ui/react-dialog'
  
  */
 
-export function DialogBase(p: {
-  children?: ReactNode
-  trigger?: ReactNode
-}) {
+export function DialogBase(
+  p: {
+    children?: ReactNode
+    trigger?: ReactNode,
+    className?: string,
+  }
+) {
   return <ModalBase trigger={ p.trigger } className={ {
-    overlay: cn("")
-  }}>
-      {p.children}
+    content: cn("flex flex-col transition-all focus:outline-none duration-200", p.className)
+  } }>
+    <CloseModalButton />
+    { p.children }
   </ModalBase>
 }
 
@@ -29,7 +34,7 @@ export function Title({ className, ...p }: Dialog.DialogTitleProps) {
 }
 
 export function Description({ className, ...p }: Dialog.DialogDescriptionProps) {
-  return <Dialog.Description className={ cn("text-indigo-300/50", className) } { ...p }/>
+  return <Dialog.Description className={ cn("text-indigo-300/50", className) } { ...p } />
 }
 
 function Content(p: { className?: string, isOpen?: boolean, children?: ReactNode }) {
@@ -52,4 +57,31 @@ function Content(p: { className?: string, isOpen?: boolean, children?: ReactNode
     "data-[state-transition=true]:scale-100",
     p.className
   ) }>{ p.children }</DialogContent>
+}
+
+export function ModalFooter(
+  prop: {
+    children: ReactNode
+  }
+) {
+  return (
+    <div className={ cn(style.dialogFooter) }>
+      { prop.children }
+    </div>
+  )
+}
+
+export function Button(
+  prop: ComponentPropsWithoutRef<"button"> & {
+    primary?: boolean
+  }
+) {
+  const { className, type, primary, ...rest } = prop
+  return (
+    <button
+      className={ cn('text-[0.8rem]', style.dialogButton, primary && "bg-indigo-600", className) }
+      type={ type ?? "button" }
+      { ...rest }
+    />
+  )
 }

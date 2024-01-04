@@ -22,7 +22,7 @@ export function TestForm() {
   })
 
   async function onSubmit(data: any) {
-    // await sleep(500)
+    await sleep(500)
     toast.success("Favourite food successfully submittted.")
   }
 
@@ -33,8 +33,8 @@ export function TestForm() {
         <Message>Enter favorite food here.</Message>
         <div className="flex gap-2">
           <Input autoComplete='none' />
-          <Button type="submit">Submit</Button>
         </div>
+          <Button type="submit">Submit</Button>
       </Fieldset>
     </Form>
   )
