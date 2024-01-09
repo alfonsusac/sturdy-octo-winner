@@ -1,9 +1,13 @@
-import { SettingPage, TabContent, TabTrigger, tabTriggerStyle } from "@/components/base/settings"
+import updateProfilePicture from "@/actions/session/update-pfp-action"
+import { getPresignedURLfromServer } from "@/actions/uploads/get-presigned-url"
+import { SettingPage, TabContent, TabTrigger, dividerStyle, tabTriggerStyle } from "@/components/base/settings"
 import ChangeDisplaynameForm from "@/components/forms/change-displayname"
 import ImageCropper from "@/components/modal/image-cropper"
 import LogoutButton from "@/components/ui/logout"
-import { useSession } from "next-auth/react"
+import { useSession } from "@/lib/auth/next-auth.client"
+import { getURL } from "next/dist/shared/lib/utils"
 import { SVGProps } from "react"
+import { toast } from "sonner"
 
 export default function UserSettingView(p: {
   children: React.ReactNode
@@ -20,7 +24,7 @@ export default function UserSettingView(p: {
           <TabTrigger value="Profile">Profile</TabTrigger>
           <TabTrigger value="Appearance">Appearance</TabTrigger>
           <TabTrigger value="Language">Language</TabTrigger>
-          <div className="h-px bg-indigo-300/10 mx-2 my-2" />
+          <hr className={ dividerStyle } />
           <LogoutButton>
             <button className={ tabTriggerStyle }>
               Log Out
@@ -38,26 +42,35 @@ export default function UserSettingView(p: {
         <div className="w-full rounded-lg overflow-hidden">
           <div className="w-full h-20 bg-indigo-900" />
           <div className="bg-[#171a24] p-4 ">
+            {/* Header of user card */ }
             <div className="flex gap-2 items-start relative h-10">
               <div className="bg-[#171a24] w-20 h-20 rounded-full overflow-hidden p-1.5 absolute  bottom-0">
-                {/* <Image unoptimized src={ session.data?.user.image ?? "" }
-                    alt="Profile Picutre" width={ 68 } height={ 68 } className="rounded-full" /> */}
                 <ImageCropper
-                  width={ 1024 }
-                  defaultValue={ session.data?.user.image }
                   className="rounded-full"
+                  width={ 256 }
+                  defaultValue={ session.data?.user.image }
+                  onCrop={ async (dataURL) => {
+                    const buffer = Buffer.from(dataURL.replace(/^data:image\/\w+;base64,/, ""), 'base64')
+                    const uploadURL = await getPresignedURLfromServer()
+                    if (!uploadURL) throw new Error('Something went wrong when prefetching presigned URL')
+                    const res = await fetch(uploadURL, {
+                      method: "PUT", body: buffer,
+                      headers: { 'Content-Type': "image/png" }
+                    })
+                    const newImageUrl = uploadURL.split('?')[0]
+                    await session.update("update-display-picture", async () => await updateProfilePicture({pfp: newImageUrl}) )
+                  }}
                 />
               </div>
               <div className="font-medium text-base pl-20 ml-2">{ session.data?.user.name }</div>
             </div>
+            {/* Details of user card */ }
             <div className="bg-[#26293a] mt-4 w-full p-4 rounded-md flex flex-col gap-4">
               <div className="flex items-center">
-
                 <div className="grow">
                   <div className="text-[0.65rem] uppercase font-semibold opacity-80">Display Name</div>
                   { session.data?.user.name }
                 </div>
-
               </div>
               <div>
                 <div className="text-[0.65rem] uppercase font-semibold opacity-80">Email</div>

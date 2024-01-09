@@ -35,8 +35,8 @@ a{
   cursor: pointer;
   transition-property: all;
 }
-flex > * { min-height: 0; min-width: 0; }
-grid > * { min-height: 0; min-width: 0; }
+.flex > * { min-height: 0px; min-width: 0px; }
+.grid > * { min-height: 0px; min-width: 0px; }
 
 *:focus-visible {
   outline: #818cf833 3px solid;

@@ -7,7 +7,7 @@ import { Session } from "next-auth"
 import { SessionProvider } from "next-auth/react"
 import { usePathname } from "next/navigation"
 import { ComponentProps, ReactNode, RefObject, SVGProps, createContext, forwardRef, useContext, useRef } from "react"
-import UserSettingView from "./_settings/user"
+import UserSettingView from "../../components/menu/userSetting"
 import { style } from "@/style"
 import { User } from "@prisma/client"
 import { URLPattern } from "next/server"
@@ -31,12 +31,12 @@ export function UserStatus(p: {
 }) {
   const session = useSession()
   return (
-    <div className="bg-black/30 h-12 p-2.5 rounded-b-lg flex flex-row gap-2 items-center">
-      <div className="h-full aspect-square rounded-full overflow-hidden bg-black/50">
-        <img src={ session.data?.user?.image ?? "" } alt="Current user's profile picture"/>
+    <div className="min-w-0 bg-black/30 h-12 p-2.5 rounded-b-lg flex flex-row gap-2 items-center flex-1">
+      <div className="h-full aspect-square rounded-full overflow-hidden bg-black/50 shrink-0">
+        <img src={ session.data?.user?.image ?? "" } alt="Current user's profile picture" className="w-full h-full object-cover"/>
       </div>
-      <div className="flex flex-col gap-1 leading-[0.8] justify-center grow">
-        <div className="text-[0.8rem] text-indigo-100/90 font-semibold">
+      <div className="flex flex-col gap-1 leading-[0.8] justify-center">
+        <div className="text-[0.8rem] text-indigo-100/90 font-semibold truncate shrink min-w-0 flex-1">
           { session.data?.user?.name ?? "" }
         </div>
         <div className="text-[0.7rem] text-indigo-100/60">
@@ -44,7 +44,7 @@ export function UserStatus(p: {
         </div>
       </div>
       <UserSettingView>
-        <button className="w-6 h-6 p-0 flex justify-center items-center text-lg text-indigo-200/40 hover:bg-indigo-400/10">
+        <button className="w-6 h-6 p-0 flex justify-center items-center text-lg text-indigo-200/40 hover:bg-indigo-400/10 shrink-0">
           <FluentSettings28Filled/>
         </button>
       </UserSettingView>

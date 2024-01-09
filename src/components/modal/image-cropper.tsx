@@ -24,29 +24,32 @@ import { useDropzone } from "react-dropzone"
 import { Slider } from "../base/slider"
 import { CloseModalButton, ModalBase } from "../base/modal"
 import { Button, ModalFooter, Title } from "../base/dialog"
-import { getPresignedURL } from "@/actions/uploads/get-presigned-url"
 import { toast } from "sonner"
 
-export default function ImageCropper({
-  aspectRatio = 1,
-  width,
-  defaultValue,
-  onCrop,
-  onDelete,
-  className
-}: {
-  aspectRatio?: number
-  width: number
-  defaultValue?: string | null
-  onCrop?: (value: string) => void
-  onDelete?: () => void
-  className?: string
-}) {
+export default function ImageCropper(
+  {
+    aspectRatio = 1,
+    width,
+    defaultValue,
+    onCrop,
+    onError,
+    className
+  }: {
+    aspectRatio?: number
+    width: number
+    defaultValue?: string | null
+    onCrop?: (value: string) => Promise<void>
+    onError?: (errors: string[]) => void
+    // onSubmit?: (resizedDataUrl: string) => Promise<void>
+    className?: string
+  }
+) {
   const editor = useRef<AvatarEditor>(null)
-  const [preview, setPreview] = useState<string>(defaultValue || "")
+  const [inputImage, setInputImage] = useState<File>()
+  const [scale, setScale] = useState(1.0)
+  const [open, setOpen] = useState(false)
   const { getRootProps, getInputProps, isDragAccept } = useDropzone({
     noKeyboard: true,
-    // maxSize: 1024 * 1024 * 2,
     multiple: false,
     accept: {
       "image/jpeg": [],
@@ -60,41 +63,49 @@ export default function ImageCropper({
     onDropRejected(fileRejections, event) {
       fileRejections.map(f => toast.error(f.errors.map(e => e.message).join('\n')))
     },
+
   })
-  const [inputImage, setInputImage] = useState<File>()
-  const [scale, setScale] = useState(1.0)
-  const [open, setOpen] = useState(false)
 
-  const cropImage = async () => {
-    const imageCanvas = editor.current?.getImage()
-    const dataUrl = imageCanvas?.toDataURL("image/png")
-    const result = await resizeBase64Img(dataUrl!, width, width / aspectRatio)
+  const [preview, setPreview] = useState<string>(defaultValue || "")
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
-    try {
-      const uploadURL = await getPresignedURL()
-      if (!uploadURL) throw new Error('Something went wrong when prefetching presigned URL')
-      
-      const imageBlob = await new Promise<Blob | null>(res => imageCanvas?.toBlob(res))
-      if (!imageBlob) throw new Error("Error converting image to blob")
-      
-      const file = new File([imageBlob], "file.png")
-      const res = await fetch(uploadURL, {
-        method: "PUT",
-        body: imageBlob,
-        headers: {
-          'Content-Type': file.type
-        }
-      })
+  function cropImage() {
+    setIsSubmitting(true)
+    let toastID = toast("Uploading profile picture")
+    processCroppedImage().then(
+      (result) => {
+        onCrop?.(result)
+        toast.success("Upload Success!!")
+        setPreview(result)
+        setOpen(false)
+      }
+    ).catch(
+      err => {
+        onError?.(err)
+        toast.error(err?.message ?? "Unknown Error")
+      }
+    ).finally(
+      () => {
+        toast.dismiss(toastID)
+        setIsSubmitting(false)
+      }
+    )
+  }
 
-      console.log(res)
-      toast.success("Upload Success!!")
-      setPreview(result)
-      onCrop?.(result)
-      setOpen(false)
 
-    } catch (error: any) {
-      toast.error(error?.message)
-    }
+  const processCroppedImage = async () => {
+    const dataUrl = editor.current?.getImage()?.toDataURL("image/png")
+    const resizedDataUrl = await resizeBase64Img(dataUrl!, width, width / aspectRatio);
+    await onCrop?.(resizedDataUrl)
+    // const buffer = Buffer.from(resizedDataUrl.replace(/^data:image\/\w+;base64,/, ""), 'base64')
+    // const uploadURL = await getPresignedURLfromServer()
+    // if (!uploadURL) throw new Error('Something went wrong when prefetching presigned URL')
+    // const res = await fetch(uploadURL, {
+    //   method: "PUT", body: buffer,
+    //   headers: { 'Content-Type': "image/png" }
+    // })
+    // const getUrl = uploadURL.split('?')[0]
+    return resizedDataUrl
   }
 
   return (
@@ -151,7 +162,7 @@ export default function ImageCropper({
           >
             { inputImage && (
               <AvatarEditor
-                className="absolute max-w-full max-h-full inset-0"
+                className={ cn("absolute max-w-full max-h-full inset-0", isSubmitting && "brightness-75") }
                 scale={ scale }
                 ref={ editor }
                 width={ 1000 }
@@ -162,24 +173,22 @@ export default function ImageCropper({
               />
             ) }
           </div>
-
           <div className="mx-8 my-4 flex gap-4 text-4xl">
             <MaterialSymbolsPhotoSizeSelectSmall />
             <Slider
-              max={ 2 }
-              step={ 0.01 }
               min={ 1 }
+              step={ 0.01 }
+              max={ 2 }
               defaultValue={ [1] }
               onValueChange={ ([value]) => setScale(value) }
             />
             <MaterialSymbolsPhotoSizeSelectLarge />
           </div>
-
         </div>
 
         <ModalFooter>
-          <Button onClick={ () => setOpen(false) }>Close</Button>
-          <Button onClick={ cropImage } primary>Crop</Button>
+          <Button onClick={ () => setOpen(false) } disabled={ isSubmitting }>Close</Button>
+          <Button onClick={ cropImage } primary disabled={ isSubmitting }>Crop</Button>
         </ModalFooter>
       </ModalBase>
     </div>

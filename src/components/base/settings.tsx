@@ -80,3 +80,4 @@ export function TabTrigger(p: { children: React.ReactNode, value?: string }) {
 export function TabContent(p: { children: React.ReactNode, value: string }) {
   return <Tabs.Content value={ p.value }>{ p.children }</Tabs.Content>
 }
+export const dividerStyle = cn("h-px m-2 my-2 border-indigo-300/10")

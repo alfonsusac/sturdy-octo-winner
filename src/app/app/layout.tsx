@@ -29,7 +29,7 @@ export default async function AppLayout(p: {
         </Sidebar>
 
         <SubSidebar className={ cn(style.cardbg, "min-h-0 grid grid-flow-row grid-rows-[minmax(0,_1fr)_3rem]") }>
-          <div className="min-h-0 flex flex-col">{ p.innersidebar }</div>
+          <div className="min-h-0 flex flex-col h-full">{ p.innersidebar }</div>
           <UserStatus user={ user } />
         </SubSidebar>
 

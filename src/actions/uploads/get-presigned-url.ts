@@ -7,7 +7,7 @@ import { getSignedUrl } from "@aws-sdk/s3-request-presigner"
 import { randomUUID } from "crypto"
 import { getServerSession } from "next-auth"
 
-export async function getPresignedURL() {
+export async function getPresignedURLfromServer() {
   const user = await Auth.getUserSession()
   if (!user) throw new Error("Not Authenticated")
   const key = `${user.id}.png`
