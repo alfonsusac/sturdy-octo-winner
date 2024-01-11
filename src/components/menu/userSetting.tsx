@@ -49,12 +49,14 @@ export default function UserSettingView(p: {
                   className="rounded-full"
                   width={ 256 }
                   defaultValue={ session.data?.user.image }
-                  onCrop={ async (dataURL) => {
-                    const buffer = Buffer.from(dataURL.replace(/^data:image\/\w+;base64,/, ""), 'base64')
+                  onCrop={ async (img) => {
+                    // const buffer2 = window.atob(dataURL)
+                    // const buffer2 = await fetch(dataURL).then(res => res.blob())
+                    // const buffer = Buffer.from(dataURL.replace(/^data:image\/\w+;base64,/, ""), 'base64')
                     const uploadURL = await getPresignedURLfromServer()
                     if (!uploadURL) throw new Error('Something went wrong when prefetching presigned URL')
                     const res = await fetch(uploadURL, {
-                      method: "PUT", body: buffer,
+                      method: "PUT", body: img.blob,
                       headers: { 'Content-Type': "image/png" }
                     })
                     const newImageUrl = uploadURL.split('?')[0]

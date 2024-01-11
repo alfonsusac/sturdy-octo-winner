@@ -49,6 +49,7 @@ export const Page(){
 ```
 
 */
+
 export function createSlidingWindow<S extends Readonly<string[]>>(duration: number, ...states: S) {
   type T = S[number]
   function useSlidingWindowContainer() {
@@ -106,7 +107,8 @@ export function createSlidingWindow<S extends Readonly<string[]>>(duration: numb
   // Setting Context to avoid prop drilling
   type contextType = ReturnType<typeof useSlidingWindowContainer>['states']
 
-  const [ Provider, useSlidingWindowContext] = createReactContext<contextType | undefined>(undefined)
+  const [Provider, useSlidingWindowContext] = createReactContext<contextType | undefined>(undefined)
+
 
   function SlidingWindowProvider({ children, states }: { children: ReactNode, states: contextType }) {
     return <Provider value={ states }>
@@ -169,3 +171,4 @@ export function createSlidingWindow<S extends Readonly<string[]>>(duration: numb
 
   return { useSlidingWindowContainer, SlidingWindowProvider, SlidingPage }
 }
+

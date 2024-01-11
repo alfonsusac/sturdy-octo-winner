@@ -57,11 +57,14 @@ export function Fieldset(
   prop: {
     name: string,
     children: ReactNode
+    className?: string
   }
 ) {
   return (
     <FormFieldContext.Provider value={ { name: prop.name } }>
-      <FormItem>{ prop.children }</FormItem>
+      <FormItem className={ prop.className }>
+        { prop.children }
+      </FormItem>
     </FormFieldContext.Provider>
   )
 }
@@ -189,13 +192,14 @@ export const Button = forwardRef(
     props: ComponentPropsWithoutRef<"button">,
     ref: Ref<HTMLButtonElement>
   ) {
-    const { className, children, type,  ...rest } = props
+    const { className, children, type, ...rest } = props
     const { formState, error } = useFormField()
+    
     return <button
-      ref={ref}
+      ref={ ref }
       className={ cn(formState && "mt-3", className) }
-      disabled={ formState.isSubmitting || !!error || !formState.isDirty }
-      type={type ?? 'submit'}
+      disabled={ formState.isSubmitting || !!error || !formState.isValid }
+      type={ type ?? 'submit' }
       { ...rest }
     >
       {

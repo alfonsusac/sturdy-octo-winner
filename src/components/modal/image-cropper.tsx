@@ -25,6 +25,7 @@ import { Slider } from "../base/slider"
 import { CloseModalButton, ModalBase } from "../base/modal"
 import { Button, ModalFooter, Title } from "../base/dialog"
 import { toast } from "sonner"
+import { createCanvasFromResizedBase64 } from "@/lib/file"
 
 export default function ImageCropper(
   {
@@ -38,9 +39,8 @@ export default function ImageCropper(
     aspectRatio?: number
     width: number
     defaultValue?: string | null
-    onCrop?: (value: string) => Promise<void>
+    onCrop?: (value: {blob: Blob, url: string}) => Promise<void>
     onError?: (errors: string[]) => void
-    // onSubmit?: (resizedDataUrl: string) => Promise<void>
     className?: string
   }
 ) {
@@ -63,7 +63,6 @@ export default function ImageCropper(
     onDropRejected(fileRejections, event) {
       fileRejections.map(f => toast.error(f.errors.map(e => e.message).join('\n')))
     },
-
   })
 
   const [preview, setPreview] = useState<string>(defaultValue || "")
@@ -76,11 +75,12 @@ export default function ImageCropper(
       (result) => {
         onCrop?.(result)
         toast.success("Upload Success!!")
-        setPreview(result)
+        setPreview(result.url)
         setOpen(false)
       }
     ).catch(
       err => {
+        console.log(err)
         onError?.(err)
         toast.error(err?.message ?? "Unknown Error")
       }
@@ -95,16 +95,8 @@ export default function ImageCropper(
 
   const processCroppedImage = async () => {
     const dataUrl = editor.current?.getImage()?.toDataURL("image/png")
-    const resizedDataUrl = await resizeBase64Img(dataUrl!, width, width / aspectRatio);
+    const resizedDataUrl = await createCanvasFromResizedBase64(dataUrl!, width, width / aspectRatio);
     await onCrop?.(resizedDataUrl)
-    // const buffer = Buffer.from(resizedDataUrl.replace(/^data:image\/\w+;base64,/, ""), 'base64')
-    // const uploadURL = await getPresignedURLfromServer()
-    // if (!uploadURL) throw new Error('Something went wrong when prefetching presigned URL')
-    // const res = await fetch(uploadURL, {
-    //   method: "PUT", body: buffer,
-    //   headers: { 'Content-Type': "image/png" }
-    // })
-    // const getUrl = uploadURL.split('?')[0]
     return resizedDataUrl
   }
 
@@ -127,21 +119,7 @@ export default function ImageCropper(
         ) }
         <input { ...getInputProps() } className="hidden" />
 
-        {/* { preview && (
-          <button
-            type="button"
-            className="absolute border top-1 h-6 w-6 rounded right-1 bg-muted/90 hover:bg-muted text-muted-foreground"
-            // size="icon"
-            onClick={ (e) => {
-              e.stopPropagation()
-              setPreview("")
-              onDelete?.()
-            } }
-          >
-            <span className="sr-only">Delete Image</span>
-            <PhXBold className="text-sm" />
-          </button>
-        ) } */}
+
         <div className="hidden group-hover:flex absolute inset-0 w-full h-full items-center justify-center bg-black/40 text-white/80">
           <IcBaselineModeEdit className="text-2xl" />
         </div>
@@ -195,28 +173,6 @@ export default function ImageCropper(
   )
 }
 
-function resizeBase64Img(base64: string, width: number, height: number) {
-  return new Promise<string>((resolve, reject) => {
-    const img = document.createElement("img")
-
-    img.onload = function () {
-      const canvas = document.createElement("canvas")
-      canvas.width = width
-      canvas.height = height
-      const ctx = canvas.getContext("2d")
-      ctx!.drawImage(img, 0, 0, width, height)
-      console.log("Canvas Dimension", canvas.width, canvas.height)
-      resolve(canvas.toDataURL())
-    }
-
-    img.onerror = function (err) {
-      reject(err)
-    }
-
-    img.src = base64
-  })
-}
-
 
 
 function MaterialSymbolsAddPhotoAlternateOutline(props: SVGProps<SVGSVGElement>) {
@@ -251,3 +207,20 @@ function IcBaselineModeEdit(props: SVGProps<SVGSVGElement>) {
     <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" { ...props }><path fill="currentColor" d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75zM20.71 7.04a.996.996 0 0 0 0-1.41l-2.34-2.34a.996.996 0 0 0-1.41 0l-1.83 1.83l3.75 3.75z"></path></svg>
   )
 }
+
+// Delete Image
+{/* { preview && (
+          <button
+            type="button"
+            className="absolute border top-1 h-6 w-6 rounded right-1 bg-muted/90 hover:bg-muted text-muted-foreground"
+            // size="icon"
+            onClick={ (e) => {
+              e.stopPropagation()
+              setPreview("")
+              onDelete?.()
+            } }
+          >
+            <span className="sr-only">Delete Image</span>
+            <PhXBold className="text-sm" />
+          </button>
+        ) } */}

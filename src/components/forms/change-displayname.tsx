@@ -6,6 +6,9 @@ import { FormLabel } from "../base/form-field"
 import { useSession } from "@/lib/auth/next-auth.client"
 import updateDisplayname from "@/actions/session/update-dname-action"
 import { toast } from "sonner"
+import { infer as i, object, string } from "zod"
+import { useEffect } from "react"
+import { zodResolver } from "@hookform/resolvers/zod"
 
 type Inputs = {
   displayname: string
@@ -15,7 +18,12 @@ export default function ChangeDisplaynameForm() {
 
   const session = useSession()
 
-  const form = useForm<Inputs>({
+  const schema = object({
+    displayname: string().refine(str => str !== session.data?.user.name)
+  })
+
+  const form = useForm({
+    resolver: zodResolver(schema),
     defaultValues: {
       displayname: session.data?.user.name ?? ""
     },
@@ -29,6 +37,8 @@ export default function ChangeDisplaynameForm() {
       })
       toast.success("Displayname updated!")
     } catch (error) {
+      console.error(error)
+      toast.error("Unknown Error")
     }
   }
 

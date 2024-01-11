@@ -25,8 +25,9 @@
   scrollbar-color: var(--thumbBG) var(--scrollbarBG);
   &::-webkit-scrollbar { width: 8px; }
   &::-webkit-scrollbar-track { background: transparent; }
-  &::-webkit-scrollbar-thumb { background-color: var(--thumbBG); }
+  &::-webkit-scrollbar-thumb { background-color: var(--thumbBG); border-radius: 10px; }
 }
+
 
 /*                         */
 /* Layouts                 */
@@ -35,6 +36,7 @@ a{
   cursor: pointer;
   transition-property: all;
 }
+div { min-height: 0; min-width: 0;}
 .flex > * { min-height: 0px; min-width: 0px; }
 .grid > * { min-height: 0px; min-width: 0px; }
 
@@ -81,37 +83,40 @@ fieldset {
 }
 
 /* BUTTON MAIN CSS!!!  */
-
-button, [type='button'], [type='reset'], [type='submit'] {
-  font-size: 0.8rem /* 14px */;
-  line-height: 1;
-  font-weight: 400;
-  transition-property: all;
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  transition-duration: 100ms;
-  border-radius: 0.2rem;
-  /* padding-block: 0.75rem; */
-  /* padding-inline: 1rem; */
-
-
-  /* background-color: rgb(165 180 252 / 0.2);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem; */
-}
-form {
-  & button, [type='button'], [type='reset'], [type='submit'] {
-    padding-block: 0.6rem;
-    padding-inline: 1rem;
-    font-size: 0.8rem;
-    background-color: rgb(165 180 252 / 0.2);
+@layer base {
+  button, [type='button'], [type='reset'], [type='submit'] {
+    font-size: 0.8rem /* 14px */;
+    line-height: 1;
+    font-weight: 400;
+    transition-property: all;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 100ms;
+    border-radius: 0.2rem;
+    /* padding-block: 0.75rem; */
+    /* padding-inline: 1rem; */
+  
+  
+    /* background-color: rgb(165 180 252 / 0.2);
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 0.5rem;
+    gap: 0.5rem; */
+  }
+  
+  form {
+    & button, [type='button'], [type='reset'], [type='submit'] {
+      padding-block: 0.6rem;
+      padding-inline: 1rem;
+      font-size: 0.8rem;
+      background-color: rgb(165 180 252 / 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
   }
 }
+
 
 button:hover {
   --tw-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);

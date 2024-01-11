@@ -2,8 +2,8 @@
 
 import { cn } from "@/lib/tailwind"
 import { style } from "@/style"
-import CreateServerForm from "../../app/app/_form/create-server"
-import JoinServerForm from "../../app/app/_form/join-server"
+import CreateServerForm from "../forms/create-server"
+import JoinServerForm from "../forms/join-server"
 import { User } from "@prisma/client"
 import { CloseModalButton, ModalBase } from "@/components/base/modal"
 import { Description, Title } from "@/components/base/dialog"
@@ -17,6 +17,7 @@ const {
 } = createSlidingWindow(500, "index", "create", "join")
 
 export function AddServerDialog(p: {
+  trigger?: React.ReactNode
   children?: React.ReactNode
   user: User
 }) {
@@ -24,14 +25,12 @@ export function AddServerDialog(p: {
   const { goTo, goBack, resetState, parentContainerRef, states } = useSlidingWindowContainer()
 
   return (
-    <ModalBase onChange={ open => open && resetState() } trigger={ p.children }
+    <ModalBase onChange={ open => open && resetState() } trigger={ p.children ?? p.trigger }
       className={ { content: "flex flex-col transition-all focus:outline-none duration-200" } }
       contentRef={ parentContainerRef }
     >
       <CloseModalButton />
       <SlidingWindowProvider states={ states }>
-
-
         <SlidingPage state="index">
           <div>
             <div className="text-center p-4">
@@ -57,7 +56,7 @@ export function AddServerDialog(p: {
             <Title>Create a New Server</Title>
             <Description>Give your new server a personality with a name and an icon. You can always change it later.</Description>
           </header>
-          <CreateServerForm toBack={ () => goBack("index") } user={ p.user } />
+          <CreateServerForm back={ () => goBack("index") }/>
         </SlidingPage>
 
         <SlidingPage state="join">
@@ -67,7 +66,6 @@ export function AddServerDialog(p: {
           </header>
           <JoinServerForm toBack={ () => goBack("index") } />
         </SlidingPage>
-
 
       </SlidingWindowProvider>
     </ModalBase >

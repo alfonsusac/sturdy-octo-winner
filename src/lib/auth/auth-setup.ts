@@ -79,7 +79,7 @@ export const authOption: AuthOptions = {
       // Session is retrieved from token.
       // if using jwt, it seems that sessino is retrieved from token only returning default properties. (name, email, emage)
       // logAuth(`Checking Session | Trigger: ${trigger ?? "check"}`)
-      console.log(chalk.blue(" Session:"), strObj(session))
+      // console.log(chalk.blue(" Session:"), strObj(session))
       // console.log(chalk.blue(" NewSession:"), strObj(newSession))
       // console.log(chalk.blue(" Token:"), strObj(token))
       // console.log(chalk.blue(" User:"), strObj(user))
@@ -109,7 +109,7 @@ export const authOption: AuthOptions = {
         }
       } satisfies Session
 
-      console.log(newNewSession)
+      // console.log(newNewSession)
 
       // Return session for useSession
       return newNewSession

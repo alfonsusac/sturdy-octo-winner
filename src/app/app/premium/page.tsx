@@ -1,5 +1,5 @@
 import { FluentPremium12Filled } from "../@innersidebar/default"
-import { TitleBar } from "../_comps/titlebar"
+import { TitleBar } from "../titlebar"
 
 export default function PremiumPage() {
   return (

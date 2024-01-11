@@ -3,7 +3,7 @@
 import { cn } from "@/lib/tailwind"
 import { style } from "@/style"
 import { usePathname } from "next/navigation"
-import { ReactNode, forwardRef } from "react"
+import { ReactNode, cloneElement, forwardRef } from "react"
 import { URLPattern } from "urlpattern-polyfill/urlpattern"
 import { useActivePath } from "./lib/use-active-path"
 
@@ -12,8 +12,8 @@ export const SidebarItem = forwardRef<HTMLButtonElement, {
   label: React.ReactNode
   urlpattern?: string
   className?: string
-  children?: ReactNode
-}>(function SidebarItem({ label, urlpattern, className, ...rest }, ref) {
+  icon?: ReactNode
+}>(function SidebarItem({ label, urlpattern, className, icon, ...rest }, ref) {
 
   const selected = useActivePath(urlpattern ?? "")
 
@@ -27,6 +27,8 @@ export const SidebarItem = forwardRef<HTMLButtonElement, {
         className,
       ) }
       { ...rest }
-    />
+    >
+      {icon}
+    </button>
   )
 })

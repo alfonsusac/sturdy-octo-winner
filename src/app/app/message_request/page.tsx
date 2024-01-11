@@ -1,5 +1,5 @@
 import { FluentChat28Filled } from "../@innersidebar/default"
-import { TitleBar } from "../_comps/titlebar"
+import { TitleBar } from "../titlebar"
 
 export default function MessageRequestPage() {
   return (
