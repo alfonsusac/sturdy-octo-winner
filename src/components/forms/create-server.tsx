@@ -51,11 +51,11 @@ export default function CreateServerForm(
 
   async function onSubmit(data: z.infer<typeof formSchema>) {
     try {
-      const guild = await runServerAction(s_createGuild, {
-        userId: session.getUserId(),
-        serverName: data.serverName,
-        withServerPicture: !!data.serverPicture
-      })
+      // const guild = await runServerAction(s_createGuild, {
+      //   userId: session.getUserId(),
+      //   serverName: data.serverName,
+      //   withServerPicture: !!data.serverPicture
+      // })
 
       if (data.serverPicture) {
         // The Image received is in Blob and I would like it to be converted 
@@ -75,6 +75,7 @@ export default function CreateServerForm(
       }
 
       // router.push()
+      toast("finishing")
       p.finish()
 
 

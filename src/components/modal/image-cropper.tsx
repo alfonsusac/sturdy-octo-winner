@@ -162,7 +162,7 @@ export default function ImageCropper(
 
       </div>
 
-      <ModalBase open={ open } onOpenChange={ (status) => setOpen(status) } className={ {
+      <ModalBase open={ open } onChange={ (status) => setOpen(status) } className={ {
         content: "flex flex-col gap-2"
       } }>
         <div className="pt-4">

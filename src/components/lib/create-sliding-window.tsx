@@ -95,6 +95,7 @@ export function createSlidingWindow<S extends Readonly<string[]>>(duration: numb
     }, [animationState])
 
     const resetState = () => {
+      // console.log("Resetting State")
       setState(states[0] as T)
     }
 

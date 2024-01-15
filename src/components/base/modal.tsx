@@ -3,7 +3,7 @@
 import { cn } from '@/lib/tailwind'
 import { style } from '@/style'
 import * as Dialog from '@radix-ui/react-dialog'
-import { CSSProperties, ReactNode, Ref, SVGProps, forwardRef, useEffect, useState } from "react"
+import { CSSProperties, ReactNode, Ref, SVGProps, forwardRef, use, useEffect, useState } from "react"
 
 /**
  
@@ -28,12 +28,43 @@ import { CSSProperties, ReactNode, Ref, SVGProps, forwardRef, useEffect, useStat
  
  */
 
-function useCloseAnimation(duration = 200, onChange?: (open?: boolean) => void) {
-  const [isVisible, setVisible] = useState(false)
-  const [isOpen, setOpen] = useState(false)
+function useCloseAnimation(
+  duration = 200,
+  onChange?: (open: boolean) => void,
+  controlled?: {
+    open?: boolean,
+    onOpenChange?: (open: boolean) => void
+  }
+) {
+  const [isVisible, setVisible] = useState(false) // or use controlled.
+  const [isOpen, setOpen] = useState(false) // this is the delayed animation
+
+  // useEffect(() => {
+  //   console.log("controlled open useffect", controlled?.open, isVisible)
+  //   if (controlled && controlled.open !== undefined && (controlled.open !== isVisible)) {
+  //     console.log("hello?")
+  //     handleOpenChange(controlled.open)
+  //   }
+  // }, [controlled?.open])
+
+  // useEffect(() => {
+  //   if (controlled?.open !== undefined) {
+  //     console.log("Open changed from controlled", controlled?.open)
+  //     if (controlled?.open) {
+  //       setVisible(true)
+  //       onChange?.(true)
+  //     }
+  //     if (!controlled?.open) {
+  //       setOpen(false)
+  //       onChange?.(false)
+  //       setTimeout(() => setVisible(false), duration)
+  //     }
+  //   }
+  // }, [controlled?.open])
 
   // Callbacks
   const handleOpenChange = (open: boolean) => {
+    console.log("Handle open change", open)
     if (open) {
       setVisible(true)
       onChange?.(true)
@@ -43,10 +74,12 @@ function useCloseAnimation(duration = 200, onChange?: (open?: boolean) => void) 
       onChange?.(false)
       setTimeout(() => setVisible(false), duration)
     }
+    console.log("handle open change end", isVisible, isOpen)
   }
 
   useEffect(() => {
     if (isVisible) {
+      console.log("next frame")
       setOpen(true)
     }
   }, [isVisible])
@@ -64,22 +97,34 @@ export function ModalBase(p: {
   style?: {
     content?: CSSProperties,
   }
-  onChange?: (open?: boolean) => void,
+  onChange?: (open: boolean) => void,
   contentRef?: Ref<HTMLDivElement>,
   open?: boolean,
   onOpenChange?: (open: boolean) => void
 }) {
-  const { isVisible, isOpen, handleOpenChange } = useCloseAnimation(200, p.onChange)
-  useEffect(() => {
-    if (p.open !== undefined) {
-      handleOpenChange(p.open)
-    }
-  }, [p.open, handleOpenChange])
+  const { isVisible, isOpen, handleOpenChange } = useCloseAnimation(200, p.onChange, {
+    open: p.open
+  })
 
-  return <Dialog.Root open={ isVisible } onOpenChange={ (open) => {
-    handleOpenChange(open)
-    p.onOpenChange?.(open)
-  } }>
+  useEffect(() => {
+    // console.log("controlled open useffect", controlled?.open, isVisible)
+    if (p && p.open !== undefined) {
+      if (p.open === true && isVisible !== true) {
+        console.log("Controlled - Should be open")
+        handleOpenChange(true)
+      }
+      if (p.open === false && isOpen !== false) {
+        console.log("Controlled - Should be closed")
+        handleOpenChange(false)
+      }
+    }
+  }, [p.open])
+
+  return <Dialog.Root
+    open={ isVisible }
+    onOpenChange={ (open) => {
+      handleOpenChange(open)
+    } }>
     <Dialog.Trigger asChild>{ p.trigger }</Dialog.Trigger>
     <Dialog.Portal>
       <Overlay isOpen={ isOpen } className={ p.className?.overlay } />
@@ -117,7 +162,7 @@ const Overlay = forwardRef(function Overlay(p: { className?: string, isOpen?: bo
       setDisplaying(false)
     }
   }, [p.isOpen])
-  
+
   return <Dialog.Overlay data-state-transition={ isDisplaying } className={ cn(
     "fixed inset-0 bg-black",
     "transition-all duration-300",
