@@ -5,14 +5,18 @@ import { useForm } from "react-hook-form"
 import { generateSlug } from "random-word-slugs"
 import { cn } from "@/lib/tailwind"
 import { style } from "@/style"
-import { MutableRefObject, RefObject, SVGProps, useEffect, useState } from "react"
+import { SVGProps } from "react"
 import { Button, Fieldset, Form, Input, Label } from "../base/form"
-import { useDropzone } from "react-dropzone"
-import { useSession } from "@/lib/auth/next-auth.client"
 import * as z from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { toast } from "sonner"
 import { useAvatarUpload } from "../lib/use-avatar-upload"
+import { s_convertToWebpAction } from "@/actions/uploads/convert-to-webp"
+import { upload } from "../lib/upload"
+import { s_createGuild } from "@/actions/create-guild"
+import { useSession } from "@/lib/auth/next-auth.client"
+import { toast } from "sonner"
+import { runServerAction } from "@/lib/serveraction/return"
+import { useRouter } from "next/navigation"
 
 
 
@@ -25,14 +29,18 @@ import { useAvatarUpload } from "../lib/use-avatar-upload"
 export default function CreateServerForm(
   p: {
     back: () => void
+    finish: () => void
   }
 ) {
+  const session = useSession()
+  const router = useRouter()
+
   const formSchema = z.object({
     serverName: z.string().min(1).max(64),
-    serverPicture: z.instanceof(FileList).optional()
+    serverPicture: z.instanceof(Blob).optional()
   })
 
-  const form = useForm({
+  const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       serverName: generateSlug(2, { format: "title" }),
@@ -43,13 +51,45 @@ export default function CreateServerForm(
 
   async function onSubmit(data: z.infer<typeof formSchema>) {
     try {
-      console.log("Helo")
-      console.log(data)
-    } catch (error) {
+      const guild = await runServerAction(s_createGuild, {
+        userId: session.getUserId(),
+        serverName: data.serverName,
+        withServerPicture: !!data.serverPicture
+      })
 
+      if (data.serverPicture) {
+        // The Image received is in Blob and I would like it to be converted 
+        //  form png to webp first.However, you can't send Blob or ArrayBuffer to
+        //  the server action. Therefore, we need to create FormData first before
+        //  sending it to the server.
+
+        // Create Form Data from File
+        const formData = new FormData()
+        formData.append("image", data.serverPicture)
+
+        // Convert PNG to WEBP
+        const webpBufferString = await s_convertToWebpAction(formData)
+        const webpBlob = new Blob([Buffer.from(webpBufferString, "ascii")], { type: "image/webp" })
+
+        await upload(webpBlob, `server/${guild.id}.webp`)
+      }
+
+      // router.push()
+      p.finish()
+
+
+    } catch (error: any) {
+      console.log(error)
+      toast(error.message ?? "Unknown Error Occurred")
     }
   }
-  const { getRootProps, getInputProps, preview } = useAvatarUpload()
+  const { getRootProps, getInputProps, preview, isLoading } = useAvatarUpload({
+    onImageSelected(originalFile, resizedBlob) {
+      console.log("Original File Size", originalFile.size.toLocaleString())
+      console.log("Resized size", resizedBlob.size.toLocaleString())
+      form.setValue("serverPicture", resizedBlob)
+    },
+  })
 
 
 
@@ -78,9 +118,14 @@ export default function CreateServerForm(
             "outline-dashed outline-2 outline-indigo-200/40",
             "flex flex-row items-center justify-center",
             "hover:shadow-[0px_0px_0px_8px_#717AC233]",
-            preview && "outline-none"
+            preview && "outline-none",
+            isLoading && "pointer-events-none"
           ) } { ...getRootProps() } type="button">
-            <img alt="New Server Profile Picture" src={ preview ?? undefined } className={ cn("w-full h-full object-cover absolute hidden", preview && "block") } />
+            {/* {
+              isLoading && <div className="absolute inset-0 bg-black/80 z-10 pointer-events-none">
+              </div>
+            } */}
+            <img alt="New Server Profile Picture" src={ preview ?? undefined } className={ cn("w-full h-full object-cover absolute hidden", preview && "block", isLoading && "blur-sm") } />
             <FluentImageAdd20Filled className="text-3xl text-indigo-200/80" />
           </button>
           {/* <small className="block self-center mt-2 text-indigo-300/40 data-[emphasize=true]:text-red-500/80">
@@ -88,6 +133,7 @@ export default function CreateServerForm(
           </small> */}
           <input className="hidden" { ...form.register("serverPicture") } { ...getInputProps() } />
         </Fieldset>
+        {/* <SpinnerSVG className="absolute left-1/2 top-1/2 block text-4xl z-10 -translate-x-1/2 -translate-y-1/2 text-indigo-200/60" /> */ }
 
         <Fieldset name="serverName" className="mt-4 flex flex-col items-stretch">
           <Label>Server Name</Label>
@@ -102,7 +148,7 @@ export default function CreateServerForm(
           onClick={ p.back }
           type="button"
         >Back</button>
-        <button type="submit">Create</button>
+        {/* <button type="submit">Create</button> */ }
         <Button className={ cn(style.dialogButton, "mt-0") }>Create</Button>
       </div>
     </Form >
@@ -224,43 +270,6 @@ export default function CreateServerForm(
   //   </form>
   // )
 }
-
-function UploadImageButton(p: {
-  inputref: MutableRefObject<HTMLInputElement | null>
-  imgref: RefObject<HTMLImageElement>
-}) {
-  // const inputref = useRef<HTMLInputElement>(null)
-
-  return (
-    <button className={ cn(
-      "self-center",
-      "mt-2",
-      "w-20 h-20",
-      "outline-dashed outline-2 outline-indigo-200/40",
-      "rounded-full",
-      "flex flex-row items-center justify-center",
-      "text-3xl",
-      "text-indigo-200/80",
-      "p-0",
-      "overflow-hidden",
-      "relative",
-      "shadow-black",
-      "hover:shadow-[0px_0px_0px_8px_#717AC233]",
-    ) }
-      onClick={ () => p.inputref.current?.click() }
-      type="button"
-    >
-      <img
-        alt="New Server Profile Picture"
-        ref={ p.imgref }
-        className={ cn(
-          "w-full h-full object-cover absolute hidden data-[show]:block"
-        ) } />
-      <FluentImageAdd20Filled />
-    </button>
-  )
-}
-
 
 function FluentImageAdd20Filled(props: SVGProps<SVGSVGElement>) {
   return (

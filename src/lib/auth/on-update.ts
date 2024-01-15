@@ -4,6 +4,7 @@ import { JWTofRegisteredUser } from "@/types/next-auth"
 
 export function onUpdateHandler(param: JWTUpdateParam ,prevToken: JWT) {
   const { name, username, email, picture, provider, userid } = param.data
+  console.log("On Update Handler...", param.data)
   return {
     ...prevToken,
     name: name ?? prevToken.name!,

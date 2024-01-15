@@ -18,7 +18,7 @@
 
 import { cn } from "@/lib/tailwind"
 import Image from "next/image"
-import { SVGProps, useRef, useState } from "react"
+import { SVGProps, useEffect, useRef, useState } from "react"
 import AvatarEditor from "react-avatar-editor"
 import { useDropzone } from "react-dropzone"
 import { Slider } from "../base/slider"
@@ -29,7 +29,7 @@ import { createCanvasFromResizedBase64 } from "@/lib/file"
 
 export default function ImageCropper(
   {
-    aspectRatio = 1,
+    aspectRatio = 1, // Support multiple aspect ratio
     width,
     defaultValue,
     onCrop,
@@ -39,7 +39,7 @@ export default function ImageCropper(
     aspectRatio?: number
     width: number
     defaultValue?: string | null
-    onCrop?: (value: {blob: Blob, url: string}) => Promise<void>
+    onCrop?: (value: { blob: Blob, url: string }) => Promise<void>
     onError?: (errors: string[]) => void
     className?: string
   }
@@ -60,45 +60,81 @@ export default function ImageCropper(
       setScale(1.0)
       setOpen(true)
     },
-    onDropRejected(fileRejections, event) {
+    onDropRejected(fileRejections) {
       fileRejections.map(f => toast.error(f.errors.map(e => e.message).join('\n')))
     },
   })
 
   const [preview, setPreview] = useState<string>(defaultValue || "")
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [toastID, setToastID] = useState<number | string>()
 
-  function cropImage() {
+  async function cropImage(e: any) {
+    e.preventDefault()
     setIsSubmitting(true)
     let toastID = toast("Uploading profile picture")
-    processCroppedImage().then(
-      (result) => {
-        onCrop?.(result)
-        toast.success("Upload Success!!")
-        setPreview(result.url)
-        setOpen(false)
-      }
-    ).catch(
-      err => {
-        console.log(err)
-        onError?.(err)
-        toast.error(err?.message ?? "Unknown Error")
-      }
-    ).finally(
-      () => {
-        toast.dismiss(toastID)
-        setIsSubmitting(false)
-      }
-    )
+    setToastID(toastID)
+
+    // The reason processCroppedImage() is not called here is because 
+    //  somehow it lags popping up the `toast` above, therefore
+    //  I decided to processCroppedImage on the next render cycle
+    //
+    // await delay(50) // so that the toast pops up instantly?
+    // processCroppedImage().then(
+    //   async (result) => {
+    //     await onCrop?.(result)
+    //     toast.success("Upload Success!!")
+    //     setPreview(result.url)
+    //     setOpen(false)
+    //   }
+    // ).catch(
+    //   err => {
+    //     console.log(err)
+    //     onError?.(err)
+    //     toast.error(err?.message ?? "Unknown Error")
+    //   }
+    // ).finally(
+    //   () => {
+    //     toast.dismiss(toastID)
+    //     setIsSubmitting(false)
+    //   }
+    // )
   }
 
-
-  const processCroppedImage = async () => {
-    const dataUrl = editor.current?.getImage()?.toDataURL("image/png")
-    const resizedDataUrl = await createCanvasFromResizedBase64(dataUrl!, width, width / aspectRatio);
-    await onCrop?.(resizedDataUrl)
-    return resizedDataUrl
-  }
+  const [isProcessing, setProcessing] = useState(false) // necessary to prevent trigger smh
+  useEffect(() => {
+    const processCroppedImage = async () => {
+      const dataUrl = editor.current?.getImage()?.toDataURL("image/png")
+      const resizedDataUrl = await createCanvasFromResizedBase64(dataUrl!, width)
+      return resizedDataUrl
+    }
+    if (isSubmitting) {
+      if (!isProcessing) {
+        setProcessing(true) // Prevent double trigger lmao
+        processCroppedImage().then(
+          async (result) => {
+            await onCrop?.(result)
+            toast.success("Upload Success!!")
+            setPreview(result.url)
+            setOpen(false)
+          }
+        ).catch(
+          err => {
+            console.log(err)
+            onError?.(err)
+            toast.error(err?.message ?? "Unknown Error")
+          }
+        ).finally(
+          () => {
+            toast.dismiss(toastID)
+            setProcessing(false)
+            setIsSubmitting(false)
+            setToastID(undefined)
+          }
+        )
+      }
+    }
+  }, [isSubmitting, onCrop, onError, toastID, width, isProcessing])
 
   return (
     <div>
@@ -132,15 +168,10 @@ export default function ImageCropper(
         <div className="pt-4">
           <CloseModalButton />
           <Title className="px-8">Edit Image</Title>
-          <div
-            className="mt-4 relative overflow-hidden"
-            style={ {
-              aspectRatio,
-            } }
-          >
+          <div className="mt-4 relative overflow-hidden" style={ { aspectRatio } }>
             { inputImage && (
               <AvatarEditor
-                className={ cn("absolute max-w-full max-h-full inset-0", isSubmitting && "brightness-75") }
+                className={ cn("absolute max-w-full max-h-full inset-0", isSubmitting && "brightness-50") }
                 scale={ scale }
                 ref={ editor }
                 width={ 1000 }
@@ -153,10 +184,7 @@ export default function ImageCropper(
           </div>
           <div className="mx-8 my-4 flex gap-4 text-4xl">
             <MaterialSymbolsPhotoSizeSelectSmall />
-            <Slider
-              min={ 1 }
-              step={ 0.01 }
-              max={ 2 }
+            <Slider min={ 1 } step={ 0.01 } max={ 2 }
               defaultValue={ [1] }
               onValueChange={ ([value]) => setScale(value) }
             />
@@ -181,12 +209,6 @@ function MaterialSymbolsAddPhotoAlternateOutline(props: SVGProps<SVGSVGElement>)
   )
 }
 
-
-function PhXBold(props: SVGProps<SVGSVGElement>) {
-  return (
-    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 256 256" { ...props }><path fill="currentColor" d="M208.49 191.51a12 12 0 0 1-17 17L128 145l-63.51 63.49a12 12 0 0 1-17-17L111 128L47.51 64.49a12 12 0 0 1 17-17L128 111l63.51-63.52a12 12 0 0 1 17 17L145 128Z"></path></svg>
-  )
-}
 
 
 function MaterialSymbolsPhotoSizeSelectSmall(props: SVGProps<SVGSVGElement>) {
@@ -224,3 +246,10 @@ function IcBaselineModeEdit(props: SVGProps<SVGSVGElement>) {
             <PhXBold className="text-sm" />
           </button>
         ) } */}
+
+
+// function PhXBold(props: SVGProps<SVGSVGElement>) {
+//   return (
+//     <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 256 256" { ...props }><path fill="currentColor" d="M208.49 191.51a12 12 0 0 1-17 17L128 145l-63.51 63.49a12 12 0 0 1-17-17L111 128L47.51 64.49a12 12 0 0 1 17-17L128 111l63.51-63.52a12 12 0 0 1 17 17L145 128Z"></path></svg>
+//   )
+// }

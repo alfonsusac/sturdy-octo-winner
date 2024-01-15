@@ -75,6 +75,7 @@ export function ModalBase(p: {
       handleOpenChange(p.open)
     }
   }, [p.open, handleOpenChange])
+
   return <Dialog.Root open={ isVisible } onOpenChange={ (open) => {
     handleOpenChange(open)
     p.onOpenChange?.(open)
@@ -107,7 +108,17 @@ export function FluentDismiss12Filled(props: SVGProps<SVGSVGElement>) {
 
 
 const Overlay = forwardRef(function Overlay(p: { className?: string, isOpen?: boolean }, ref: Ref<HTMLDivElement>) {
-  return <Dialog.Overlay data-state-transition={ p.isOpen } className={ cn(
+  const [isDisplaying, setDisplaying] = useState(false)
+
+  useEffect(() => {
+    if (p.isOpen === true) {
+      setDisplaying(true)
+    } else {
+      setDisplaying(false)
+    }
+  }, [p.isOpen])
+  
+  return <Dialog.Overlay data-state-transition={ isDisplaying } className={ cn(
     "fixed inset-0 bg-black",
     "transition-all duration-300",
     "opacity-0",
@@ -118,8 +129,28 @@ const Overlay = forwardRef(function Overlay(p: { className?: string, isOpen?: bo
   />
 })
 
-const Content = forwardRef(function Content(p: { className?: string, isOpen?: boolean, children: ReactNode, style?: CSSProperties }, ref: Ref<HTMLDivElement>) {
-  return <Dialog.Content data-state-transition={ p.isOpen } className={ cn(
+const Content = forwardRef(function Content(
+  p: {
+    className?: string,
+    isOpen?: boolean,
+    children: ReactNode,
+    style?: CSSProperties
+  }, ref: Ref<HTMLDivElement>
+) {
+  const [isDisplaying, setDisplaying] = useState(false)
+
+  // Somehow the rendering of Content and Overlay are delayed such that when
+  //  Content is rendered, isOpen is already set to true (??)
+  //  for now, this useEffect is needed to delay the animation
+  useEffect(() => {
+    if (p.isOpen === true) {
+      setDisplaying(true)
+    } else {
+      setDisplaying(false)
+    }
+  }, [p.isOpen])
+
+  return <Dialog.Content data-state-transition={ isDisplaying } className={ cn(
     "fixed outline-none",
     "top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2", //Center
     "w-full max-w-sm", // Default Size of Dialog

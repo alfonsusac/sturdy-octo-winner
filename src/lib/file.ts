@@ -35,33 +35,52 @@ export function canvas2Blob(canvas: HTMLCanvasElement) {
   })
 }
 
-export async function resizeAvatarToSquare(
-  base64: string,
-  targetWidth: number,
-  targetHeight: number,
-) {
-  const img = await loadImage(base64)
-  const canvas = createCanvas(targetWidth, targetHeight)
+export function bufferToBase64() {
 
-  const ctx = canvas.getContext("2d")
-  ctx?.drawImage(img, 0, 0, targetWidth, targetHeight)
-
-  const url = canvas.toDataURL()
-  const blob = await canvas2Blob(canvas)
-
-  return { blob, url }
 }
+
+// export async function resizeAvatarToSquare(input: Buffer) {
+//   const buffer = await sharp(input).resize(512, 512, {
+//     fit: "cover",
+//     position: "center"
+//   }).toBuffer()
+
+//   const url = `data:image/png;base64,${buffer.toString('base64')}}`
+
+//   return {buffer, url}
+// }
 
 export async function createCanvasFromResizedBase64(
   base64: string,
-  targetWidth: number,
-  targetHeight: number
+  sideLength: number,
+  // Todo: Support different aspect ratio?
 ) {
-  const img = await loadImage(base64)
-  const canvas = createCanvas(targetWidth, targetHeight)
+  const img = await loadImage(base64) //
 
+  const canvas = createCanvas(sideLength, sideLength)
   const ctx = canvas.getContext("2d")
-  ctx?.drawImage(img, 0, 0, targetWidth, targetHeight)
+  // ctx?.drawImage(img, 0, 0, targetWidth, targetHeight)
+
+  const srcWidth = img.naturalWidth
+  const srcHeight = img.naturalHeight
+
+  let scale = 1
+  let startX = 0
+  let startY = 0
+
+  if (srcHeight > srcWidth) {
+    scale = sideLength / srcWidth
+    startX = 0
+    startY = - ((srcHeight - srcWidth) / 2) * scale
+  }
+
+  if (srcWidth >= srcHeight) {
+    scale = sideLength / srcHeight
+    startX = - ((srcWidth - srcHeight) / 2) * scale
+    startY = 0
+  }
+
+  ctx?.drawImage(img, startX, startY, srcWidth * scale, srcHeight * scale)
 
   const url = canvas.toDataURL()
   const blob = await canvas2Blob(canvas)
@@ -99,14 +118,16 @@ export async function createCanvasFromResizedBase64(
 }
 
 export function readFileAsDataURL(file: File) {
-  return new Promise((resolve, reject) => {
+  return new Promise<string>((resolve, reject) => {
     const reader = new FileReader()
     reader.onload = function () {
-      resolve(reader.result)
+      resolve(reader.result as string)
+      //readAsDataURL()	- The result is a string with a data: URL representing the file's data.
+      //https://developer.mozilla.org/en-US/docs/Web/API/FileReader/result
     }
     reader.onerror = function () {
       reject(reader.error)
     }
-    reader.readAsDataURL(file);
+    reader.readAsDataURL(file)
   })
 }

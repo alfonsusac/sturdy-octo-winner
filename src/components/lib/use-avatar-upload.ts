@@ -1,29 +1,34 @@
-import { readFileAsDataURL } from "@/lib/file"
-import { useEffect, useState } from "react"
+import { createCanvasFromResizedBase64, readFileAsDataURL } from "@/lib/file"
+import { useEffect, useState, useTransition } from "react"
 import { FileRejection, useDropzone } from "react-dropzone"
 import { toast } from "sonner"
 
 export function useAvatarUpload(
   param?: {
-    transformImage(file: File): void
-    onImageSelected?(file: File): void
+    onImageSelected?(
+      originalFile: File,
+      resizedBlob: Blob,
+    ): void
     onImageRejected?(rejection: FileRejection): void
     onError?(error: Error): void
   }
 ) {
   const [preview, setPreview] = useState<null | string>(null)
+  const [isPending, startTransition] = useTransition()
   const dropzone = useDropzone({
     accept: { "image/jpeg": [], "image/png": [] },
     noKeyboard: true,
     multiple: false,
-    async onDropAccepted(dropped, event) {
-      const imgFile = dropped[0]
-      const imgBase64 = await readFileAsDataURL(imgFile)
-
-
-      
-      setPreview(URL.createObjectURL(dropped[0]))
-      param?.onImageSelected?.(dropped[0])
+    async onDropAccepted(dropped) {
+      // setLoading(true)
+      startTransition(async () => {
+        const imgFile = dropped[0]
+        const imgBase64 = await readFileAsDataURL(imgFile)
+        const newimg = await createCanvasFromResizedBase64(imgBase64, 512)
+        setPreview(newimg.url)
+        // setLoading(false)
+        param?.onImageSelected?.(dropped[0], newimg.blob)
+      })
     },
     onDropRejected(fileRejections) {
       param?.onImageRejected?.(fileRejections[0])
@@ -42,7 +47,7 @@ export function useAvatarUpload(
     }
   }, [preview])
 
-  return { ...dropzone, preview }
+  return { ...dropzone, preview, isLoading: isPending }
 }
 
 

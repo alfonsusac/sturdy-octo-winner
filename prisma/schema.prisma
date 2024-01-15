@@ -11,23 +11,21 @@ datasource db {
   directUrl = env("PROD_DB_URL")
 }
 
-
 model User {
-  id             String             @id @default(uuid())
-  email          String             @unique
+  id             String          @id @default(uuid())
+  email          String          @unique
   accounts       Account[]
   username       String
   displayName    String
   profilePicture String
-  friendsOf      User[]             @relation("userFriends")
-  friends        User[]             @relation("userFriends")
+  friendsOf      User[]          @relation("userFriends")
+  friends        User[]          @relation("userFriends")
   friendRequest  FriendRequest[]
   server         ServerMember[]
-  createdAt      DateTime           @default(now())
-  bio            String             @default("")
-  ownedServer    Server[]
+  createdAt      DateTime        @default(now())
+  bio            String          @default("")
+  ownedServer    Guild[]
 }
-
 
 enum AcccountProvider {
   google
@@ -39,7 +37,8 @@ model Account {
   userId            String
   user              User             @relation(fields: [userId], references: [id])
   providerType      AcccountProvider
-  providerAccountId String           
+  providerAccountId String
+
   @@unique([providerAccountId, providerType], name: "providerData")
 }
 
@@ -61,17 +60,17 @@ enum FriendRequestStatus {
   BLOCKED
 }
 
-model Server {
+model Guild {
   id             String         @id @default(uuid())
   name           String
-  profilePicture String
-  owner          User           @relation(fields: [userId], references: [id])
+  profilePicture Boolean
   members        ServerMember[]
-  userId         String
+  owner          User           @relation(fields: [ownerUserId], references: [id])
+  ownerUserId    String
 }
 
 model ServerMember {
-  server   Server @relation(fields: [serverId], references: [id])
+  server   Guild  @relation(fields: [serverId], references: [id])
   serverId String
   user     User   @relation(fields: [userId], references: [id])
   userId   String

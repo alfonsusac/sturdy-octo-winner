@@ -12,15 +12,15 @@ export async function createServer({ name, profilePicture }: {
 }) {
 
   const { id } = await Auth.getUserSession()
-  const newServer = await prisma.server.create({
-    data: {
-      name,
-      profilePicture,
-      owner: { connect: { id } }
-    }
-  })
+  // const newServer = await prisma.server.create({
+  //   data: {
+  //     name,
+  //     profilePicture,
+  //     owner: { connect: { id } }
+  //   }
+  // })
 
-  return newServer
+  // return newServer
 
 }
 

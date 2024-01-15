@@ -3,7 +3,6 @@
 import prisma from "@/lib/db/prisma"
 import { getSessionUserData } from "./user"
 import { redirect } from "next/navigation"
-import { Server } from "@prisma/client"
 import { S3Client, ListBucketsCommand } from "@aws-sdk/client-s3";
 
 export const createNewServer = async (
@@ -11,7 +10,7 @@ export const createNewServer = async (
   pfp: Buffer
 ) => {
   const user = await getSessionUserData()
-  let server: Server
+  // let server: Server
   // Upload to S3
 
 

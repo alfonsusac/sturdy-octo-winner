@@ -2,25 +2,35 @@
 
 import { Auth } from "@/lib/auth/auth-setup"
 import { S3 } from "@/lib/upload/config"
-import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3"
+import { PutObjectCommand } from "@aws-sdk/client-s3"
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner"
-import { randomUUID } from "crypto"
-import { getServerSession } from "next-auth"
 
-export async function getPresignedURLfromServer() {
+export async function getPresignedURL(pathAndKey: string, type?: string) {
   const user = await Auth.getUserSession()
   if (!user) throw new Error("Not Authenticated")
-  const key = `${user.id}.png`
   const command = new PutObjectCommand({
     Bucket: 'diskott-avatars',
-    Key: key,
-    ContentType: 'image/png',
+    Key: pathAndKey,
+    ContentType: type
   })
   try {
     const signedUrl = await getSignedUrl(S3, command, { expiresIn: 10 })
     return signedUrl
   } catch (error) {
+    console.log("Error getting presigned url")
     console.log(error)
     return null
   }
 }
+
+// export async function getPresignedURLForUserProfilePicture() {
+//   const user = await Auth.getUserSession()
+//   if (!user) throw new Error("Not Authenticated")
+//   return await getPresignedURL(`user/${user.id}${user.image?.at(-5) === '0' ? "1" : user.image?.at(-5) === "1" ? "0" : "1"}.png`)
+// }
+
+// export async function getPresignedURLForServerImage(serverid: string) {
+//   const user = await Auth.getUserSession()
+//   if (!user) throw new Error("Not Authenticated")
+//   return await getPresignedURL(`server/${serverid}.webp`)
+// }

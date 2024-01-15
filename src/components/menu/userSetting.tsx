@@ -1,5 +1,5 @@
 import updateProfilePicture from "@/actions/session/update-pfp-action"
-import { getPresignedURLfromServer } from "@/actions/uploads/get-presigned-url"
+// import { getPresignedURLForUserProfilePicture } from "@/actions/uploads/get-presigned-url"
 import { SettingPage, TabContent, TabTrigger, dividerStyle, tabTriggerStyle } from "@/components/base/settings"
 import ChangeDisplaynameForm from "@/components/forms/change-displayname"
 import ImageCropper from "@/components/modal/image-cropper"
@@ -8,6 +8,7 @@ import { useSession } from "@/lib/auth/next-auth.client"
 import { getURL } from "next/dist/shared/lib/utils"
 import { SVGProps } from "react"
 import { toast } from "sonner"
+import { upload } from "../lib/upload"
 
 export default function UserSettingView(p: {
   children: React.ReactNode
@@ -50,17 +51,25 @@ export default function UserSettingView(p: {
                   width={ 256 }
                   defaultValue={ session.data?.user.image }
                   onCrop={ async (img) => {
-                    // const buffer2 = window.atob(dataURL)
+                    const user = session.data?.user
+                    if(!user) throw new Error("Not Authenticated")
+
                     // const buffer2 = await fetch(dataURL).then(res => res.blob())
                     // const buffer = Buffer.from(dataURL.replace(/^data:image\/\w+;base64,/, ""), 'base64')
-                    const uploadURL = await getPresignedURLfromServer()
-                    if (!uploadURL) throw new Error('Something went wrong when prefetching presigned URL')
-                    const res = await fetch(uploadURL, {
-                      method: "PUT", body: img.blob,
-                      headers: { 'Content-Type': "image/png" }
-                    })
-                    const newImageUrl = uploadURL.split('?')[0]
-                    await session.update("update-display-picture", async () => await updateProfilePicture({pfp: newImageUrl}) )
+                    // const uploadURL = await getPresignedURLForUserProfilePicture()
+                    // if (!uploadURL) throw new Error('Something went wrong when prefetching presigned URL')
+                    // const res = await fetch(uploadURL, {
+                    //   method: "PUT", body: img.blob,
+                    // })
+                    // const newImageUrl = uploadURL.split('?')[0]
+                    
+                    await session.update("update-display-picture",
+                      async () => await updateProfilePicture(
+                        {
+                          pfp: await upload(img.blob, `user/${user.userid}${user.image?.at(-5) === '0' ? "1" : user.image?.at(-5) === "1" ? "0" : "1"}.png`)
+                        }
+                      )
+                    )
                   }}
                 />
               </div>
