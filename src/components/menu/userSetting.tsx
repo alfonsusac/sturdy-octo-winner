@@ -1,13 +1,10 @@
 import updateProfilePicture from "@/actions/session/update-pfp-action"
-// import { getPresignedURLForUserProfilePicture } from "@/actions/uploads/get-presigned-url"
 import { SettingPage, TabContent, TabTrigger, dividerStyle, tabTriggerStyle } from "@/components/base/settings"
 import ChangeDisplaynameForm from "@/components/forms/change-displayname"
 import ImageCropper from "@/components/modal/image-cropper"
 import LogoutButton from "@/components/ui/logout"
 import { useSession } from "@/lib/auth/next-auth.client"
-import { getURL } from "next/dist/shared/lib/utils"
 import { SVGProps } from "react"
-import { toast } from "sonner"
 import { upload } from "../lib/upload"
 
 export default function UserSettingView(p: {
