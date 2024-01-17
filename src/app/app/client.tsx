@@ -2,19 +2,18 @@
 "use client"
 
 import { useSession } from "@/lib/auth/next-auth.client"
-import { cn } from "@/lib/tailwind"
 import { Session } from "next-auth"
 import { SessionProvider } from "next-auth/react"
-import { usePathname } from "next/navigation"
-import { ComponentProps, ReactNode, RefObject, SVGProps, createContext, forwardRef, useContext, useRef } from "react"
+import { ReactNode, SVGProps, useState } from "react"
 import UserSettingView from "../../components/menu/userSetting"
-import { style } from "@/style"
-import { User } from "@prisma/client"
-import { URLPattern } from "next/server"
+import { Guild, User } from "@prisma/client"
 import { BaseScreen } from "./screen"
+import { SidebarItem } from "@/components/parts/sidebar-item"
 
+
+// -------------------------------------------
 // ※ Providers
-//     - session provider
+// -------------------------------------------
 
 export function Providers(p: {
   children: React.ReactNode
@@ -28,6 +27,12 @@ export function Providers(p: {
     </SessionProvider>
   )
 }
+
+
+
+// -------------------------------------------
+// ※ User Status
+// -------------------------------------------
 
 export function UserStatus(p: {
   user: User
@@ -63,3 +68,90 @@ export function FluentSettings28Filled(props: SVGProps<SVGSVGElement>) {
 }
 
 
+
+// -------------------------------------------
+// ※ Guild List
+// -------------------------------------------
+
+export let addServerToList: ((guild: Guild) => void)
+export let removeServerFromList: ((id: string) => void)
+
+export function GuildList(
+  props: {
+    children: ReactNode
+    prefetchedData: Guild[]
+  }
+) {
+  const [guilds, setGuilds] = useState(props.prefetchedData)
+
+  addServerToList = (guild) => {
+    if (guilds.find(g => g.id === guild.id)) return
+    setGuilds(prev => [...prev, guild])
+  }
+
+  removeServerFromList = (id) => {
+    if (guilds.find(g => g.id == id)) {
+      setGuilds(prev => prev.filter(g => g.id !== id))
+    }
+  }
+
+
+
+  // updateServerList = () => {
+  //   console.log("ServerList Update Test")
+  //   setGuilds(prev => [...prev, {
+  //     id: crypto.randomUUID(),
+  //     name: "Hello",
+  //     ownerUserId: "asd",
+  //     profilePicture: true
+  //   }])
+  // }
+
+  // serverList.update = () => {
+  //   console.log("ServerList Update Test")
+  //   setGuilds(prev => [...prev, {
+  //     id: crypto.randomUUID(),
+  //     name: "Hello",
+  //     ownerUserId: "asd",
+  //     profilePicture: true
+  //   }])
+  // }
+
+  return (
+    <>
+      {
+        guilds.map((guild, i) => (
+          <SidebarItem
+            className={
+              "bg-indigo-300/10 rounded-2xl hover:rounded-xl hover:bg-indigo-600 transition-all select-none font-medium text-sm"
+            }
+
+            label={ guild.name }
+            key={ i }
+            icon={
+              !guild.profilePicture
+                ? guild.name.split(' ').map(str => str[0]).slice(0, 2).join('')
+                : <img src={`https://diskott-avatars.s3.ap-southeast-1.amazonaws.com/server/${guild.id}.webp`}/>
+              }
+          />
+        ))
+      }
+    </>
+  )
+
+}
+
+
+export function DefaultServerIcon(props: SVGProps<SVGSVGElement>) {
+  // RiCommunityFill
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 14 14" { ...props }><path fill="currentColor" fillRule="evenodd" d="M7 0a4.5 4.5 0 0 0-2.977 7.875c.337.297.528.66.55 1.024c.021.355-.113.788-.572 1.247c-.558.558-1.35.757-1.978.623a1.322 1.322 0 0 1-.734-.407C1.119 10.168 1 9.89 1 9.5a.5.5 0 0 0-1 0v.828c0 .844.299 1.618.796 2.223a.622.622 0 0 1 .28.156l.003.004a1.516 1.516 0 0 0 .274.176c.213.106.552.222 1.022.222c1.505 0 2.525-1.24 2.963-2.34a.625.625 0 0 1 1.161.462c-.34.857-1.048 1.956-2.149 2.597h5.3c-1.101-.641-1.808-1.74-2.15-2.597a.625.625 0 1 1 1.162-.462c.438 1.1 1.458 2.34 2.963 2.34c.47 0 .809-.116 1.021-.223a1.522 1.522 0 0 0 .275-.175l.003-.004a.623.623 0 0 1 .28-.156A3.485 3.485 0 0 0 14 10.328V9.5a.5.5 0 1 0-1 0c0 .39-.12.668-.289.862c-.173.199-.425.34-.735.407c-.628.134-1.419-.065-1.977-.623c-.46-.46-.593-.892-.572-1.247c.022-.365.213-.727.55-1.024A4.5 4.5 0 0 0 7 0m-.964 5.25a.786.786 0 1 1-1.572 0a.786.786 0 0 1 1.572 0m2.714.786a.786.786 0 1 0 0-1.572a.786.786 0 0 0 0 1.572" clipRule="evenodd"></path></svg>
+  )
+}
+
+
+export function StreamlineOctopusSolid(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 14 14" { ...props }><path fill="currentColor" fillRule="evenodd" d="M7 0a4.5 4.5 0 0 0-2.977 7.875c.337.297.528.66.55 1.024c.021.355-.113.788-.572 1.247c-.558.558-1.35.757-1.978.623a1.322 1.322 0 0 1-.734-.407C1.119 10.168 1 9.89 1 9.5a.5.5 0 0 0-1 0v.828c0 .844.299 1.618.796 2.223a.622.622 0 0 1 .28.156l.003.004a1.516 1.516 0 0 0 .274.176c.213.106.552.222 1.022.222c1.505 0 2.525-1.24 2.963-2.34a.625.625 0 0 1 1.161.462c-.34.857-1.048 1.956-2.149 2.597h5.3c-1.101-.641-1.808-1.74-2.15-2.597a.625.625 0 1 1 1.162-.462c.438 1.1 1.458 2.34 2.963 2.34c.47 0 .809-.116 1.021-.223a1.522 1.522 0 0 0 .275-.175l.003-.004a.623.623 0 0 1 .28-.156A3.485 3.485 0 0 0 14 10.328V9.5a.5.5 0 1 0-1 0c0 .39-.12.668-.289.862c-.173.199-.425.34-.735.407c-.628.134-1.419-.065-1.977-.623c-.46-.46-.593-.892-.572-1.247c.022-.365.213-.727.55-1.024A4.5 4.5 0 0 0 7 0m-.964 5.25a.786.786 0 1 1-1.572 0a.786.786 0 0 1 1.572 0m2.714.786a.786.786 0 1 0 0-1.572a.786.786 0 0 0 0 1.572" clipRule="evenodd"></path></svg>
+  )
+}

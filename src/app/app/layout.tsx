@@ -1,11 +1,12 @@
 import { cn } from "@/lib/tailwind"
 import { style } from "@/style"
-import { SVGProps } from "react"
+import { ReactNode, SVGProps } from "react"
 import { getSessionUserData } from "@/controller/user"
 import { Auth } from "@/lib/auth/auth-setup"
-import { Providers, UserStatus } from "./client"
+import { GuildList, Providers, UserStatus } from "./client"
 import { AddServerDialog } from "../../components/modal/add-server"
-import { SidebarItem } from "@/components/sidebar-item"
+import { SidebarItem } from "@/components/parts/sidebar-item"
+import prisma from "@/lib/db/prisma"
 
 
 export default async function AppLayout(
@@ -17,12 +18,26 @@ export default async function AppLayout(
 ) {
   const { session } = await Auth.getUserSession()
   const user = await getSessionUserData() // for user status
+  const guildList = await prisma.guild.findMany({
+    where: {
+      members: {
+        some: {
+          userId: user.id
+        }
+      }
+    }
+  })
   return (
     <Providers session={ session }>
 
-      <Sidebar className="h-auto flex flex-col">
+      <Sidebar className="h-auto flex flex-col gap-2 overflow-y-scroll scrollbar-none">
         <SidebarItem label="Home" urlpattern="/app*" icon={ <HomeIcon /> } />
         <hr className="w-1/2 h-px border-indigo-300/20 self-center my-2" />
+        <GuildList
+          prefetchedData={ guildList }
+        >
+          <></>
+        </GuildList>
         <AddServerDialog user={ user } trigger={
           <SidebarItem label="Add New Server" icon={ <AddIcon className="text-2xl" /> } />
         } />
@@ -51,6 +66,23 @@ function AddIcon(props: SVGProps<SVGSVGElement>) {
   return (<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 16 16" { ...props }><path fill="currentColor" d="M8.5 2.75a.75.75 0 0 0-1.5 0V7H2.75a.75.75 0 0 0 0 1.5H7v4.25a.75.75 0 0 0 1.5 0V8.5h4.25a.75.75 0 0 0 0-1.5H8.5V2.75Z"></path></svg>)
 }
 
-
 const SubSidebar = "div"
 const Sidebar = "div"
+
+
+
+
+// async function GuildList(p: {
+//   children: ReactNode
+// }) {
+//   const { session } = await Auth.getUserSession()
+//   const server = await prisma.serverMember.findMany({
+//     where: {
+//       userId: session.userid
+//     }
+//   })
+  
+//   return (
+//     <></>
+//   )
+// }

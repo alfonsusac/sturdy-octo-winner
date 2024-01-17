@@ -23,7 +23,7 @@ export async function s_createGuild(
       data: {
         // metadata
         name: params.serverName,
-        profilePicture: true,
+        profilePicture: params.withServerPicture,
         // relationship
         owner: { connect: { id: params.userId } },
         members: { create: { user: { connect: { id: params.userId } } } }

@@ -17,6 +17,7 @@ import { useSession } from "@/lib/auth/next-auth.client"
 import { toast } from "sonner"
 import { runServerAction } from "@/lib/serveraction/return"
 import { useRouter } from "next/navigation"
+import { addServerToList } from "@/app/app/client"
 
 
 
@@ -50,12 +51,13 @@ export default function CreateServerForm(
   })
 
   async function onSubmit(data: z.infer<typeof formSchema>) {
+    console.log(data)
     try {
-      // const guild = await runServerAction(s_createGuild, {
-      //   userId: session.getUserId(),
-      //   serverName: data.serverName,
-      //   withServerPicture: !!data.serverPicture
-      // })
+      const guild = await runServerAction(s_createGuild, {
+        userId: session.getUserId(),
+        serverName: data.serverName,
+        withServerPicture: !!data.serverPicture
+      })
 
       if (data.serverPicture) {
         // The Image received is in Blob and I would like it to be converted 
@@ -71,11 +73,14 @@ export default function CreateServerForm(
         const webpBufferString = await s_convertToWebpAction(formData)
         const webpBlob = new Blob([Buffer.from(webpBufferString, "ascii")], { type: "image/webp" })
 
-        await upload(webpBlob, `server/${guild.id}.webp`)
+        const imgurl = await upload(webpBlob, `server/${guild.id}.webp`)
+        console.log(imgurl)
       }
 
       // router.push()
       toast("finishing")
+      addServerToList(guild)
+      // serverList.update()
       p.finish()
 
 
