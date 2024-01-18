@@ -4,16 +4,26 @@
 import { useSession } from "@/lib/auth/next-auth.client"
 import { Session } from "next-auth"
 import { SessionProvider } from "next-auth/react"
-import { ReactNode, SVGProps, useState } from "react"
+import { ReactNode, SVGProps, useEffect, useState } from "react"
 import UserSettingView from "../../components/menu/userSetting"
 import { Guild, User } from "@prisma/client"
 import { BaseScreen } from "./screen"
 import { SidebarItem } from "@/components/parts/sidebar-item"
+import { useParams, usePathname, useRouter } from "next/navigation"
+import { toast } from "sonner"
+import { cn } from "@/lib/tailwind"
+import { createReactContext } from "@/components/lib/create-context"
 
 
 // -------------------------------------------
 // ※ Providers
 // -------------------------------------------
+
+
+
+const [StoreProvider, useStore] = createReactContext({
+  guildlist: undefined as unknown as Guild[]
+})
 
 export function Providers(p: {
   children: React.ReactNode
@@ -67,6 +77,31 @@ export function FluentSettings28Filled(props: SVGProps<SVGSVGElement>) {
   )
 }
 
+// -------------------------------------------
+// ※ Home Button
+// -------------------------------------------
+export function HomeButton() {
+  const router = useRouter()
+  const pathname = usePathname()
+  return <SidebarItem
+    label="Home"
+    urlpattern="/app{/(premium|message_request)}?"
+    icon={ <HomeIcon /> }
+    onClick={ () => {
+      if (pathname === '/app'
+        || pathname.startsWith('/app/message_request')
+        || pathname.startsWith('/app/premium')
+      ) {
+        return
+      }
+      router.push('/app')
+    } }
+  />
+}
+function HomeIcon(props: SVGProps<SVGSVGElement>) {
+  // FluentHome12Filled
+  return (<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 12 12" { ...props }><path fill="currentColor" d="M5.37 1.222a1 1 0 0 1 1.26 0l3.814 3.09A1.5 1.5 0 0 1 11 5.476V10a1 1 0 0 1-1 1H8.5a1 1 0 0 1-1-1V7.5A.5.5 0 0 0 7 7H5a.5.5 0 0 0-.5.5V10a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V5.477a1.5 1.5 0 0 1 .556-1.166l3.815-3.089Z"></path></svg>)
+}
 
 
 // -------------------------------------------
@@ -78,11 +113,11 @@ export let removeServerFromList: ((id: string) => void)
 
 export function GuildList(
   props: {
-    children: ReactNode
     prefetchedData: Guild[]
   }
 ) {
   const [guilds, setGuilds] = useState(props.prefetchedData)
+  const router = useRouter()
 
   addServerToList = (guild) => {
     if (guilds.find(g => g.id === guild.id)) return
@@ -95,44 +130,34 @@ export function GuildList(
     }
   }
 
-
-
-  // updateServerList = () => {
-  //   console.log("ServerList Update Test")
-  //   setGuilds(prev => [...prev, {
-  //     id: crypto.randomUUID(),
-  //     name: "Hello",
-  //     ownerUserId: "asd",
-  //     profilePicture: true
-  //   }])
-  // }
-
-  // serverList.update = () => {
-  //   console.log("ServerList Update Test")
-  //   setGuilds(prev => [...prev, {
-  //     id: crypto.randomUUID(),
-  //     name: "Hello",
-  //     ownerUserId: "asd",
-  //     profilePicture: true
-  //   }])
-  // }
-
   return (
     <>
       {
         guilds.map((guild, i) => (
           <SidebarItem
             className={
-              "bg-indigo-300/10 rounded-2xl hover:rounded-xl hover:bg-indigo-600 transition-all select-none font-medium text-sm"
+              cn(
+                // "hover:bg-indigo-600 data-[state=active]:bg-indigo-600",
+                "bg-indigo-300/10 rounded-2xl hover:rounded-xl transition-all select-none font-medium text-sm w-11 self-center overflow-visible",
+                "data-[state=active]:bg-indigo-600 hover:data-[state=active]:bg-indigo-600",
+                "opacity-70 data-[state=active]:opacity-100",
+                "[&_img]:grayscale [&_img]:data-[state=active]:grayscale-0",
+                "data-[state=active]:scale-110"
+              )
             }
-
+            onClick={
+              () => {
+                router.push(`/app/guild/${guild.id}`)
+              }
+            }
+            urlpattern={ `/app/guild/${guild.id}*` }
             label={ guild.name }
             key={ i }
             icon={
               !guild.profilePicture
                 ? guild.name.split(' ').map(str => str[0]).slice(0, 2).join('')
-                : <img src={`https://diskott-avatars.s3.ap-southeast-1.amazonaws.com/server/${guild.id}.webp`}/>
-              }
+                : <img src={ `https://diskott-avatars.s3.ap-southeast-1.amazonaws.com/server/${guild.id}.webp` } alt="" />
+            }
           />
         ))
       }
@@ -141,17 +166,36 @@ export function GuildList(
 
 }
 
+// -------------------------------------------
+// ※ Server Header
+// -------------------------------------------
 
-export function DefaultServerIcon(props: SVGProps<SVGSVGElement>) {
-  // RiCommunityFill
+export function GuildHeader(
+  props: {
+    guildlist: Guild[]
+  }
+) {
+  const param = useParams() as { guildid?: string }
+  if (!param.guildid) return <></>
+
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 14 14" { ...props }><path fill="currentColor" fillRule="evenodd" d="M7 0a4.5 4.5 0 0 0-2.977 7.875c.337.297.528.66.55 1.024c.021.355-.113.788-.572 1.247c-.558.558-1.35.757-1.978.623a1.322 1.322 0 0 1-.734-.407C1.119 10.168 1 9.89 1 9.5a.5.5 0 0 0-1 0v.828c0 .844.299 1.618.796 2.223a.622.622 0 0 1 .28.156l.003.004a1.516 1.516 0 0 0 .274.176c.213.106.552.222 1.022.222c1.505 0 2.525-1.24 2.963-2.34a.625.625 0 0 1 1.161.462c-.34.857-1.048 1.956-2.149 2.597h5.3c-1.101-.641-1.808-1.74-2.15-2.597a.625.625 0 1 1 1.162-.462c.438 1.1 1.458 2.34 2.963 2.34c.47 0 .809-.116 1.021-.223a1.522 1.522 0 0 0 .275-.175l.003-.004a.623.623 0 0 1 .28-.156A3.485 3.485 0 0 0 14 10.328V9.5a.5.5 0 1 0-1 0c0 .39-.12.668-.289.862c-.173.199-.425.34-.735.407c-.628.134-1.419-.065-1.977-.623c-.46-.46-.593-.892-.572-1.247c.022-.365.213-.727.55-1.024A4.5 4.5 0 0 0 7 0m-.964 5.25a.786.786 0 1 1-1.572 0a.786.786 0 0 1 1.572 0m2.714.786a.786.786 0 1 0 0-1.572a.786.786 0 0 0 0 1.572" clipRule="evenodd"></path></svg>
+    <div className="
+    text-sm font-medium px-4 h-11 rounded-t-lg
+    border-b-2 border-b-black/10 select-none
+
+    flex flex-row items-center justify-between
+
+    transition-all
+    hover:bg-indigo-300/5
+    ">
+      { props.guildlist.find(guild => guild.id === param.guildid)?.name }
+      <MajesticonsChevronDown className="text-[1.2rem]"/>
+    </div>
   )
 }
 
-
-export function StreamlineOctopusSolid(props: SVGProps<SVGSVGElement>) {
+export function MajesticonsChevronDown(props: SVGProps<SVGSVGElement>) {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 14 14" { ...props }><path fill="currentColor" fillRule="evenodd" d="M7 0a4.5 4.5 0 0 0-2.977 7.875c.337.297.528.66.55 1.024c.021.355-.113.788-.572 1.247c-.558.558-1.35.757-1.978.623a1.322 1.322 0 0 1-.734-.407C1.119 10.168 1 9.89 1 9.5a.5.5 0 0 0-1 0v.828c0 .844.299 1.618.796 2.223a.622.622 0 0 1 .28.156l.003.004a1.516 1.516 0 0 0 .274.176c.213.106.552.222 1.022.222c1.505 0 2.525-1.24 2.963-2.34a.625.625 0 0 1 1.161.462c-.34.857-1.048 1.956-2.149 2.597h5.3c-1.101-.641-1.808-1.74-2.15-2.597a.625.625 0 1 1 1.162-.462c.438 1.1 1.458 2.34 2.963 2.34c.47 0 .809-.116 1.021-.223a1.522 1.522 0 0 0 .275-.175l.003-.004a.623.623 0 0 1 .28-.156A3.485 3.485 0 0 0 14 10.328V9.5a.5.5 0 1 0-1 0c0 .39-.12.668-.289.862c-.173.199-.425.34-.735.407c-.628.134-1.419-.065-1.977-.623c-.46-.46-.593-.892-.572-1.247c.022-.365.213-.727.55-1.024A4.5 4.5 0 0 0 7 0m-.964 5.25a.786.786 0 1 1-1.572 0a.786.786 0 0 1 1.572 0m2.714.786a.786.786 0 1 0 0-1.572a.786.786 0 0 0 0 1.572" clipRule="evenodd"></path></svg>
+    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" { ...props }><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m17 10l-5 5l-5-5"></path></svg>
   )
 }

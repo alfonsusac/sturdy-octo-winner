@@ -42,12 +42,15 @@ export default function RootLayout({
             fontWeight: 400,
           },
           classNames: {
-            toast: " p-4 rounded-md text-sm w-full font-normal flex gap-2 items-center shadow-[0_0_4px_2px_#0004]",
+            toast: " p-4 rounded-md text-sm w-full font-normal flex gap-2 items-center shadow-[0_0_4px_2px_#0004] bg-[#343850]",
             title: "!font-normal data-[sonner-toast]:!font-normal",
             default: "bg-[#343850]",
             success: "bg-[#37474D] [&_[data-icon]]:text-green-300/80",
           },
-        } } />
+        } }
+          visibleToasts={ Infinity } 
+          expand={true}
+        />
         { children }
       </body>
     </html>

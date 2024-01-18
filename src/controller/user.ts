@@ -6,9 +6,9 @@ import { memoize } from "nextjs-better-unstable-cache"
 import { cache } from "react"
 import "server-only"
 
-
+// -----------------------------------------------
 // Get Session User Data (from DB)
-// 
+// -----------------------------------------------
 export const getSessionUserData = cache(async () => {
   logFunc("Getting User Data")
 
@@ -19,8 +19,10 @@ export const getSessionUserData = cache(async () => {
   else return user
 })
 
+// -----------------------------------------------
 // Find a user based on their email.
-// 
+// -----------------------------------------------
+
 export const findUserByEmail = cache(async (
   email: string
 ) => {
@@ -35,13 +37,15 @@ export const findUserById = cache(async (
   return await prisma.user.findUnique({ where: { id: userid } })
 })
 
-/**
+/** -----------------------------------------------
  * Get OAuth User's Default Image.
  * If doesn't exist, generate it
+ * -----------------------------------------------
  */
 export const getUserDefaultImage = memoize(
-
-  async (email: string) => {
+  async (
+    email: string
+  ) => {
     logFunc("Getting User Default Image", email)
     const userDefaultImage = await prisma.userDefaultImage.findUnique({ where: { email } })
     if (!userDefaultImage)
@@ -52,3 +56,22 @@ export const getUserDefaultImage = memoize(
   { log: ['datacache'], logid: "Get User Default Image" }
 )
 
+// -----------------------------------------------
+// Get Guild List
+// -----------------------------------------------
+
+export const getUserGuildList = cache(
+  async () => {
+    const { id } = await Auth.getUserSession()
+    const guilds = await prisma.guild.findMany({
+      where: {
+        members: {
+          some: {
+            userId: id
+          }
+        }
+      }
+    })
+    return guilds
+  }
+)

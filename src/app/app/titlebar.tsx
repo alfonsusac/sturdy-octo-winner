@@ -11,10 +11,8 @@ export function TitleBar(p: {
       "min-h-0 flex flex-col",
       "border-b-2 border-b-black/10",
       "flex flex-row items-center",
-      "justify-between",
-      "px-4",
-      "text-sm",
-      "font-semibold"
+      "justify-between px-4 text-sm",
+      "font-medium"
     ) }>
       <div className="flex flex-row items-center">
         <div className="mr-1.5 text-lg text-indigo-200/60">
@@ -26,7 +24,7 @@ export function TitleBar(p: {
         {
           p.subtitle && (
             <>
-              <div className="mx-3 w-px h-4 bg-indigo-200/20" />
+              {/* <div className="mx-3 w-px h-4 bg-indigo-200/20" /> */}
               { p.subtitle }
             </>
           )

@@ -1,5 +1,4 @@
 import { cn } from "@/lib/tailwind"
-import { usePathname } from "next/navigation"
 import { HomeSidebarMenuItem } from "./client"
 import { SVGProps } from "react"
 import { style } from "@/style"
