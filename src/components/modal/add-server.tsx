@@ -33,7 +33,7 @@ export function AddServerDialog(p: {
   return (
     <ModalBase
       trigger={ p.children ?? p.trigger }
-      onChange={ open => {
+      onOpenChange={ open => {
         console.log("On Change", open)
         open && resetState()
         setOpen(open)

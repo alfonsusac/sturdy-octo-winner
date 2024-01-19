@@ -30,7 +30,7 @@ import { CSSProperties, ReactNode, Ref, SVGProps, forwardRef, use, useEffect, us
 
 function useCloseAnimation(
   duration = 200,
-  onChange?: (open: boolean) => void,
+  // onChange?: (open: boolean) => void,
   controlled?: {
     open?: boolean,
     onOpenChange?: (open: boolean) => void
@@ -39,39 +39,32 @@ function useCloseAnimation(
   const [isVisible, setVisible] = useState(false) // or use controlled.
   const [isOpen, setOpen] = useState(false) // this is the delayed animation
 
-  // useEffect(() => {
-  //   console.log("controlled open useffect", controlled?.open, isVisible)
-  //   if (controlled && controlled.open !== undefined && (controlled.open !== isVisible)) {
-  //     console.log("hello?")
-  //     handleOpenChange(controlled.open)
-  //   }
-  // }, [controlled?.open])
-
-  // useEffect(() => {
-  //   if (controlled?.open !== undefined) {
-  //     console.log("Open changed from controlled", controlled?.open)
-  //     if (controlled?.open) {
-  //       setVisible(true)
-  //       onChange?.(true)
-  //     }
-  //     if (!controlled?.open) {
-  //       setOpen(false)
-  //       onChange?.(false)
-  //       setTimeout(() => setVisible(false), duration)
-  //     }
-  //   }
-  // }, [controlled?.open])
+  // If Controlled
+  useEffect(() => {
+    // console.log("controlled open useffect", controlled?.open, isVisible)
+    if (controlled && controlled.open !== undefined) {
+      if (controlled.open === true && isVisible !== true) {
+        console.log("Controlled - Should be open")
+        handleOpenChange(true)
+      }
+      if (controlled.open === false && isOpen !== false) {
+        console.log("Controlled - Should be closed")
+        handleOpenChange(false)
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [controlled?.open])
 
   // Callbacks
   const handleOpenChange = (open: boolean) => {
     console.log("Handle open change", open)
     if (open) {
       setVisible(true)
-      onChange?.(true)
+      controlled?.onOpenChange?.(true)
     }
     if (!open) {
       setOpen(false)
-      onChange?.(false)
+      controlled?.onOpenChange?.(false)
       setTimeout(() => setVisible(false), duration)
     }
     console.log("handle open change end", isVisible, isOpen)
@@ -97,28 +90,14 @@ export function ModalBase(p: {
   style?: {
     content?: CSSProperties,
   }
-  onChange?: (open: boolean) => void,
+  onOpenChange?: (open: boolean) => void,
   contentRef?: Ref<HTMLDivElement>,
   open?: boolean,
-  onOpenChange?: (open: boolean) => void
 }) {
-  const { isVisible, isOpen, handleOpenChange } = useCloseAnimation(200, p.onChange, {
-    open: p.open
+  const { isVisible, isOpen, handleOpenChange } = useCloseAnimation(200, {
+    open: p.open,
+    onOpenChange: p.onOpenChange
   })
-
-  useEffect(() => {
-    // console.log("controlled open useffect", controlled?.open, isVisible)
-    if (p && p.open !== undefined) {
-      if (p.open === true && isVisible !== true) {
-        console.log("Controlled - Should be open")
-        handleOpenChange(true)
-      }
-      if (p.open === false && isOpen !== false) {
-        console.log("Controlled - Should be closed")
-        handleOpenChange(false)
-      }
-    }
-  }, [p.open])
 
   return <Dialog.Root
     open={ isVisible }

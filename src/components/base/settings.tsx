@@ -17,18 +17,26 @@ import { useScreen } from "@/app/app/screen"
  
  */
 
-export function SettingPage(p: {
-  trigger: React.ReactNode
-  children: React.ReactNode
-  firstValue: string
-  title?: string
-  tabs?: React.ReactNode
-}) {
+export function SettingPage(
+  props: {
+    trigger: React.ReactNode
+    children: React.ReactNode
+    firstValue: string
+    title?: string
+    tabs?: React.ReactNode
+    open?: boolean,
+    onOpenChange?: (open: boolean) => void
+  }
+) {
   const baseScreenRef = useScreen()
   return (
     <ModalBase
-      onChange={ (open) => { baseScreenRef?.current?.setAttribute("data-transition-setting", open ? "true" : "false") } }
-      trigger={ p.trigger }
+      open={ props.open }
+      onOpenChange={ (open) => {
+        baseScreenRef?.current?.setAttribute("data-transition-setting", open ? "true" : "false")
+        props.onOpenChange?.(open)
+      } }
+      trigger={ props.trigger }
       className={ {
         content: cn(
           "bg-transparent flex flex-row justify-center items-stretch",
@@ -44,22 +52,22 @@ export function SettingPage(p: {
     >
       <Tabs.Root
         orientation="vertical"
-        defaultValue={ p.firstValue }
+        defaultValue={ props.firstValue }
         className={ cn("max-w-2xl grow relative text-sm flex flex-row sm:rounded-3xl sm:m-8") }
       >
         <Tabs.List
           className="
               bg-[#212432] w-64 p-2 flex flex-col items-stretch gap-0.5 pt-4
               [&>*]:pl-3"
-          aria-label={ p.title }
+          aria-label={ props.title }
         >
-          <Dialog.Title className={ cn(style.categoryTitle, "font-semibold mb-1 pl-8 text-[0.65rem]") }>{ p.title }</Dialog.Title>
+          <Dialog.Title className={ cn(style.categoryTitle, "font-semibold mb-1 pl-8 text-[0.65rem]") }>{ props.title }</Dialog.Title>
           {/* List of Tabs is passed to here */ }
-          { p.tabs }
+          { props.tabs }
         </Tabs.List>
         <div className="p-8 bg-[#272B3C] w-full overflow-visible relative before:-z-10 before:top-0 before:left-0 before:absolute before:w-full before:h-full before:bg-[#272B3C] before:origin-[center_left] before:scale-[1000]">
           {/* List of Tab Content is passed to here */ }
-          { p.children }
+          { props.children }
           <CloseModalButton />
         </div>
       </Tabs.Root>

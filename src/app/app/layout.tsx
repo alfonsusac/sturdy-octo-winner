@@ -7,6 +7,11 @@ import { GuildHeader, GuildList, HomeButton, Providers, UserStatus } from "./cli
 import { AddServerDialog } from "../../components/modal/add-server"
 import { SidebarItem } from "@/components/parts/sidebar-item"
 import prisma from "@/lib/db/prisma"
+import {
+  dehydrate,
+  HydrationBoundary,
+  QueryClient,
+} from '@tanstack/react-query'
 
 
 export default async function AppLayout(
@@ -18,31 +23,39 @@ export default async function AppLayout(
 ) {
   const { session } = await Auth.getUserSession()
   const user = await getSessionUserData()
-  const guildList = await getUserGuildList()
+  // const guildList = await getUserGuildList()
+
+  const queryClient = new QueryClient()
+  await queryClient.prefetchQuery({
+    queryKey: ['guilds'],
+    queryFn: getUserGuildList,
+  })
 
   return (
     <Providers session={ session }>
 
-      <Sidebar className="h-auto flex flex-col gap-2 overflow-y-scroll scrollbar-none">
-        <HomeButton />
-        <hr className="w-1/2 h-px border-indigo-300/20 self-center my-2" />
-        <GuildList prefetchedData={ guildList } />
-        <AddServerDialog user={ user } trigger={
-          <SidebarItem label="Add New Server" icon={ <AddIcon className="text-2xl" /> } />
-        } />
-      </Sidebar>
+      <HydrationBoundary state={ dehydrate(queryClient) }>
+        <Sidebar className="h-auto flex flex-col gap-2 overflow-y-scroll scrollbar-none">
+          <HomeButton />
+          <hr className="w-1/2 h-px border-indigo-300/20 self-center my-2" />
+          <GuildList />
+          <AddServerDialog user={ user } trigger={
+            <SidebarItem label="Add New Server" icon={ <AddIcon className="text-2xl" /> } />
+          } />
+        </Sidebar>
 
-      <SubSidebar className={ cn(style.cardbg, "grid grid-flow-row grid-rows-[minmax(0,_1fr)_3rem]") }>
-        <div className="flex flex-col h-full">
-          <GuildHeader guildlist={ guildList } />
-          { p.innersidebar }
+        <SubSidebar className={ cn(style.cardbg, "grid grid-flow-row grid-rows-[minmax(0,_1fr)_3rem]") }>
+          <div className="flex flex-col h-full">
+            <GuildHeader />
+            { p.innersidebar }
+          </div>
+          <UserStatus user={ user } />
+        </SubSidebar>
+
+        <div className={ cn(style.cardbg, "grid grid-flow-row grid-rows-[2.75rem_1fr] text-sm") }>
+          { p.children }
         </div>
-        <UserStatus user={ user } />
-      </SubSidebar>
-
-      <div className={ cn(style.cardbg, "grid grid-flow-row grid-rows-[2.75rem_1fr] text-sm") }>
-        { p.children }
-      </div>
+      </HydrationBoundary>
 
     </Providers>
   )
