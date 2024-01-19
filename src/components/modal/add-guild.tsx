@@ -7,7 +7,7 @@ import JoinGuildForm from "../forms/join-server"
 import { User } from "@prisma/client"
 import { CloseModalButton, ModalBase } from "@/components/base/modal"
 import { Description, Title } from "@/components/base/dialog"
-import { createSlidingWindow } from "../lib/create-sliding-window"
+import { createSlidingWindow } from "../api/create-sliding-window"
 import { useEffect, useState } from "react"
 
 

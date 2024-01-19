@@ -5,7 +5,7 @@ import ImageCropper from "@/components/modal/image-cropper"
 import LogoutButton from "@/components/ui/logout"
 import { useSession } from "@/lib/auth/next-auth.client"
 import { SVGProps } from "react"
-import { upload } from "../lib/upload"
+import { upload } from "../api/upload"
 
 export default function UserSettingView(p: {
   children: React.ReactNode

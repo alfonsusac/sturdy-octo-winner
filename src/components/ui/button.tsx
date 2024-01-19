@@ -1,7 +1,7 @@
 "use client"
 
 import { Attributes, ButtonHTMLAttributes, useState } from "react"
-import { Slot } from "../lib/slot"
+import { Slot } from "../api/slot"
 import { delay } from "@/lib/devutil"
 import { cn } from "@/lib/tailwind"
 import { Icon } from '@iconify/react'

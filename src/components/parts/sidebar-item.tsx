@@ -3,7 +3,7 @@
 import { cn } from "@/lib/tailwind"
 import { style } from "@/style"
 import { ReactNode, forwardRef } from "react"
-import { useActivePath } from "../lib/use-active-path"
+import { useActivePath } from "../api/use-active-path"
 
 //   - [SidebarItem]: forwardRef'd sidebarItem of sidebar
 export const SidebarItem = forwardRef<HTMLButtonElement, {
