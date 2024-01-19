@@ -235,7 +235,7 @@ function MajesticonsChevronDown(props: SVGProps<SVGSVGElement>) {
 
 function MajesticonsClose(props: SVGProps<SVGSVGElement>) {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" { ...props }><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 12L7 7m5 5l5 5m-5-5l5-5m-5 5l-5 5"></path></svg>
+    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" { ...props }><path fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 12L7 7m5 5l5 5m-5-5l5-5m-5 5l-5 5"></path></svg>
   )
 }
 
@@ -251,6 +251,37 @@ function GuildContextMenu(
   const [open, setOpen] = useState(false)
   const session = useSession()
   const router = useRouter()
+
+  const [deleting, setDeleting] = useState(false)
+
+
+  // Delete Guild in the next frame
+  useEffect(() => {
+    let ignore = false;
+
+    if (deleting) {
+      const startDeleting = async () => {
+        if (!ignore) {
+          try {
+            await runServerAction(s_deleteGuild, {
+              userId: session.getUserId(),
+              guildId: props.guild.id
+            })
+          } catch (error: any) {
+            toast.error(error.message)
+          }
+          removeServerFromList(props.guild.id)
+          setDeleting(false)
+        }
+      }
+      startDeleting()
+    }
+
+    return () => {
+      ignore = true
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  },[deleting])
 
   return (
     <>
@@ -270,15 +301,8 @@ function GuildContextMenu(
           className="text-red-400 hover:bg-red-500 hover:text-white"
           onClick={ async () => {
             router.push('/app')
-            try {
-              await runServerAction(s_deleteGuild, {
-                userId: session.getUserId(),
-                guildId: props.guild.id
-              })
-            } catch (error: any) {
-              toast.error(error.message)
-            }
-            removeServerFromList(props.guild.id)
+            // Delete Guild in the next frame
+            setDeleting(true)
           } }
         >
           <MaterialSymbolsDeleteRounded />
