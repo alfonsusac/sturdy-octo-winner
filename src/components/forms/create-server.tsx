@@ -17,17 +17,10 @@ import { useSession } from "@/lib/auth/next-auth.client"
 import { toast } from "sonner"
 import { runServerAction } from "@/lib/serveraction/return"
 import { useRouter } from "next/navigation"
-import { addServerToList } from "@/app/app/client"
+import { addGuildToList } from "@/app/app/client"
 
 
-
-
-// type CreateServerInputs = {
-//   serverName: string
-//   serverPicture: File
-// }
-
-export default function CreateServerForm(
+export default function CreateGuildForm(
   p: {
     back: () => void
     finish: () => void
@@ -37,15 +30,15 @@ export default function CreateServerForm(
   const router = useRouter()
 
   const formSchema = z.object({
-    serverName: z.string().min(1).max(64),
-    serverPicture: z.instanceof(Blob).optional()
+    guildName: z.string().min(1).max(64),
+    guildPicture: z.instanceof(Blob).optional()
   })
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      serverName: generateSlug(2, { format: "title" }),
-      serverPicture: undefined,
+      guildName: generateSlug(2, { format: "title" }),
+      guildPicture: undefined,
     },
     mode: 'onChange',
   })
@@ -55,11 +48,11 @@ export default function CreateServerForm(
     try {
       const guild = await runServerAction(s_createGuild, {
         userId: session.getUserId(),
-        serverName: data.serverName,
-        withServerPicture: !!data.serverPicture
+        guildName: data.guildName,
+        withGuildPicture: !!data.guildPicture
       })
 
-      if (data.serverPicture) {
+      if (data.guildPicture) {
         // The Image received is in Blob and I would like it to be converted 
         //  form png to webp first.However, you can't send Blob or ArrayBuffer to
         //  the server action. Therefore, we need to create FormData first before
@@ -67,18 +60,18 @@ export default function CreateServerForm(
 
         // Create Form Data from File
         const formData = new FormData()
-        formData.append("image", data.serverPicture)
+        formData.append("image", data.guildPicture)
 
         // Convert PNG to WEBP
         const webpBufferString = await s_convertToWebpAction(formData)
         const webpBlob = new Blob([Buffer.from(webpBufferString, "ascii")], { type: "image/webp" })
 
-        const imgurl = await upload(webpBlob, `server/${guild.id}.webp`)
+        const imgurl = await upload(webpBlob, `guild/${guild.id}.webp`)
         console.log(imgurl)
       }
 
       toast("finishing")
-      addServerToList(guild)
+      addGuildToList(guild)
       p.finish()
 
 
@@ -91,7 +84,7 @@ export default function CreateServerForm(
     onImageSelected(originalFile, resizedBlob) {
       console.log("Original File Size", originalFile.size.toLocaleString())
       console.log("Resized size", resizedBlob.size.toLocaleString())
-      form.setValue("serverPicture", resizedBlob)
+      form.setValue("guildPicture", resizedBlob)
     },
   })
 
@@ -117,7 +110,7 @@ export default function CreateServerForm(
     <Form { ...form } onSubmit={ onSubmit }>
       {/* Fields */ }
       <div className="flex flex-col p-4 items-stretch">
-        <Fieldset name="serverPicture" className="flex flex-col items-stretch">
+        <Fieldset name="guildPicture" className="flex flex-col items-stretch">
           <button className={ cn("relative w-20 h-20 mt-2 p-0 self-center rounded-full overflow-hidden text-3xl",
             "outline-dashed outline-2 outline-indigo-200/40",
             "flex flex-row items-center justify-center",
@@ -129,18 +122,18 @@ export default function CreateServerForm(
               isLoading && <div className="absolute inset-0 bg-black/80 z-10 pointer-events-none">
               </div>
             } */}
-            <img alt="New Server Profile Picture" src={ preview ?? undefined } className={ cn("w-full h-full object-cover absolute hidden", preview && "block", isLoading && "blur-sm") } />
+            <img alt="New Guild Profile Picture" src={ preview ?? undefined } className={ cn("w-full h-full object-cover absolute hidden", preview && "block", isLoading && "blur-sm") } />
             <FluentImageAdd20Filled className="text-3xl text-indigo-200/80" />
           </button>
           {/* <small className="block self-center mt-2 text-indigo-300/40 data-[emphasize=true]:text-red-500/80">
             Maximum File Size: 1MB
           </small> */}
-          <input className="hidden" { ...form.register("serverPicture") } { ...getInputProps() } />
+          <input className="hidden" { ...form.register("guildPicture") } { ...getInputProps() } />
         </Fieldset>
         {/* <SpinnerSVG className="absolute left-1/2 top-1/2 block text-4xl z-10 -translate-x-1/2 -translate-y-1/2 text-indigo-200/60" /> */ }
 
-        <Fieldset name="serverName" className="mt-4 flex flex-col items-stretch">
-          <Label>Server Name</Label>
+        <Fieldset name="guildName" className="mt-4 flex flex-col items-stretch">
+          <Label>Guild Name</Label>
           <Input />
         </Fieldset>
         { }

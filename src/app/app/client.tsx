@@ -125,8 +125,8 @@ function HomeIcon(props: SVGProps<SVGSVGElement>) {
 // ※ Guild List
 // -------------------------------------------
 
-export let addServerToList: ((guild: Guild) => void)
-export let removeServerFromList: ((id: string) => void)
+export let addGuildToList: ((guild: Guild) => void)
+export let removeGuildFromList: ((id: string) => void)
 export function useGuilds(
   options?: Omit<UndefinedInitialDataOptions<Guild[]>, 'queryKey'>
 ) {
@@ -141,11 +141,11 @@ export function GuildList(
   const queryClient = useQueryClient()
   const { data: guilds } = useGuilds()
 
-  addServerToList = (guild) => {
+  addGuildToList = (guild) => {
     queryClient.setQueryData(['guilds'], (prev: Guild[]) => [...prev, guild])
   }
 
-  removeServerFromList = (id) => {
+  removeGuildFromList = (id) => {
     queryClient.setQueryData(['guilds'], (prev: Guild[]) => prev.filter(g => g.id !== id))
   }
 
@@ -175,7 +175,7 @@ export function GuildList(
             icon={
               !guild.profilePicture
                 ? guild.name.split(' ').map(str => str[0]).slice(0, 2).join('')
-                : <img src={ `https://diskott-avatars.s3.ap-southeast-1.amazonaws.com/server/${guild.id}.webp` } alt="" />
+                : <img src={ `https://diskott-avatars.s3.ap-southeast-1.amazonaws.com/guild/${guild.id}.webp` } alt="" />
             }
           />
         ))
@@ -186,7 +186,7 @@ export function GuildList(
 }
 
 // -------------------------------------------
-// ※ Server Header
+// ※ Guild Header
 // -------------------------------------------
 
 export function GuildHeader(
@@ -270,7 +270,7 @@ function GuildContextMenu(
           } catch (error: any) {
             toast.error(error.message)
           }
-          removeServerFromList(props.guild.id)
+          removeGuildFromList(props.guild.id)
           setDeleting(false)
         }
       }
@@ -295,7 +295,7 @@ function GuildContextMenu(
           } }
         >
           <FluentSettings28Filled />
-          Server Settings
+          Guild Settings
         </DropdownItem>
         <DropdownItem
           className="text-red-400 hover:bg-red-500 hover:text-white"
@@ -306,7 +306,7 @@ function GuildContextMenu(
           } }
         >
           <MaterialSymbolsDeleteRounded />
-          Delete Server (Dev)
+          Delete Guild (Dev)
         </DropdownItem>
       </DropdownBase>
     </>

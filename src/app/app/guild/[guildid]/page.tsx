@@ -12,7 +12,7 @@ export default function GuildPage(
 
   return (
     <>
-      <TitleBar icon={ <AkarIconsHashtag /> } title="Server" menus={ <></> } />
+      <TitleBar icon={ <AkarIconsHashtag /> } title="Guild" menus={ <></> } />
       Guildid
       <div>
         { context.params.guildid }

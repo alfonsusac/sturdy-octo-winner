@@ -2,8 +2,8 @@
 
 import { cn } from "@/lib/tailwind"
 import { style } from "@/style"
-import CreateServerForm from "../forms/create-server"
-import JoinServerForm from "../forms/join-server"
+import CreateGuildForm from "../forms/create-server"
+import JoinGuildForm from "../forms/join-server"
 import { User } from "@prisma/client"
 import { CloseModalButton, ModalBase } from "@/components/base/modal"
 import { Description, Title } from "@/components/base/dialog"
@@ -17,7 +17,7 @@ const {
   SlidingPage,
 } = createSlidingWindow(500, "index", "create", "join")
 
-export function AddServerDialog(p: {
+export function AddGuildDialog(p: {
   trigger?: React.ReactNode
   children?: React.ReactNode
   user: User
@@ -69,7 +69,7 @@ export function AddServerDialog(p: {
             <Title>Create a New Server</Title>
             <Description>Give your new server a personality with a name and an icon. You can always change it later.</Description>
           </header>
-          <CreateServerForm
+          <CreateGuildForm
             back={ () => goBack("index") }
             finish={ () => {
               console.log("Setting Open False")
@@ -83,7 +83,7 @@ export function AddServerDialog(p: {
             <Title>Join a Server</Title>
             <Description>Enter an invite below to join an existing server</Description>
           </header>
-          <JoinServerForm toBack={ () => goBack("index") } />
+          <JoinGuildForm toBack={ () => goBack("index") } />
         </SlidingPage>
 
       </SlidingWindowProvider>

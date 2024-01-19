@@ -4,7 +4,7 @@ import { ReactNode, SVGProps } from "react"
 import { getSessionUserData, getUserGuildList } from "@/controller/user"
 import { Auth } from "@/lib/auth/auth-setup"
 import { GuildHeader, GuildList, HomeButton, Providers, UserStatus } from "./client"
-import { AddServerDialog } from "../../components/modal/add-server"
+import { AddGuildDialog } from "../../components/modal/add-guild"
 import { SidebarItem } from "@/components/parts/sidebar-item"
 import prisma from "@/lib/db/prisma"
 import {
@@ -39,8 +39,8 @@ export default async function AppLayout(
           <HomeButton />
           <hr className="w-1/2 h-px border-indigo-300/20 self-center my-2" />
           <GuildList />
-          <AddServerDialog user={ user } trigger={
-            <SidebarItem label="Add New Server" icon={ <AddIcon className="text-2xl" /> } />
+          <AddGuildDialog user={ user } trigger={
+            <SidebarItem label="Add New Guild" icon={ <AddIcon className="text-2xl" /> } />
           } />
         </Sidebar>
 
