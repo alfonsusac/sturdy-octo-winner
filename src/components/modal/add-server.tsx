@@ -41,10 +41,6 @@ export function AddServerDialog(p: {
       className={ { content: "flex flex-col transition-all focus:outline-none duration-200" } }
       contentRef={ parentContainerRef }
       open={ open }
-      // onOpenChange={ (open) => {
-      //   console.log("On Open Change", open)
-        
-      // } }
     >
       <CloseModalButton />
       <SlidingWindowProvider states={ states }>

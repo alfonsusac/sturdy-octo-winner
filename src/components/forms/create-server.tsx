@@ -77,10 +77,8 @@ export default function CreateServerForm(
         console.log(imgurl)
       }
 
-      // router.push()
       toast("finishing")
       addServerToList(guild)
-      // serverList.update()
       p.finish()
 
 

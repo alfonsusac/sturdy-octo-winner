@@ -12,7 +12,6 @@ export async function s_createGuild(
     withServerPicture: boolean
   }
 ) {
-  // 
   const user = await Auth.getUserSession()
   if (user.id !== params.userId)
     return { error: "Not Authenticated" }
@@ -34,5 +33,28 @@ export async function s_createGuild(
   } catch (error) {
     console.log(error)
     return { error: "Unknown Prisma Error When Creating Server" }
+  }
+}
+
+export async function s_deleteGuild(
+  params: {
+    userId: string,
+    guildId: string,
+  }
+) {
+  const user = await Auth.getUserSession()
+  if (user.id !== params.userId)
+    return { error: "Not Authenticated" }
+  
+  try {
+    await prisma.guild.delete({
+      where: {
+        id: params.guildId
+      }
+    })
+    return { data: "" }
+  } catch (error) {
+    console.log(error)
+    return { error: "Unknown Prisma Error When Deleting Server" }
   }
 }

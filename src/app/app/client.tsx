@@ -17,6 +17,8 @@ import { DropdownBase, DropdownItem } from "@/components/base/dropdown"
 import GuildSettingView from "@/components/setting-menu/guildSetting"
 import { devtoast } from "@/lib/devutil-client"
 import { QueryClient, QueryClientProvider, UndefinedInitialDataOptions, useQuery, useQueryClient } from "@tanstack/react-query"
+import { runServerAction } from "@/lib/serveraction/return"
+import { s_deleteGuild } from "@/actions/create-guild"
 
 
 // -------------------------------------------
@@ -144,7 +146,7 @@ export function GuildList(
   }
 
   removeServerFromList = (id) => {
-    queryClient.setQueryData(['guilds'], (prev: Guild[]) => prev.filter(g => g.id === id))
+    queryClient.setQueryData(['guilds'], (prev: Guild[]) => prev.filter(g => g.id !== id))
   }
 
   return (
@@ -247,6 +249,8 @@ function GuildContextMenu(
 ) {
   // control the state
   const [open, setOpen] = useState(false)
+  const session = useSession()
+  const router = useRouter()
 
   return (
     <>
@@ -254,13 +258,29 @@ function GuildContextMenu(
       <DropdownBase
         open={ props.open } onOpenChange={ props.setOpen }
         trigger={ props.children }>
-        <DropdownItem onClick={ () => {
-          setOpen(true)
-        } }>
+        <DropdownItem
+          onClick={ () => {
+            setOpen(true)
+          } }
+        >
           <FluentSettings28Filled />
           Server Settings
         </DropdownItem>
-        <DropdownItem className="text-red-400 hover:bg-red-500 hover:text-white">
+        <DropdownItem
+          className="text-red-400 hover:bg-red-500 hover:text-white"
+          onClick={ async () => {
+            router.push('/app')
+            try {
+              await runServerAction(s_deleteGuild, {
+                userId: session.getUserId(),
+                guildId: props.guild.id
+              })
+            } catch (error: any) {
+              toast.error(error.message)
+            }
+            removeServerFromList(props.guild.id)
+          } }
+        >
           <MaterialSymbolsDeleteRounded />
           Delete Server (Dev)
         </DropdownItem>
