@@ -18,7 +18,7 @@ import GuildSettingView from "@/components/setting-menu/guildSetting"
 import { devtoast } from "@/lib/devutil-client"
 import { QueryClient, QueryClientProvider, UndefinedInitialDataOptions, useQuery, useQueryClient } from "@tanstack/react-query"
 import { runServerAction } from "@/lib/serveraction/return"
-import { s_deleteGuild } from "@/actions/create-guild"
+import { s_deleteGuild } from "@/actions/crud-guild"
 
 
 // -------------------------------------------

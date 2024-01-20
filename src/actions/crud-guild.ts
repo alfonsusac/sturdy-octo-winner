@@ -24,7 +24,7 @@ export async function s_createGuild(
         // relationship
         owner: { connect: { id: params.userId } },
         members: { create: { user: { connect: { id: params.userId } } } },
-        channels: { create: { name: "general"  } }
+        channels: { create: { name: "general" } }
       }
     })
 
@@ -47,6 +47,11 @@ export async function s_deleteGuild(
 
   try {
     await prisma.guildMember.deleteMany({
+      where: {
+        guildId: params.guildId
+      }
+    })
+    await prisma.channel.deleteMany({
       where: {
         guildId: params.guildId
       }
