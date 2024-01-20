@@ -218,7 +218,7 @@ export function GuildHeader(
   return (
     <GuildContextMenu open={ open } setOpen={ setOpen } guild={ guild }>
       <div className={ cn(
-        "text-sm font-medium px-4 h-11 rounded-t-lg",
+        "text-sm font-medium px-4 h-11 rounded-t-lg gap-1",
         "border-b-2 border-b-black/10 select-none",
 
         "flex flex-row items-center justify-between",
@@ -227,7 +227,9 @@ export function GuildHeader(
         "hover:bg-indigo-300/5",
         open && ("bg-indigo-300/5")
       ) }>
-        { guild.name }
+        <div className="text-nowrap w-0 grow truncate">
+          { guild.name }
+        </div>
         <div className={ cn("rotate-0 transition", open && "rotate-90") }>
           { !open && <MajesticonsChevronDown className="text-[1.2rem] transition" /> }
           { open && <MajesticonsClose className="text-[1.2rem]" /> }
@@ -268,7 +270,7 @@ function GuildContextMenu(
 
   // Delete Guild in the next frame
   useEffect(() => {
-    let ignore = false;
+    let ignore = false
 
     if (deleting) {
       const startDeleting = async () => {
@@ -291,8 +293,8 @@ function GuildContextMenu(
     return () => {
       ignore = true
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  },[deleting])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [deleting])
 
   return (
     <>
