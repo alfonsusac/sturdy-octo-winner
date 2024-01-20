@@ -189,18 +189,29 @@ export function GuildList(
 // ※ Guild Header
 // -------------------------------------------
 
+export function OnlyInGuild(
+  props: {
+    children: ReactNode
+  }
+) {
+  const param = useParams() as { guildid?: string }
+  if (!param.guildid) return <></>
+  else return props.children
+}
 export function GuildHeader(
   props: {}
 ) {
   const param = useParams() as { guildid?: string }
   const [open, setOpen] = useState(false)
   const { data: guilds } = useGuilds()
+  const router = useRouter()
 
   if (!param.guildid) return <></>
 
   const guild = guilds?.find(guild => guild.id === param.guildid)
   if (!guild) {
-    devtoast("Guild not found when filtering in header")
+    router.push('/app')
+    // devtoast("Guild not found when filtering in header")
     return
   }
 
