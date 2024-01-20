@@ -1,26 +1,34 @@
 import { AkarIconsHashtag } from "@/app/app/guild/[guildid]/page"
-import { getUserGuildList } from "@/controller/user"
+import { TooltipBase } from "@/components/base/tooltip"
+import prisma from "@/lib/db/prisma"
 import { SVGProps } from "react"
 
-export default async function GuildSidebar() {
+export default async function GuildSidebar(context: { params: { guildid: string } }) {
   // const guildList = await getUserGuildList()
-  return <div className="flex flex-col gap-px p-1.5">
-    <div className="text-[0.65rem] font-semibold uppercase text-indigo-300/30 mt-2 mb-1 ml-2 flex justify-between items-center select-none gap-4">
+
+  const channels = await prisma.channel.findMany({
+    where: { guildId: context.params.guildid }
+  })
+
+  return <div className="flex flex-col gap-px p-1.5 h-0 grow overflow-auto">
+    <div className="text-[0.65rem] font-semibold uppercase text-indigo-300/30 mt-2 mb-1 mx-1.5 flex justify-between items-center select-none gap-4 shrink-0">
       <div className="w-0 grow truncate">
         Text Channels aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
       </div>
-      <div className="hover:text-indigo-100/90">
-        <MaterialSymbolsAdd className="text-lg" />
-      </div>
+      <TooltipBase content="Create Channel">
+        <button className="hover:text-indigo-100/90 hover:bg-transparent">
+          <MaterialSymbolsAdd className="text-lg" />
+        </button>
+      </TooltipBase>
     </div>
     {
-      [0, 0, 0, 0, 0, 0, 0, 0, 0].map((_, i) => (
+      channels.map((ch, i) => (
         <a
           key={ i }
-          className="group px-2 h-[1.9rem] text-[0.85rem] flex gap-1.5 items-center text-indigo-200/50 hover:bg-indigo-300/5 rounded-md select-none">
+          className="group px-2 h-[1.9rem] text-[0.85rem] flex gap-1.5 items-center text-indigo-200/50 hover:bg-indigo-300/5 rounded-md select-none shrink-0">
           <AkarIconsHashtag className="shrink-0 text-lg" />
-          <div className="w-0 grow truncate group-hover:text-indigo-100/90">
-            Channel Nameeeeeeeeeeeeeeeeeeeeeeeeee
+          <div className="w-0 grow truncate group-hover:text-indigo-100/90 lowercase">
+            { ch.name }
           </div>
         </a>
       ))

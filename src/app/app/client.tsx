@@ -69,12 +69,12 @@ export function UserStatus(p: {
       <div className="h-full aspect-square rounded-full overflow-hidden bg-black/50 shrink-0">
         <img src={ session.data?.user?.image ?? "" } alt="Current user's profile picture" className="w-full h-full object-cover" />
       </div>
-      <div className="flex flex-col gap-1 leading-[0.8] justify-center">
+      <div className="flex flex-col gap-1 leading-[0.8] justify-center grow">
         <div className="text-[0.8rem] text-indigo-100/90 font-semibold truncate shrink min-w-0 flex-1">
-          { session.data?.user?.name ?? "" }
+          { session.data?.user?.name ?? "" } hhhhhhhhhhhhhhhhhhhhhhhhhhh
         </div>
-        <div className="text-[0.7rem] text-indigo-100/60">
-          status
+        <div className="text-[0.7rem] text-indigo-100/60 truncate">
+          status hhhhhhhhhhhhhhhhhhhhhhhhhhhhhh
         </div>
       </div>
       <UserSettingView>
@@ -210,7 +210,7 @@ export function GuildHeader(
 
   const guild = guilds?.find(guild => guild.id === param.guildid)
   if (!guild) {
-    router.push('/app')
+    // router.push('/app')
     // devtoast("Guild not found when filtering in header")
     return
   }
@@ -218,7 +218,7 @@ export function GuildHeader(
   return (
     <GuildContextMenu open={ open } setOpen={ setOpen } guild={ guild }>
       <div className={ cn(
-        "text-sm font-medium px-4 h-11 rounded-t-lg gap-1",
+        "text-sm font-medium px-4 h-11 rounded-t-lg gap-1 shrink-0",
         "border-b-2 border-b-black/10 select-none",
 
         "flex flex-row items-center justify-between",
@@ -228,7 +228,7 @@ export function GuildHeader(
         open && ("bg-indigo-300/5")
       ) }>
         <div className="text-nowrap w-0 grow truncate">
-          { guild.name }
+          { guild.name } aaaaaaaaaaaaaaaaaaaa
         </div>
         <div className={ cn("rotate-0 transition", open && "rotate-90") }>
           { !open && <MajesticonsChevronDown className="text-[1.2rem] transition" /> }

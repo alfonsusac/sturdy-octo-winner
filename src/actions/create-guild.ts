@@ -23,7 +23,8 @@ export async function s_createGuild(
         profilePicture: params.withGuildPicture,
         // relationship
         owner: { connect: { id: params.userId } },
-        members: { create: { user: { connect: { id: params.userId } } } }
+        members: { create: { user: { connect: { id: params.userId } } } },
+        channels: { create: { name: "general"  } }
       }
     })
 
@@ -43,7 +44,7 @@ export async function s_deleteGuild(
   const user = await Auth.getUserSession()
   if (user.id !== params.userId)
     return { error: "Not Authenticated" }
-  
+
   try {
     await prisma.guildMember.deleteMany({
       where: {
