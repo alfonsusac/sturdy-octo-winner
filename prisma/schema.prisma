@@ -67,6 +67,7 @@ model Guild {
   members        GuildMember[]
   owner          User          @relation(fields: [ownerUserId], references: [id])
   ownerUserId    String
+  channels       Channel[]
 }
 
 model GuildMember {
@@ -76,4 +77,21 @@ model GuildMember {
   userId  String
 
   @@id([guildId, userId])
+}
+
+model Channel {
+  id       String    @id @default(uuid())
+  name     String
+  guild    Guild     @relation(fields: [guildId], references: [id])
+  guildId  String
+  messages Message[]
+}
+
+model Message {
+  id         String   @id @default(uuid())
+  sender     String
+  content    String
+  created_at DateTime
+  channel    Channel  @relation(fields: [channelId], references: [id])
+  channelId  String
 }
