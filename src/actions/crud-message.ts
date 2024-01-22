@@ -18,14 +18,14 @@ export async function s_sendMessage(
   if(params.message === "") return { error: "message is required" }
 
   try {
-    await prisma.message.create({
+    const message = await prisma.message.create({
       data: {
         content: params.message,
         channelId: params.channelid,
         sender: params.userid
       }
     })
-    return { data: "" }
+    return { data: message }
   } catch (error) {
     return { error: "Unknown Prisma error when sending message" }
   }
