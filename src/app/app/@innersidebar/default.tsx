@@ -7,13 +7,7 @@ export default function HomeSidebar(p: any){
   return (
     <>
       <div className={ cn(
-        "m-2",
-        "p-1.5",
-        "bg-black/30",
-        "text-xs",
-        "text-indigo-100/40",
-
-        "rounded-md",
+        "m-2 p-1.5 bg-black/30 text-xs text-indigo-100/40 rounded-md",
         "flex justify-center items-center",
       ) }>
         Find or start a conversation
