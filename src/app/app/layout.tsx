@@ -35,6 +35,7 @@ export default async function AppLayout(
     <Providers session={ session }>
 
       <HydrationBoundary state={ dehydrate(queryClient) }>
+        
         <Sidebar className="h-auto flex flex-col gap-2 overflow-y-scroll scrollbar-none">
           <HomeButton />
           <hr className="w-1/2 h-px border-indigo-300/20 self-center my-2" />
@@ -55,6 +56,7 @@ export default async function AppLayout(
         <div className={ cn(style.cardbg, "grid grid-flow-row grid-rows-[2.75rem_1fr] text-sm") }>
           { p.children }
         </div>
+
       </HydrationBoundary>
 
     </Providers>

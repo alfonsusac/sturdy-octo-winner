@@ -130,7 +130,10 @@ export let removeGuildFromList: ((id: string) => void)
 export function useGuilds(
   options?: Omit<UndefinedInitialDataOptions<Guild[]>, 'queryKey'>
 ) {
-  return useQuery<Guild[]>({ queryKey: ['guilds'], ...options })
+  return useQuery<Guild[]>({
+    queryKey: ['guilds'],
+    ...options
+  })
 }
 
 export function GuildList(
