@@ -11,22 +11,6 @@ datasource db {
   directUrl = env("PROD_DB_URL")
 }
 
-model User {
-  id             String          @id @default(uuid())
-  email          String          @unique
-  accounts       Account[]
-  username       String
-  displayName    String
-  profilePicture String
-  friendsOf      User[]          @relation("userFriends")
-  friends        User[]          @relation("userFriends")
-  friendRequest  FriendRequest[]
-  guildMember    GuildMember[]
-  createdAt      DateTime        @default(now())
-  bio            String          @default("")
-  ownedGuild     Guild[]
-}
-
 enum AcccountProvider {
   google
   credentials
@@ -42,6 +26,23 @@ model Account {
   @@unique([providerAccountId, providerType], name: "providerData")
 }
 
+model User {
+  id                String          @id @default(uuid())
+  email             String          @unique
+  accounts          Account[]
+  username          String
+  displayName       String
+  profilePicture    String
+  friendsOf         User[]          @relation("userFriends")
+  friends           User[]          @relation("userFriends")
+  friendRequest     FriendRequest[] @relation("friendRequests")
+  friendRequestSent FriendRequest[] @relation("sentFriendRequests")
+  guildMember       GuildMember[]
+  createdAt         DateTime        @default(now())
+  bio               String          @default("")
+  ownedGuild        Guild[]
+}
+
 model UserDefaultImage {
   email String @id @unique
   id    String @default(uuid())
@@ -49,15 +50,21 @@ model UserDefaultImage {
 
 model FriendRequest {
   id         String              @id @default(uuid())
-  fromUser   User                @relation(fields: [fromUserID], references: [id])
+  fromUser   User                @relation(fields: [fromUserID], references: [id], name: "friendRequests")
   fromUserID String
-  status     FriendRequestStatus
+  toUser     User                @relation(fields: [toUserID], references: [id], name: "sentFriendRequests")
+  toUserID   String
+  status     FriendRequestStatus @default(PENDING)
 }
 
 enum FriendRequestStatus {
   PENDING
-  REJECTED
-  BLOCKED
+  IGNORED
+}
+
+model DirectMessageRoom {
+  id       String    @id
+  messages Message[]
 }
 
 model Guild {
@@ -88,10 +95,13 @@ model Channel {
 }
 
 model Message {
-  id         String   @id @default(uuid())
-  sender     String
-  content    String
-  created_at DateTime @default(now())
-  channel    Channel  @relation(fields: [channelId], references: [id])
-  channelId  String
+  id                  String             @id @default(uuid())
+  sender              String
+  content             String
+  created_at          DateTime           @default(now())
+  origin              String
+  channel             Channel?           @relation(fields: [channelId], references: [id])
+  channelId           String?
+  directMessageRoom   DirectMessageRoom? @relation(fields: [directMessageRoomId], references: [id])
+  directMessageRoomId String?
 }
