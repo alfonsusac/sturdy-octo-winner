@@ -87,7 +87,7 @@ export default async function Page() {
   }
 
   return (
-    <div className="bg-[#212432] h-screen flex flex-col justify-center items-center">
+    <div className="bg-[#212432] min-h-screen flex flex-col justify-center items-center">
       <div className="max-w-sm w-full flex flex-col items-start">
         <h1 className="text-3xl font-semibold leading-loose">
           Almost There! 👋

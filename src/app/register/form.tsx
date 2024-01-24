@@ -121,10 +121,10 @@ export default function RegisterForm(p: {
       </fieldset>
 
       <FormSubmitButton />
-
+{/* 
       <pre>
         { JSON.stringify(session.data, null, 1) }
-      </pre>
+      </pre> */}
     </form>
   )
 }
