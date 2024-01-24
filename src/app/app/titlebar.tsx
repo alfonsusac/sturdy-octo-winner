@@ -1,14 +1,18 @@
 import { cn } from "@/lib/tailwind"
+import { ReactNode } from "react"
 
-export function TitleBar(p: {
-  icon: React.ReactNode,
-  title: React.ReactNode,
-  subtitle?: React.ReactNode,
-  menus?: React.ReactNode,
-}) {
+export function TitleBar(
+  props: {
+    icon: React.ReactNode,
+    title: React.ReactNode,
+    // subtitle?: React.ReactNode,
+    menus?: React.ReactNode,
+    children?: React.ReactNode,
+  }
+) {
   return (
     <div className={ cn(
-      "min-h-0 flex flex-col",
+      "flex flex-col h-11 shrink-0",
       "border-b-2 border-b-black/10",
       "flex flex-row items-center",
       "justify-between px-4 text-sm",
@@ -16,16 +20,36 @@ export function TitleBar(p: {
     ) }>
       <div className="flex flex-row items-center">
         <div className="mr-1.5 text-lg text-indigo-200/60">
-          { p.icon }
+          { props.icon }
         </div>
         <div>
-          { p.title }
+          { props.title }
         </div>
-        { p.subtitle && <>{ p.subtitle }</> }
+        { props.children }
+        {/* { props.subtitle && <>{ props.subtitle }</> } */}
       </div>
       <div className="shrink-0 flex flex-row">
-        { p.menus }
+        { props.menus }
       </div>
     </div>
   )
+}
+export function TitleBarIcon(
+  props: {
+    children: ReactNode
+  }
+) {
+  return <div className="mr-1.5 text-lg text-indigo-200/60">
+    {props.children}
+  </div>
+}
+
+export function TitleBarTitle(
+  props: {
+    children: ReactNode
+  }
+) {
+  return <div className="">
+    {props.children}
+  </div>
 }
