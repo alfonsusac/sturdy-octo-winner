@@ -3,7 +3,7 @@ import { HomeSidebarMenuItem } from "./client"
 import { SVGProps } from "react"
 import { style } from "@/style"
 
-export default function HomeSidebar(p: any){
+export default function HomeSidebar(p: any) {
   return (
     <>
       <div className={ cn(
@@ -12,25 +12,25 @@ export default function HomeSidebar(p: any){
       ) }>
         Find or start a conversation
       </div>
-      
+
       <div className="p-2 overflow-y-scroll">
         <div className="flex flex-col gap-0.5 ">
           <HomeSidebarMenuItem
             icon={ <FluentPeople28Filled /> }
             label={ <>Friends</> }
-            strict={ true }
+            pattern="/app"
             link="/app"
           />
           <HomeSidebarMenuItem
             icon={ <FluentPremium12Filled /> }
             label={ <>Premium</> }
-            strict={ true }
+            pattern="/app/premium"
             link="/app/premium"
           />
           <HomeSidebarMenuItem
             icon={ <FluentChat28Filled /> }
             label={ <>Message Requests</> }
-            strict={ true }
+            pattern="/app/message_request"
             link="/app/message_request"
           />
         </div>
@@ -38,7 +38,7 @@ export default function HomeSidebar(p: any){
         <div className="mt-6">
           <div className={ cn(
             "flex flex-row justify-between items-center ",
-            "px-2",
+            "pl-2",
             "my-2",
             style.categoryTitle,
           ) }>
@@ -46,7 +46,7 @@ export default function HomeSidebar(p: any){
               Direct Messages
             </div>
             <div>
-              <FluentAdd12Filled className="text-[1.3em] text-indigo-200/40"/>
+              <FluentAdd12Filled className="text-[1.3em] text-indigo-200/40" />
             </div>
           </div>
           {
