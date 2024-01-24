@@ -53,7 +53,7 @@ export default async function AppLayout(
           <UserStatus user={ user } />
         </SubSidebar>
 
-        <div className={ cn(style.cardbg, "grid grid-flow-row grid-rows-[2.75rem_1fr] text-sm") }>
+        <div className={ cn(style.cardbg, "text-sm flex flex-col shrink-0") }>
           { p.children }
         </div>
 
