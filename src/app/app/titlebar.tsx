@@ -26,7 +26,6 @@ export function TitleBar(
           { props.title }
         </div>
         { props.children }
-        {/* { props.subtitle && <>{ props.subtitle }</> } */}
       </div>
       <div className="shrink-0 flex flex-row">
         { props.menus }

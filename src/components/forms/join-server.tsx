@@ -23,7 +23,7 @@ export default function JoinGuildForm(p: {
     <form onSubmit={ handleSubmit(onSubmit) } className="flex flex-col">
       <div className="flex flex-col p-4 pt-0 items-stretch">
         <fieldset className="mt-4 flex flex-col items-stretch">
-          <label className={ cn(style.inputLabel) }>Invite Link</label>
+          <label className={ cn("") }>Invite Link</label>
           <input
             className={ cn(style.textInput) }
             placeholder={ `hTKzmaks` }

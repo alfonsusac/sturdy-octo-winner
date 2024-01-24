@@ -11,8 +11,6 @@ export const style = {
 
     "data-[state=active]:bg-indigo-300/20",
     "data-[state=active]:text-indigo-100/90",
-    // "data-[state=active]:shadow-md",
-    // "data-[state=active]:shadow-black/10",
 
     "data-[state=active]:hover:bg-indigo-300/20",
     "data-[state=active]:hover:text-indigo-100/90",
@@ -34,16 +32,13 @@ export const style = {
     "hover:bg-indigo-700",
     "hover:shadow-md",
 
-
     "disabled:saturate-50",
     "disabled:brightness-75",
     "disabled:pointer-events-none",
-
-
   ),
 
   categoryTitle: cn(
-    "text-[0.7rem]",
+    "text-xs",
     "text-indigo-300/40",
     "font-semibold",
     "uppercase",
@@ -52,10 +47,7 @@ export const style = {
   cardbg: cn(
     'rounded-lg bg-indigo-300/5'
   ),
-  inputLabel: cn(
-    // "text-[0.7rem] uppercase font-semibold",
-    // "my-1.5",
-  ),
+
   textInput: cn(
     "p-2.5 px-3",
     "rounded-md",
