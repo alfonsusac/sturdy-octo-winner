@@ -9,6 +9,10 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      fontSize: {
+        xxs: '0.65rem',
+        xs: '0.7rem'
+      },
       fontFamily: {
         sans: ['var(--font-open-sans)', "Open Sans", 'ui-sans-serif', 'system-ui'],
         logo: ['var(--font-logo)']
