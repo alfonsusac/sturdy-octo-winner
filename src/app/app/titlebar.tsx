@@ -21,14 +21,7 @@ export function TitleBar(p: {
         <div>
           { p.title }
         </div>
-        {
-          p.subtitle && (
-            <>
-              {/* <div className="mx-3 w-px h-4 bg-indigo-200/20" /> */}
-              { p.subtitle }
-            </>
-          )
-        }
+        { p.subtitle && <>{ p.subtitle }</> }
       </div>
       <div className="shrink-0 flex flex-row">
         { p.menus }
