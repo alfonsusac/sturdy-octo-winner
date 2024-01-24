@@ -14,6 +14,8 @@ export async function s_sendMessage(
   if (user.id !== params.userid)
     return { error: "Not Authenticated" }
 
+  console.log("Message", params.message)
+
   // todo: check if user has channelid
   if(params.message === "") return { error: "message is required" }
 
