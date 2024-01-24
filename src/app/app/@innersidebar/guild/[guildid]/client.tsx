@@ -1,19 +1,11 @@
 "use client"
 
-import { ComponentProps, ComponentPropsWithoutRef, ReactNode, Ref, forwardRef } from "react"
-import { ChannelListItemServer } from "./page"
+import { ComponentPropsWithoutRef, ReactNode, Ref, forwardRef } from "react"
 import { useActivePath } from "@/components/api/use-active-path"
 import { useParams, useRouter } from "next/navigation"
 import { cn } from "@/lib/tailwind"
 import { Slot } from "@radix-ui/react-slot"
 
-const style_channelItemList = cn(
-  "group px-2 h-[1.9rem] text-[0.85rem] rounded-md select-none leading-normal",
-  "flex gap-1.5 items-center",
-  "text-indigo-200/50 hover:bg-indigo-300/5 shrink-0 text-left duration-75",
-  "data-[selected=true]:bg-indigo-200/10",
-  "data-[selected=true]:text-white",
-)
 
 export const ChannelListItem = forwardRef(
   function ChanelListItem(
@@ -33,6 +25,7 @@ export const ChannelListItem = forwardRef(
           router.push(path)
         }
       } }
+      ref={ ref }
       {...rest}
     />
   }
