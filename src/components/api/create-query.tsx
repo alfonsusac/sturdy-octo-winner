@@ -15,7 +15,7 @@ export function createQuery<FnData extends any>(
     queryFn: QueryFunction<FnData>
   ) {
     const queryClient = getQueryClient()
-    queryClient.prefetchQuery({
+    await queryClient.prefetchQuery({
       ...options,
       queryFn,
     })

@@ -14,11 +14,10 @@ import { toast } from "sonner"
 import { cn } from "@/lib/tailwind"
 import { DropdownBase, DropdownItem } from "@/components/base/dropdown"
 import GuildSettingView from "@/components/setting-menu/guildSetting"
-import { QueryClient, QueryClientProvider, UndefinedInitialDataOptions, useQuery, useQueryClient } from "@tanstack/react-query"
+import { QueryClient, QueryClientProvider, useQueryClient } from "@tanstack/react-query"
 import { runServerAction } from "@/lib/serveraction/return"
 import { s_deleteGuild } from "@/actions/crud-guild"
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
-import { createQuery } from "@/components/api/create-query"
 import { useGuilds } from "./query"
 
 
@@ -50,7 +49,7 @@ export function Providers(p: {
       <BaseScreen>
         <QueryClientProvider client={ queryClient }>
           { p.children }
-          <ReactQueryDevtools />
+          <ReactQueryDevtools  />
         </QueryClientProvider>
       </BaseScreen>
     </SessionProvider>
@@ -73,7 +72,7 @@ export function UserStatus(p: {
         <img src={ session.data?.user?.image ?? "" } alt="Current user's profile picture" className="w-full h-full object-cover" />
       </div>
       <div className="flex flex-col gap-1 leading-[0.8] justify-center grow">
-        <div className="text-[0.8rem] text-indigo-100/90 font-semibold truncate shrink min-w-0 flex-1">
+        <div className="text-[0.8rem] text-indigo-100/90 font-medium truncate shrink min-w-0 flex-1">
           { session.data?.user?.name ?? "" } hhhhhhhhhhhhhhhhhhhhhhhhhhh
         </div>
         <div className="text-[0.7rem] text-indigo-100/60 truncate">
@@ -137,14 +136,17 @@ export function GuildList(
 ) {
   const router = useRouter()
 
-  const { data: guilds } = useGuilds()
+  const { data: guilds } = useGuilds({
+    queryFn: () => {
+      toast("Fetching guild list")
+      return []
+    }
+  })
   
   const queryClient = useQueryClient()
-
   addGuildToList = (guild) => {
     queryClient.setQueryData(['guilds'], (prev: Guild[]) => [...prev, guild])
   }
-
   removeGuildFromList = (id) => {
     queryClient.setQueryData(['guilds'], (prev: Guild[]) => prev.filter(g => g.id !== id))
   }
