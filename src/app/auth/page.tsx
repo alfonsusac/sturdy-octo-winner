@@ -1,31 +1,32 @@
-import { ButtonBase, LoginButton } from "@/components/ui/button"
-import { LoginGoogleButton } from "@/components/ui/button.login"
 import { LoginLocalDev, LoginViaGoogle } from "@/lib/auth/login-button"
-import { Icon } from '@iconify/react'
 
 export default function AuthPage() {
   return (
     <main className="min-h-screen w-full gap-8 flex flex-col items-center justify-center">
-      <div className="max-w-sm w-full flex flex-col gap-8 items-center bg-indigo-300/5 p-8 rounded-3xl">
-        <h1 className="text-3xl font-bold text-white">
-          Log in
-        </h1>
+
+      <div className="max-w-sm w-full flex flex-col gap-8 items-center p-8 rounded-3xl">
+        <header className="text-center">
+          <h1 className="text-2xl font-semibold text-white">
+            Welcome Back
+          </h1>
+          <p className="text-sm opacity-70 mt-2">
+            Select Authentication Method Below
+          </p>
+        </header>
         <div className="flex w-full gap-2 flex-col">
           <LoginViaGoogle>
-            <button className="w-full h-10">
-              <GoogleLogo/>
-              Login via Google
+            <button className="w-full h-10 flex items-center justify-center gap-2 shadow-[0_0_2px_0_#fff3] rounded-lg">
+              <GoogleLogo /> Login via Google
             </button>
           </LoginViaGoogle>
           <LoginLocalDev>
-            <button className="w-full h-10">
+            <button className="w-full h-10 flex items-center justify-center gap-2 shadow-[0_0_2px_0_#fff3] rounded-lg">
               Login via Local Dev
             </button>
           </LoginLocalDev>
         </div>
-
-        {/* <LoginGoogleButton secondary large block /> */}
       </div>
+
     </main>
   )
 }

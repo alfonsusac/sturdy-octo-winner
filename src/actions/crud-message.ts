@@ -31,5 +31,4 @@ export async function s_sendMessage(
   } catch (error) {
     return { error: "Unknown Prisma error when sending message" }
   }
-  
 }

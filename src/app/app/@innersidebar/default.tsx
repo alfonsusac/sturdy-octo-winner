@@ -13,7 +13,7 @@ export default function HomeSidebar(p: any) {
         Find or start a conversation
       </div>
 
-      <div className="p-2 overflow-y-scroll">
+      <div className="p-2 overflow-y-scroll h-0 grow">
         <div className="flex flex-col gap-0.5 ">
           <HomeSidebarMenuItem
             icon={ <FluentPeople28Filled /> }

@@ -12,13 +12,15 @@ import { SidebarItem } from "@/components/parts/sidebar-item"
 import { useParams, usePathname, useRouter } from "next/navigation"
 import { toast } from "sonner"
 import { cn } from "@/lib/tailwind"
-import { createReactContext } from "@/components/api/create-context"
 import { DropdownBase, DropdownItem } from "@/components/base/dropdown"
 import GuildSettingView from "@/components/setting-menu/guildSetting"
-import { devtoast } from "@/lib/devutil-client"
 import { QueryClient, QueryClientProvider, UndefinedInitialDataOptions, useQuery, useQueryClient } from "@tanstack/react-query"
 import { runServerAction } from "@/lib/serveraction/return"
 import { s_deleteGuild } from "@/actions/crud-guild"
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+import { createQuery } from "@/components/api/create-query"
+import { useGuilds } from "./query"
+
 
 
 // -------------------------------------------
@@ -37,7 +39,7 @@ export function Providers(p: {
           queries: {
             // With SSR, we usually want to set some default staleTime
             // above 0 to avoid refetching immediately on the client
-            staleTime: 60 * 1000,
+            staleTime: 60 * 1000, // 1 minute
           },
         },
       }),
@@ -48,6 +50,7 @@ export function Providers(p: {
       <BaseScreen>
         <QueryClientProvider client={ queryClient }>
           { p.children }
+          <ReactQueryDevtools />
         </QueryClientProvider>
       </BaseScreen>
     </SessionProvider>
@@ -127,22 +130,16 @@ function HomeIcon(props: SVGProps<SVGSVGElement>) {
 
 export let addGuildToList: ((guild: Guild) => void)
 export let removeGuildFromList: ((id: string) => void)
-export function useGuilds(
-  options?: Omit<UndefinedInitialDataOptions<Guild[]>, 'queryKey'>
-) {
-  return useQuery<Guild[]>({
-    queryKey: ['guilds'],
-    ...options
-  })
-}
+
 
 export function GuildList(
   props: {}
 ) {
   const router = useRouter()
 
-  const queryClient = useQueryClient()
   const { data: guilds } = useGuilds()
+  
+  const queryClient = useQueryClient()
 
   addGuildToList = (guild) => {
     queryClient.setQueryData(['guilds'], (prev: Guild[]) => [...prev, guild])
@@ -206,9 +203,9 @@ export function GuildHeader(
 ) {
   const param = useParams() as { guildid?: string }
   const [open, setOpen] = useState(false)
-  const { data: guilds } = useGuilds()
   const router = useRouter()
-
+  
+  const { data: guilds } = useGuilds()
   if (!param.guildid) return <></>
 
   const guild = guilds?.find(guild => guild.id === param.guildid)

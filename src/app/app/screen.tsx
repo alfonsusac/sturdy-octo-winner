@@ -22,6 +22,7 @@ export function BaseScreen(p: {
           "w-screen h-screen",
           "grid grid-flow-row",
           "grid-cols-[3rem_13rem_minmax(0,_1fr)]",
+          "grid-rows-1",
           "p-2 gap-2",
 
           "scale-100",

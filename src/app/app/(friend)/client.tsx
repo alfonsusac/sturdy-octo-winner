@@ -3,7 +3,7 @@
 import { ReactNode } from "react"
 import { FluentPeople28Filled } from "../@innersidebar/default"
 import { TitleBar } from "../titlebar"
-import { Tabs, TabsList, TabsTrigger } from "@radix-ui/react-tabs"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@radix-ui/react-tabs"
 import { cn } from "@/lib/tailwind"
 
 export function AppPageClient(
@@ -50,3 +50,6 @@ export function AppPageClient(
 const buttonStyle = cn(
   "px-2.5 py-1.5 hover:bg-indigo-200/10 data-[state=active]:bg-indigo-200/20 data-[state=active]:hover:bg-indigo-200/20"
 )
+
+export const TabsContentClient = TabsContent
+
