@@ -8,8 +8,6 @@ import { AddGuildDialog } from "../../components/modal/add-guild"
 import { SidebarItem } from "@/components/parts/sidebar-item"
 import prisma from "@/lib/db/prisma"
 import { prefetchGuilds } from "./query"
-import { HydrationBoundary, QueryClient, dehydrate } from "@tanstack/react-query"
-
 
 export default async function AppLayout(
   props: {
@@ -30,26 +28,12 @@ export default async function AppLayout(
       })
     }
   )
-  // const qc = new QueryClient()
-  // await qc.prefetchQuery({
-  //   queryKey: ['guilds'],
-  //   queryFn: async () => {
-  //     const { id } = await Auth.getUserSession()
-  //     const data = await prisma.guild.findMany({
-  //       where: { members: { some: { userId: id } } }
-  //     })
-  //     console.log("q: Fetching guild list", data.length)
-  //     return data
-  //   }
-  // })
+
 
   return (
     <div className="overflow-hidden">
       <Providers session={session}>
         <GuildsHydrationBoundary>
-
-        {/* <HydrationBoundary state={dehydrate(qc)}> */}
-
 
           <Sidebar className="h-auto flex flex-col gap-2 overflow-y-scroll scrollbar-none grow">
             <HomeButton />
@@ -71,8 +55,6 @@ export default async function AppLayout(
           <div className={cn(style.cardbg, "text-sm flex flex-col shrink-0")}>
             {props.children}
           </div>
-
-        {/* </HydrationBoundary> */}
 
 
         </GuildsHydrationBoundary>
