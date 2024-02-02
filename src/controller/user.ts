@@ -1,3 +1,4 @@
+import { getQueryClient, prepareQuery } from "@/components/api/create-query"
 import { Auth } from "@/lib/auth/auth-setup"
 import prisma from "@/lib/db/prisma"
 import { logFunc } from "@/lib/devutil"
@@ -14,6 +15,8 @@ export const getSessionUserData = cache(async () => {
 
   const { id } = await Auth.getUserSession()
   const user = await findUserById(id)
+
+  prepareQuery(['user', id], user)
 
   if (!user) redirect('/register', "No user found with that id (getSessionUserData)")
   else return user
