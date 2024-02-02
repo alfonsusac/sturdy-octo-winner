@@ -7,11 +7,11 @@ export const {
 } = createQuery<Guild[]>(['guilds'])
 
 export const {
-  prefetch: prefetchFriendList,
+  prefetch: prepareFriendListQuery,
   useHook: useFriendList,
 } = createQuery<User[]>(['friendList'])
 
 export const {
-  prefetch: prefetchFriendRequestList,
+  prefetch: prepareFriendRequestListQuery,
   useHook: useFriendRequestList,
 } = createQuery<FriendRequest[]>(['friendRequestList'])

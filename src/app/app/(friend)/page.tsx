@@ -5,7 +5,7 @@ import { HydrateState, getQueryClient } from "@/components/api/create-query"
 import prisma from "@/lib/db/prisma"
 import { Auth } from "@/lib/auth/auth-setup"
 import { HydrationBoundary } from "@tanstack/react-query"
-import { prefetchFriendList, prefetchFriendRequestList } from "../query"
+import { prepareFriendListQuery, prepareFriendRequestListQuery } from "../query"
 
 interface Hello {
 
@@ -16,11 +16,11 @@ export default async function AppPage() {
   // fetch pending
   // fetch add new friend
   
-  await prefetchFriendList(async () => {
+  await prepareFriendListQuery(async () => {
     return await prisma.user.findMany({ where: { friendsOf: { some: { id: (await Auth.getUserSession()).id } } } })
   })
 
-  await prefetchFriendRequestList(async () => {
+  await prepareFriendRequestListQuery(async () => {
     return await prisma.friendRequest.findMany({ where: { toUserID: (await Auth.getUserSession()).id } })
   })
 
@@ -44,7 +44,10 @@ export default async function AppPage() {
   )
 }
 
-export function AllFriendListServer() {
+export async function AllFriendListServer() {
+
+  const friendList = await prisma.user.findMany({ where: {friendsOf: {some: {id: (await Auth.getUserSession()).id}}}})
+  await p
 
   return (
     <>
