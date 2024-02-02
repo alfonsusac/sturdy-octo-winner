@@ -54,7 +54,7 @@ export function createQuery<FnData>(
   //     still be hydrated in the client!!
   //     Do not find solution to pass the prefetched data to HydrateState!
   //  - update #2: No longer need RQHydrationBoundary because we already have HydrateState
-  // 
+  //  - update #3: Now you can pass values in here.
   async function prefetch(
     queryFn: QueryFunction<FnData> | FnData
   ) {
