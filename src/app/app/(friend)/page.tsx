@@ -1,24 +1,15 @@
 import { cn } from "@/lib/tailwind"
 import { style } from "@/style"
-import { AppPageClient, FriendCount, TabsContentClient } from "./client"
-import { HydrateState, getQueryClient } from "@/components/api/create-query"
+import { AppPageClient, Client_FriendCount, Client_FriendList, TabsContentClient } from "./client"
+import { HydrateState } from "@/components/api/create-query"
 import prisma from "@/lib/db/prisma"
 import { Auth } from "@/lib/auth/auth-setup"
-import { HydrationBoundary } from "@tanstack/react-query"
 import { prepareFriendListQuery, prepareFriendRequestListQuery } from "../query"
-
-interface Hello {
-
-}
 
 export default async function AppPage() {
   // fetch friends list
   // fetch pending
   // fetch add new friend
-  
-  await prepareFriendListQuery(async () => {
-    return await prisma.user.findMany({ where: { friendsOf: { some: { id: (await Auth.getUserSession()).id } } } })
-  })
 
   await prepareFriendRequestListQuery(async () => {
     return await prisma.friendRequest.findMany({ where: { toUserID: (await Auth.getUserSession()).id } })
@@ -29,58 +20,73 @@ export default async function AppPage() {
   return (
     <HydrateState>
       <AppPageClient>
-        <TabsContentClient value="all" className={pageStyle} >
-          <AllFriendListServer />
-        </TabsContentClient>
-        <TabsContentClient value="pending" className={pageStyle}>
 
+        <TabsContentClient value="all" className={pageStyle}>
+          <AllFriendList />
         </TabsContentClient>
+
+        <TabsContentClient value="pending" className={pageStyle}>
+          <AllFriendRequests />
+        </TabsContentClient>
+
         <TabsContentClient value="addfriend" className={pageStyle}>
 
         </TabsContentClient>
+
       </AppPageClient>
     </HydrateState>
 
   )
 }
 
-export async function AllFriendListServer() {
+async function AllFriendList() {
 
-  const friendList = await prisma.user.findMany({ where: {friendsOf: {some: {id: (await Auth.getUserSession()).id}}}})
-  await p
+  const friendList = await prisma.user.findMany({ where: { friendsOf: { some: { id: (await Auth.getUserSession()).id } } } })
+  await prepareFriendListQuery(friendList)
 
   return (
-    <>
+    <HydrateState>
       <input
         className="bg-black/30 rounded-md p-1.5 px-2.5 mb-4 placeholder:text-indigo-200/30 shrink-0"
         placeholder="Search"
       />
       <div className={cn(style.categoryTitle, "shrink-0")}>
-        all friends - <FriendCount />
+        all friends - <Client_FriendCount />
       </div>
       <div className="flex flex-col items-stretch overflow-y-scroll">
-        {
-          [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0].map((_, i) => (
-            <div key={i} className={cn(
-              "p-2 w-auto",
-              "flex flex-row shrink-0",
-              "gap-2",
-              "rounded-md",
-              "hover:bg-indigo-300/10"
-            )}>
-              <div className="w-9 h-9 rounded-full bg-black/30" />
-              <div className="flex flex-col items-start">
-                <div>
-                  Friend A
-                </div>
-                <div className="text-xs leading-none text-indigo-100/40">
-                  Status
-                </div>
-              </div>
-            </div>
-          ))
-        }
+        <Client_FriendList />
       </div>
-    </>
+    </HydrateState>
   )
+}
+
+async function AllFriendRequests() {
+
+  const friendRequests = await prisma.friendRequest.findMany({ where: { toUserID: (await Auth.getUserSession()).id } })
+  await prepareFriendRequestListQuery(friendRequests)
+
+  return (
+    <HydrateState>
+      {
+        friendRequests.map((data) => (
+          <div key={data.id} className="flex-none p-2 rounded-md
+            hover:bg-indigo-300/10
+            flex gap-2
+          ">
+            {
+              JSON.stringify(data)
+            }
+          </div>
+        ))
+      }
+    </HydrateState>
+  )
+
+  
+}
+
+async function AddFriendPage() {
+  
+
+
 }
