@@ -29,7 +29,7 @@ import { useGuilds } from "./query"
 // -------------------------------------------
 
 
-export function Providers(p: {
+export function ClientProviders(p: {
   children: React.ReactNode
   session: Session | null
 }) {
