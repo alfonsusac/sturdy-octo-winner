@@ -3,14 +3,12 @@ import { style } from "@/style"
 import { SVGProps } from "react"
 import { getSessionUserData } from "@/controller/user"
 import { Auth } from "@/lib/auth/auth-setup"
-import { GuildHeader, GuildList, HomeButton, Providers, UserStatus } from "./client"
+import { GuildHeader, GuildList, HomeButton, ClientProviders, UserStatus } from "./client"
 import { AddGuildDialog } from "../../components/modal/add-guild"
 import { SidebarItem } from "@/components/parts/sidebar-item"
 import prisma from "@/lib/db/prisma"
-// import { prefetchGuilds } from "./query"
-import { HydrateState, createQuery } from "@/components/api/create-query"
-import { Guild } from "@prisma/client"
-import { prefetchGuilds } from "./query"
+import { HydrateState } from "@/components/api/create-query"
+import { prepareGuildsQuery } from "./query"
 
 
 export default async function AppLayout(
@@ -22,30 +20,16 @@ export default async function AppLayout(
 ) {
   const { session } = await Auth.getUserSession()
   const user = await getSessionUserData()
-
-  async function getGuilds() {
-    const { id } = await Auth.getUserSession()
-    console.log("q: Fetching guild list")
-    return await prisma.guild.findMany({
-      where: { members: { some: { userId: id } } }
-    })
-  }
-
-  await prefetchGuilds(getGuilds)
-  // const data = await getGuilds()
-
-  // const qc = getQueryClient()
-  // await qc.prefetchQuery({
-    // queryKey: ['guilds'],
-    // queryFn: () => data
-  // })
-  // await prefetch()
+  const guilds = await prisma.guild.findMany({
+    where: { members: { some: { userId: user.id } } }
+  })
+  await prepareGuildsQuery(guilds)
 
   return (
     <div className="overflow-hidden">
-      <Providers session={session}>
+      <ClientProviders session={session}>
         <HydrateState>
-
+    
           <Sidebar className="h-auto flex flex-col gap-2 overflow-y-scroll scrollbar-none grow">
             <HomeButton />
             <hr className="w-1/2 h-px border-indigo-300/20 self-center my-2" />
@@ -55,6 +39,7 @@ export default async function AppLayout(
             } />
           </Sidebar>
 
+          
           <SubSidebar className={cn(style.cardbg, "grid grid-flow-row grid-rows-[minmax(0,_1fr)_3rem]")}>
             <div className="flex flex-col h-full">
               <GuildHeader />
@@ -63,13 +48,14 @@ export default async function AppLayout(
             <UserStatus user={user} />
           </SubSidebar>
 
+          
           <div className={cn(style.cardbg, "text-sm flex flex-col shrink-0")}>
             {props.children}
           </div>
 
         </HydrateState>
-      </Providers>
-    </div>
+      </ClientProviders>
+    </div >
   )
 }
 
