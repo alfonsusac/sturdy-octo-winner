@@ -26,7 +26,7 @@ export function HydrateState(
 type QueryKeyWithData<D> = QueryKey & D
 
 export function prepareQuery<FnData extends any>(
-  key: QueryKeyWithData<FnData>,
+  key: QueryKey,
   data: FnData
 ) {
   getQueryClient().prefetchQuery({
