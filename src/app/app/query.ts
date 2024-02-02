@@ -15,3 +15,4 @@ export const {
   prefetch: prepareFriendRequestListQuery,
   useHook: useFriendRequestList,
 } = createQuery<FriendRequest[]>(['friendRequestList'])
+
