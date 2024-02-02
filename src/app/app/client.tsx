@@ -18,7 +18,9 @@ import { QueryClient, QueryClientProvider, useQueryClient } from "@tanstack/reac
 import { runServerAction } from "@/lib/serveraction/return"
 import { s_deleteGuild } from "@/actions/crud-guild"
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+import { createQuery } from "@/components/api/create-query"
 import { useGuilds } from "./query"
+// import { useGuilds } from "./layout"
 
 
 
@@ -49,7 +51,7 @@ export function Providers(p: {
       <BaseScreen>
         <QueryClientProvider client={ queryClient }>
           { p.children }
-          <ReactQueryDevtools  />
+          <ReactQueryDevtools initialIsOpen={true} />
         </QueryClientProvider>
       </BaseScreen>
     </SessionProvider>
@@ -136,25 +138,19 @@ export function GuildList(
 ) {
   const router = useRouter()
 
-  const { data: guilds } = useGuilds({
-    queryFn: () => {
-      toast("Fetching guild list")
-      return []
-    }
-  })
+  const guilds = useGuilds()
   
-  const queryClient = useQueryClient()
   addGuildToList = (guild) => {
-    queryClient.setQueryData(['guilds'], (prev: Guild[]) => [...prev, guild])
+    guilds.setData((prev) => [...prev, guild])
   }
   removeGuildFromList = (id) => {
-    queryClient.setQueryData(['guilds'], (prev: Guild[]) => prev.filter(g => g.id !== id))
+    guilds.setData((prev) => prev.filter(g => g.id !== id))
   }
 
   return (
     <>
       {
-        guilds?.map((guild, i) => (
+        guilds.data?.map((guild, i) => (
           <SidebarItem
             className={
               cn(
