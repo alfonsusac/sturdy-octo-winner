@@ -7,7 +7,11 @@ import { GuildHeader, GuildList, HomeButton, Providers, UserStatus } from "./cli
 import { AddGuildDialog } from "../../components/modal/add-guild"
 import { SidebarItem } from "@/components/parts/sidebar-item"
 import prisma from "@/lib/db/prisma"
+// import { prefetchGuilds } from "./query"
+import { HydrateState, createQuery } from "@/components/api/create-query"
+import { Guild } from "@prisma/client"
 import { prefetchGuilds } from "./query"
+
 
 export default async function AppLayout(
   props: {
@@ -19,21 +23,28 @@ export default async function AppLayout(
   const { session } = await Auth.getUserSession()
   const user = await getSessionUserData()
 
-  const GuildsHydrationBoundary = await prefetchGuilds(
-    async () => {
-      const { id } = await Auth.getUserSession()
-      console.log("q: Fetching guild list")
-      return await prisma.guild.findMany({
-        where: { members: { some: { userId: id } } }
-      })
-    }
-  )
+  async function getGuilds() {
+    const { id } = await Auth.getUserSession()
+    console.log("q: Fetching guild list")
+    return await prisma.guild.findMany({
+      where: { members: { some: { userId: id } } }
+    })
+  }
 
+  await prefetchGuilds(getGuilds)
+  // const data = await getGuilds()
+
+  // const qc = getQueryClient()
+  // await qc.prefetchQuery({
+    // queryKey: ['guilds'],
+    // queryFn: () => data
+  // })
+  // await prefetch()
 
   return (
     <div className="overflow-hidden">
       <Providers session={session}>
-        <GuildsHydrationBoundary>
+        <HydrateState>
 
           <Sidebar className="h-auto flex flex-col gap-2 overflow-y-scroll scrollbar-none grow">
             <HomeButton />
@@ -56,8 +67,7 @@ export default async function AppLayout(
             {props.children}
           </div>
 
-
-        </GuildsHydrationBoundary>
+        </HydrateState>
       </Providers>
     </div>
   )
