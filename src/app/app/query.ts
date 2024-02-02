@@ -1,10 +1,9 @@
-import { createQuery, prefetch } from "@/components/api/create-query"
+import { createQuery, prepareQuery } from "@/components/api/create-query"
 import { FriendRequest, Guild, User } from "@prisma/client"
 
-
 export const {
-  prefetch: prefetchGuilds,
-  useHook: useGuilds
+  prefetch: prepareGuildsQuery,
+  useHook: useGuilds,
 } = createQuery<Guild[]>(['guilds'])
 
 export const {
