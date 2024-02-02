@@ -7,14 +7,16 @@ export const getQueryClient = cache(
 )
 
 // Server Only. Hydrates any query client that is present in the current request.
+type QueryKeyData<Data extends any> = QueryKey & { data: Data }
+type Query<Data extends any = unknown> = { data: Data, key: QueryKeyData<Data> }
 export function HydrateState(
   props: {
-    children: ReactNode
+    children: ReactNode,
+    queries?: Query[]
   }
 ) {
-  const qc = getQueryClient()
   return (
-    <RQHydrationBoundary state={dehydrate(qc)}>
+    <RQHydrationBoundary state={dehydrate(getQueryClient())}>
       {props.children}
     </RQHydrationBoundary>
   )
@@ -23,7 +25,7 @@ export function HydrateState(
 
 type QueryKeyWithData<D> = QueryKey & D
 
-export function prefetch<FnData extends any>(
+export function prepareQuery<FnData extends any>(
   key: QueryKeyWithData<FnData>,
   data: FnData
 ) {
@@ -34,30 +36,50 @@ export function prefetch<FnData extends any>(
 }
 
 
-export function createQuery<FnData extends any>(
+type NotFunction<T> = T extends Function ? never : T;
+
+export function createQuery<FnData>(
   key: QueryKey,
   // options?: UndefinedInitialDataOptions<FnData>
 ) {
   // const { queryFn, ...clientDefaultOptions} = options
-  
+
   // [Server-Only]
-  // Creates a prefetching function that prefetches a data 
+  // Creates a prefetching function that prefetches a data
   //  and prepares them into qc where it can by dehydrated into the boundary
   //  and get rehydrated in the client
+  //  - update #1: this is already perfect because on a
+  //     single request, you only need one HydrateState since getQueryClient is cached.
+  //     Therefore if you call prefetch function deep in server component, it will
+  //     still be hydrated in the client!!
+  //     Do not find solution to pass the prefetched data to HydrateState!
+  //  - update #2: No longer need RQHydrationBoundary because we already have HydrateState
+  // 
   async function prefetch(
-    queryFn: QueryFunction<FnData>
+    queryFn: QueryFunction<FnData> | FnData
   ) {
     const queryClient = getQueryClient()
-    await queryClient.prefetchQuery({
-      // ...options,
-      queryKey: key,
-      queryFn,
-    })
-    return function HydrationBoundary(
-      props: Omit<HydrationBoundaryProps, 'state'>
-    ) {
-      return <RQHydrationBoundary state={ dehydrate(queryClient) } { ...props } />
+
+    if (typeof queryFn === "function") {
+      await queryClient.prefetchQuery({
+        // ...options,
+        queryKey: key,
+        queryFn: queryFn as QueryFunction<FnData>,
+      })
+    } else {
+      await queryClient.prefetchQuery({
+        // ...options,
+        queryKey: key,
+        queryFn: () => queryFn,
+      })
     }
+
+
+    // return function HydrationBoundary(
+    //   props: Omit<HydrationBoundaryProps, 'state'>
+    // ) {
+    //   return <RQHydrationBoundary state={dehydrate(queryClient)} {...props} />
+    // }
   }
 
   // [Client Only]
@@ -100,7 +122,7 @@ export function createQuery<FnData extends any>(
   return {
     prefetch,
     useHook,
-    key,
+    key: key as QueryKeyData<FnData>,
     // keys: options.queryKey as QueryKeyWithData<FnData>
   }
 }
