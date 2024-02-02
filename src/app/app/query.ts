@@ -1,4 +1,4 @@
-import { createQuery, prepareQuery } from "@/components/api/create-query"
+import { createQuery } from "@/components/api/create-query"
 import { FriendRequest, Guild, User } from "@prisma/client"
 
 export const {

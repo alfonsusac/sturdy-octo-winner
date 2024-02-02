@@ -1,4 +1,4 @@
-import { HydrationBoundary as RQHydrationBoundary, HydrationBoundaryProps, QueryClient, QueryClientConfig, UndefinedInitialDataOptions, dehydrate, useQuery, QueryFunction, HydrationBoundary, QueryKey, useQueryClient, QueryFilters, Updater, UseQueryResult } from "@tanstack/react-query"
+import { HydrationBoundary as RQHydrationBoundary, QueryClient, QueryClientConfig, UndefinedInitialDataOptions, dehydrate, useQuery, QueryFunction, QueryKey, useQueryClient, QueryFilters } from "@tanstack/react-query"
 import { ReactNode, cache } from "react"
 
 // Server Only
@@ -35,8 +35,6 @@ export function prepareQuery<FnData extends any>(
   })
 }
 
-
-type NotFunction<T> = T extends Function ? never : T;
 
 export function createQuery<FnData>(
   key: QueryKey,
@@ -95,26 +93,10 @@ export function createQuery<FnData>(
       ...clientOptions
     });
     (query as any).setData = (fn: ((prev: FnData) => FnData)) => queryClient.setQueriesData(key as QueryFilters, fn as unknown)
-    // (query as any).invalidate = () => queryClient.invalidateQueries(key as QueryFilters)
-    // (query as any)[Symbol.iterator] = () => {
-    //   return Object.keys(query)
-    // }
-    // (query as any)[0] = query.data;
-    // (query as any)[1] = (fn:((prev: FnData)=>FnData)) => queryClient.setQueriesData(key as QueryFilters, fn as unknown)
-    // const q = useQuery({
-    //   // ...clientDefaultOptions,
-    //   queryKey: key,
-    //   ...clientOptions
-    // })
-    // return query as UseQueryResult<FnData, Error> & {
-    //   [0]: FnData,
-    //   [1]: (fn: ((prev: FnData) => FnData)) => void
-    // }
-    // return query as UseQueryResult<FnData, Error> & [
-    //   FnData,
-    //   (fn: ((prev: FnData) => FnData)) => void
-    // ]
-    return query as UseQueryResult<FnData, Error> & {
+
+    const res = query
+
+    return res as typeof query & {
       setData: (fn: ((prev: FnData) => FnData)) => void
     }
   }

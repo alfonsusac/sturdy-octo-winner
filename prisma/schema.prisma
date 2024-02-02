@@ -75,7 +75,7 @@ model Guild {
   owner          User          @relation(fields: [ownerUserId], references: [id])
   ownerUserId    String
   channels       Channel[]
-  guildInvite    GuildInvite[]
+  invites    GuildInvite[]
 }
 
 model GuildInvite {
@@ -83,7 +83,6 @@ model GuildInvite {
   inviteKey  String
   guild      Guild    @relation(fields: [guildId], references: [id])
   guildId    String
-  validUntil DateTime
 
   @@unique([guildId, inviteKey]) // Invite Key must be unique per guild
 }

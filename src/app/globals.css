@@ -130,6 +130,9 @@
   .f-row{
     @apply flex flex-row
   }
+  .flexlist {
+    @apply flex flex-col
+  }
 }
 
 

@@ -2,6 +2,7 @@
 
 import { Auth } from "@/lib/auth/auth-setup"
 import prisma from "@/lib/db/prisma"
+import { nanoid } from "nanoid"
 
 export async function s_createGuild(
   params: {
@@ -24,7 +25,8 @@ export async function s_createGuild(
         // relationship
         owner: { connect: { id: params.userId } },
         members: { create: { user: { connect: { id: params.userId } } } },
-        channels: { create: { name: "general" } }
+        channels: { create: { name: "general" } },
+        invites: { create : { inviteKey: nanoid(6) } }
       }
     })
 
