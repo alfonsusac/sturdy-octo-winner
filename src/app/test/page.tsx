@@ -1,6 +1,6 @@
 import { Auth, authOption } from "@/lib/auth/auth-setup"
 import { getServerSession } from "next-auth"
-import { Providers } from "../app/client"
+import { ClientProviders } from "../app/client"
 import { SessionProviderClientComp, UpdateSession } from "./client"
 
 export default async function Page() {
@@ -23,9 +23,9 @@ export default async function Page() {
 
 
   return (
-    <Providers session={session}>
+    <ClientProviders session={session}>
       <pre>{ JSON.stringify(session, null, 1) }</pre>
       <UpdateSession />
-    </Providers>
+    </ClientProviders>
     )
 }
