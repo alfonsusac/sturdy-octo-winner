@@ -11,7 +11,7 @@ import * as z from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useAvatarUpload } from "../api/use-avatar-upload"
 import { s_convertToWebpAction } from "@/actions/uploads/convert-to-webp"
-import { upload } from "../api/upload"
+import { upload } from "../../actions/uploads/client-upload"
 import { s_createGuild } from "@/actions/crud-guild"
 import { useSession } from "@/lib/auth/next-auth.client"
 import { toast } from "sonner"
@@ -19,6 +19,7 @@ import { runServerAction } from "@/lib/serveraction/return"
 import { useRouter } from "next/navigation"
 import { addGuildToList } from "@/app/app/client"
 import { useZodForm } from "../api/create-form"
+import { uploadAsWebp } from "@/actions/uploads/client-upload-webp"
 
 
 export default function CreateGuildForm(
@@ -31,7 +32,7 @@ export default function CreateGuildForm(
   const router = useRouter()
   
 
-  const form2 = useZodForm({
+  const form = useZodForm({
     schema: {
       guildName: z.string().min(1).max(64),
       guildPicture: z.instanceof(Blob).optional()
@@ -49,27 +50,12 @@ export default function CreateGuildForm(
         })
 
         if (data.guildPicture) {
-          // The Image received is in Blob and I would like it to be converted 
-          //  form png to webp first.However, you can't send Blob or ArrayBuffer to
-          //  the server action. Therefore, we need to create FormData first before
-          //  sending it to the server.
-
-          // Create Form Data from File
-          const formData = new FormData()
-          formData.append("image", data.guildPicture)
-
-          // Convert PNG to WEBP
-          const webpBufferString = await s_convertToWebpAction(formData)
-          const webpBlob = new Blob([Buffer.from(webpBufferString, "ascii")], { type: "image/webp" })
-
-          const imgurl = await upload(webpBlob, `guild/${ guild.id }.webp`)
-          console.log(imgurl)
+          await uploadAsWebp(data.guildPicture, `guild/${ guild.id }.webp`)
         }
 
-        toast("finishing")
         addGuildToList(guild)
         props.finish()
-
+        router.push(`/app/guild/${guild.id}`)
 
       } catch (error: any) {
         console.log(error)
@@ -78,24 +64,14 @@ export default function CreateGuildForm(
     }
   })
 
-  // const form = useForm<z.infer<typeof formSchema>>({
-  //   resolver: zodResolver(formSchema),
-  //   defaultValues: {
-  //     guildName: generateSlug(2, { format: "title" }),
-  //     guildPicture: undefined,
-  //   },
-  //   mode: 'onChange',
-  // })
-
-
   const { getRootProps, getInputProps, preview, isLoading } = useAvatarUpload({
     onImageSelected(originalFile, resizedBlob) {
-      form2.setValue("guildPicture", resizedBlob)
+      form.setValue("guildPicture", resizedBlob)
     },
   })
 
   return (
-    <Form { ...form2 }>
+    <Form { ...form }>
       {/* Fields */ }
       <div className="flex flex-col p-4 items-stretch">
         <Fieldset name="guildPicture" className="flex flex-col items-stretch">
@@ -109,7 +85,7 @@ export default function CreateGuildForm(
             <img alt="New Guild Profile Picture" src={ preview ?? undefined } className={ cn("w-full h-full object-cover absolute hidden", preview && "block", isLoading && "blur-sm") } />
             <FluentImageAdd20Filled className="text-3xl text-indigo-200/80" />
           </button>
-          <input className="hidden" { ...form2.register("guildPicture") } { ...getInputProps() } />
+          <input className="hidden" { ...form.register("guildPicture") } { ...getInputProps() } />
         </Fieldset>
         <Fieldset name="guildName" className="mt-4 flex flex-col items-stretch">
           <Label>Guild Name</Label>
