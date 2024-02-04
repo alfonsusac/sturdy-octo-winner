@@ -92,7 +92,7 @@ export function createQuery<FnData>(
       queryKey: key,
       ...clientOptions
     });
-    (query as any).setData = (fn: ((prev: FnData) => FnData)) => queryClient.setQueriesData(key as QueryFilters, fn as unknown)
+    (query as any).setData = (fn: ((prev: FnData) => FnData)) => queryClient.setQueryData(key, fn as unknown)
 
     const res = query
 

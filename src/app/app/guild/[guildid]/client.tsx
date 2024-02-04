@@ -23,13 +23,17 @@ export function GuildName(
     guildid: string
   }
 ) {
-  const query = useGuilds({
-    select(data) {
-      return data.filter(data => data.id === props.guildid)
-    }
-  })
-
-  return query.data?.[0].name
+  try {
+    const query = useGuilds({
+      select(data) {
+        return data.filter(data => data.id === props.guildid)
+      }
+    })
+  
+    return query.data?.[0].name
+  } catch (error) {
+    return undefined
+  }
 }
 
 export function ServerMemberItem(

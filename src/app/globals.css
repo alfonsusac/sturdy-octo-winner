@@ -136,3 +136,8 @@
 }
 
 
+
+.tsqd-parent-container *{
+  min-height: unset !important;
+  min-width: unset !important;
+}

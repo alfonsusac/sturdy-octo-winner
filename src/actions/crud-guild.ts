@@ -48,6 +48,11 @@ export async function s_deleteGuild(
     return { error: "Not Authenticated" }
 
   try {
+    await prisma.guildInvite.deleteMany({
+      where: {
+        guildId: params.guildId
+      }
+    })
     await prisma.guildMember.deleteMany({
       where: {
         guildId: params.guildId

@@ -4,23 +4,37 @@ import { useForm, SubmitHandler } from "react-hook-form"
 import { cn } from "@/lib/tailwind"
 import { style } from "@/style"
 import { joinGuild } from "@/actions/join-guild"
+import * as z from "zod"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useSession } from "@/lib/auth/next-auth.client"
+import { useRouter } from "next/router"
 
-export type JoinGuildInputs = {
-  invite: string
-}
+
+
 
 export default function JoinGuildForm(
   props: {
     toBack: () => void
   }
 ) {
-  const { register, handleSubmit, formState } = useForm<JoinGuildInputs>({
+  const session = useSession()
+  const router = useRouter()
+
+  const formSchema = z.object({
+    invite: z.string().length(8),
+  })
+
+  const { register, handleSubmit, formState } = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: { invite: "" },
     mode: "onChange",
   })
-  const onSubmit: SubmitHandler<JoinGuildInputs> = async (data) => {
+
+  const onSubmit = async (data: z.infer<typeof formSchema>) => {
     console.log(data)
     const res = await joinGuild(data)
   }
+
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col">
       <div className="flex flex-col p-4 pt-0 items-stretch">
