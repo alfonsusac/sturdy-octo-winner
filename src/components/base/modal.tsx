@@ -80,35 +80,39 @@ function useCloseAnimation(
   return { isVisible, isOpen, handleOpenChange }
 }
 
-export function ModalBase(p: {
-  trigger?: React.ReactNode
-  children?: React.ReactNode
-  className?: {
-    overlay?: string,
-    content?: string,
-  },
-  style?: {
-    content?: CSSProperties,
+// Modal Base
+
+export function ModalBase(
+  props: {
+    trigger?: React.ReactNode
+    children?: React.ReactNode
+    className?: {
+      overlay?: string,
+      content?: string,
+    },
+    style?: {
+      content?: CSSProperties,
+    }
+    onOpenChange?: (open: boolean) => void,
+    contentRef?: Ref<HTMLDivElement>,
+    open?: boolean,
   }
-  onOpenChange?: (open: boolean) => void,
-  contentRef?: Ref<HTMLDivElement>,
-  open?: boolean,
-}) {
+) {
   const { isVisible, isOpen, handleOpenChange } = useCloseAnimation(200, {
-    open: p.open,
-    onOpenChange: p.onOpenChange
+    open: props.open,
+    onOpenChange: props.onOpenChange
   })
 
   return <Dialog.Root
-    open={ isVisible }
-    onOpenChange={ (open) => {
+    open={isVisible}
+    onOpenChange={(open) => {
       handleOpenChange(open)
-    } }>
-    <Dialog.Trigger asChild>{ p.trigger }</Dialog.Trigger>
+    }}>
+    <Dialog.Trigger asChild>{props.trigger}</Dialog.Trigger>
     <Dialog.Portal>
-      <Overlay isOpen={ isOpen } className={ p.className?.overlay } />
-      <Content isOpen={ isOpen } className={ p.className?.content } ref={ p.contentRef } style={ p.style?.content }>
-        { p.children }
+      <Overlay isOpen={isOpen} className={props.className?.overlay} />
+      <Content isOpen={isOpen} className={props.className?.content} ref={props.contentRef} style={props.style?.content}>
+        {props.children}
       </Content>
     </Dialog.Portal>
   </Dialog.Root>
@@ -116,14 +120,14 @@ export function ModalBase(p: {
 }
 export function CloseModalButton() {
   return (
-    <Dialog.Close asChild className={ cn("absolute top-4 right-4 p-2 rounded-lg z-10", style.buttonListItem) }>
+    <Dialog.Close asChild className={cn("absolute top-4 right-4 p-2 rounded-lg z-10", style.buttonListItem)}>
       <button><FluentDismiss12Filled /></button>
     </Dialog.Close>
   )
 }
 export function FluentDismiss12Filled(props: SVGProps<SVGSVGElement>) {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 12 12" { ...props }><path fill="currentColor" d="m1.897 2.054l.073-.084a.75.75 0 0 1 .976-.073l.084.073L6 4.939l2.97-2.97a.75.75 0 1 1 1.06 1.061L7.061 6l2.97 2.97a.75.75 0 0 1 .072.976l-.073.084a.75.75 0 0 1-.976.073l-.084-.073L6 7.061l-2.97 2.97A.75.75 0 1 1 1.97 8.97L4.939 6l-2.97-2.97a.75.75 0 0 1-.072-.976l.073-.084l-.073.084Z"></path></svg>
+    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 12 12" {...props}><path fill="currentColor" d="m1.897 2.054l.073-.084a.75.75 0 0 1 .976-.073l.084.073L6 4.939l2.97-2.97a.75.75 0 1 1 1.06 1.061L7.061 6l2.97 2.97a.75.75 0 0 1 .072.976l-.073.084a.75.75 0 0 1-.976.073l-.084-.073L6 7.061l-2.97 2.97A.75.75 0 1 1 1.97 8.97L4.939 6l-2.97-2.97a.75.75 0 0 1-.072-.976l.073-.084l-.073.084Z"></path></svg>
   )
 }
 
@@ -142,14 +146,14 @@ const Overlay = forwardRef(function Overlay(p: { className?: string, isOpen?: bo
     }
   }, [p.isOpen])
 
-  return <Dialog.Overlay data-state-transition={ isDisplaying } className={ cn(
+  return <Dialog.Overlay data-state-transition={isDisplaying} className={cn(
     "fixed inset-0 bg-black",
     "transition-all duration-300",
     "opacity-0",
     "data-[state-transition=true]:opacity-70",
     p?.className,
-  ) }
-    ref={ ref }
+  )}
+    ref={ref}
   />
 })
 
@@ -174,7 +178,7 @@ const Content = forwardRef(function Content(
     }
   }, [p.isOpen])
 
-  return <Dialog.Content data-state-transition={ isDisplaying } className={ cn(
+  return <Dialog.Content data-state-transition={isDisplaying} className={cn(
     "fixed outline-none",
     "top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2", //Center
     "w-full max-w-sm", // Default Size of Dialog
@@ -192,6 +196,6 @@ const Content = forwardRef(function Content(
     "data-[state-transition=true]:opacity-100",
     "data-[state-transition=true]:scale-100",
     p.className
-  ) } ref={ ref } style={ p.style }>{ p.children }</Dialog.Content>
+  )} ref={ref} style={p.style}>{p.children}</Dialog.Content>
 })
 
