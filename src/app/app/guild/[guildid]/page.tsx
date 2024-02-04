@@ -2,7 +2,7 @@ import { SVGProps } from "react"
 import { TitleBar } from "../../titlebar"
 import prisma from "@/lib/db/prisma"
 import { HydrateState } from "@/components/api/create-query"
-import { GuildName } from "./client"
+import { GuildName, ServerMemberItem } from "./client"
 
 export default function GuildPage(
   context: {
@@ -18,7 +18,7 @@ export default function GuildPage(
       <div className="w-full max-w-screen-sm mx-auto p-8
         flexlist gap-4
       ">
-        <h2 className="text-3xl font-bold opacity-60">
+        <h2 className="text-3xl font-bold opacity-90">
           <GuildName guildid={context.params.guildid} />
         </h2>
         <p className="opacity-20 font-mono">
@@ -26,11 +26,11 @@ export default function GuildPage(
         </p>
         <div className="p-3 rounded-lg bg-black/10 min-h-20">
           <h3 className="mb-2 font-medium">Server Invites</h3>
-          <ServerInvites guildId={context.params.guildid} />
+          <GuildInvites guildId={context.params.guildid} />
         </div>
-        <div className="p-3 rounded-lg bg-black/10 min-h-20">
+        <div className="p-3 rounded-lg bg-black/10 min-h-20 space-y-2">
           <h3>Server Members</h3>
-          <ServerMembers guildId={context.params.guildid} />
+          <GuildMembers guildId={context.params.guildid} />
         </div>
       </div>
     </HydrateState>
@@ -45,10 +45,20 @@ export function AkarIconsHashtag(props: SVGProps<SVGSVGElement>) {
   )
 }
 
-async function ServerInvites(
+async function GuildInvites(
   props: { guildId: string }
 ) {
   const invites = await prisma.guildInvite.findMany({ where: { guildId: props.guildId } })
+
+  if (invites.length === 0) {
+    return (
+      <div className="text-center opacity-60 text-sm flex-none p-4">
+        No Server Invite
+      </div>
+    )
+  }
+
+
   return invites.map(i => (
     <div key={i.id} className="p-2 hover:bg-indigo-200/5 rounded-md">
       {i.inviteKey}
@@ -56,13 +66,13 @@ async function ServerInvites(
   ))
 }
 
-async function ServerMembers(
+async function GuildMembers(
   props: { guildId: string }
 ) {
   const members = await prisma.guildMember.findMany({ where: { guildId: props.guildId } })
   return members.map(member => (
-    <div key={member.userId} className="p-2 hover:bg-indigo-200/5 rounded-md">
-      {member.userId}
+    <div key={member.userId} className="p-1 hover:bg-indigo-200/5 rounded-md">
+      <ServerMemberItem userid={member.userId} />
     </div>
   ))
 }
