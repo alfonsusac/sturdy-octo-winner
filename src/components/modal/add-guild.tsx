@@ -9,6 +9,7 @@ import { CloseModalButton, ModalBase } from "@/components/base/modal"
 import { Description, Title } from "@/components/base/dialog"
 import { createSlidingWindow } from "../api/create-sliding-window"
 import { useState } from "react"
+import { Button } from "../base/form"
 
 
 const {
@@ -16,6 +17,7 @@ const {
   SlidingWindowProvider,
   SlidingPage,
 } = createSlidingWindow(500, "index", "create", "join")
+
 
 export function AddGuildDialog(p: {
   trigger?: React.ReactNode
@@ -26,9 +28,8 @@ export function AddGuildDialog(p: {
   const [open, setOpen] = useState(false)
   const { goTo, goBack, resetState, parentContainerRef, states } = useSlidingWindowContainer()
 
-  // useEffect(() => {
-  //   console.log("add serber open: ",open)
-  // },[open])
+  const closeModal = () => setOpen(false)
+  const openModal = () => setOpen(true)
 
   return (
     <ModalBase
@@ -70,11 +71,8 @@ export function AddGuildDialog(p: {
             <Description>Give your new server a personality with a name and an icon. You can always change it later.</Description>
           </header>
           <CreateGuildForm
-            back={ () => goBack("index") }
-            finish={ () => {
-              // console.log("Setting Open False")
-              setOpen(false)
-            } }
+            onBack={ () => goBack("index") }
+            onFinish={ closeModal }
           />
         </SlidingPage>
 
