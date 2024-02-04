@@ -17,6 +17,7 @@ import { addGuildToList } from "@/app/app/client"
 import { useZodForm } from "../api/create-form"
 import { uploadAsWebp } from "@/actions/uploads/client-upload-webp"
 import { useGuilds } from "@/app/app/query"
+import { useModal } from "../base/modal"
 
 
 export default function CreateGuildForm(
@@ -29,6 +30,7 @@ export default function CreateGuildForm(
   const session = useSession()
   const router = useRouter()
   const guilds = useGuilds()
+  const modal = useModal()
 
   const form = useZodForm({
     schema: {
@@ -51,7 +53,7 @@ export default function CreateGuildForm(
         }
         guilds.addGuild(guild)
         router.push(`/app/guild/${ guild.id }`)
-        props.onFinish()
+        modal.close()
 
       } catch (error: any) {
         console.log(error)

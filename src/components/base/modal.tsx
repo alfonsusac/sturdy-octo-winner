@@ -4,6 +4,7 @@ import { cn } from '@/lib/tailwind'
 import { style } from '@/style'
 import * as Dialog from '@radix-ui/react-dialog'
 import { CSSProperties, ReactNode, Ref, SVGProps, forwardRef, use, useEffect, useState } from "react"
+import { createReactContext } from '../api/create-context'
 
 /**
  
@@ -80,7 +81,25 @@ function useCloseAnimation(
   return { isVisible, isOpen, handleOpenChange }
 }
 
+//
+// Context API
+//
+
+const [ModalProvider, useModal] = createReactContext<{
+  open: boolean | undefined,
+  setOpen: (toState: boolean) => void,
+  close: () => void
+}>({
+  open: undefined,
+  setOpen: () => { },
+  close: () => { }
+})
+
+export { useModal }
+
+//
 // Modal Base
+//
 
 export function ModalBase(
   props: {
@@ -108,13 +127,22 @@ export function ModalBase(
     onOpenChange={(open) => {
       handleOpenChange(open)
     }}>
-    <Dialog.Trigger asChild>{props.trigger}</Dialog.Trigger>
-    <Dialog.Portal>
-      <Overlay isOpen={isOpen} className={props.className?.overlay} />
-      <Content isOpen={isOpen} className={props.className?.content} ref={props.contentRef} style={props.style?.content}>
-        {props.children}
-      </Content>
-    </Dialog.Portal>
+    <ModalProvider value={{
+      open: isVisible,
+      close: () => handleOpenChange(false),
+      setOpen: handleOpenChange
+    }}>
+
+      <Dialog.Trigger asChild>{props.trigger}</Dialog.Trigger>
+      <Dialog.Portal>
+        <Overlay isOpen={isOpen} className={props.className?.overlay} />
+        <Content isOpen={isOpen} className={props.className?.content} ref={props.contentRef} style={props.style?.content}>
+          {props.children}
+        </Content>
+      </Dialog.Portal>
+
+    </ModalProvider>
+
   </Dialog.Root>
 
 }
@@ -132,8 +160,12 @@ export function FluentDismiss12Filled(props: SVGProps<SVGSVGElement>) {
 }
 
 
-
-
+//
+// Modal Components
+//
+// - Overlay
+// - Content
+// 
 
 const Overlay = forwardRef(function Overlay(p: { className?: string, isOpen?: boolean }, ref: Ref<HTMLDivElement>) {
   const [isDisplaying, setDisplaying] = useState(false)
