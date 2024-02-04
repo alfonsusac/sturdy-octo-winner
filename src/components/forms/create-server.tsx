@@ -88,24 +88,6 @@ export default function CreateGuildForm(
     },
   })
 
-
-
-  // const { register, handleSubmit, formState, } = useForm<CreateServerInputs>({
-  //   mode: "onChange",
-  // })
-  // https://www.youtube.com/watch?v=PEGUFi9Sx-U  TUTORIAL HOW TO UPLOAD FILE ✅
-
-  // const onSubmit: SubmitHandler<CreateServerInputs> = async (_, event) => {
-  //   const data = new FormData(event?.target)
-  //   const file = data.get("serverPicture") as File
-  //   console.log(file)
-  //   const { key, signedUploadUrl } = await generatePresignedUrl(session.data?.user.userid ?? "", file.name, file.type) // Server Action
-
-  //   // https://www.youtube.com/watch?v=wbNyipJw9rI TUTORIAL HOW TO USE S3 to GENERATE LINK
-
-  //   // p.onSubmit(data) // <- Server Action <- Works :/
-  // }
-
   return (
     <Form { ...form } onSubmit={ onSubmit }>
       {/* Fields */ }
