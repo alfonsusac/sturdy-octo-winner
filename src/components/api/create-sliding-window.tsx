@@ -1,4 +1,4 @@
-import { ComponentProps, ReactNode, useCallback, useEffect, useId, useRef, useState } from "react"
+import { ComponentProps, ReactNode, useCallback, useContext, useEffect, useId, useRef, useState } from "react"
 import { createReactContext } from "./create-context"
 import { cn } from "@/lib/tailwind"
 
@@ -50,12 +50,23 @@ export const Page(){
 
 */
 
-export function createSlidingWindow<S extends Readonly<string[]>>(duration: number, ...states: S) {
-  type T = S[number]
+export function createSlidingWindow<States extends Readonly<string[]>>(duration: number, ...states: States) {
+  type State = States[number] // Possible States
+
+
+  const windowStates: Readonly<{
+    [key in State]: string
+  }> = {} as any
+
+  for (const key of states) {
+    (windowStates as any)[key as State] = key
+  }
+
+  // Main Hook
   function useSlidingWindowContainer() {
-    const [state, setState] = useState<T>(states[0] as T)
-    const [leftSide, setLeftSide] = useState<T>()
-    const [rightSide, setRightSide] = useState<T>()
+    const [state, setState] = useState<State>(states[0] as State)
+    const [leftSide, setLeftSide] = useState<State>()
+    const [rightSide, setRightSide] = useState<State>()
     const [animationState, setAnimationState] = useState<"left" | "right" | undefined>(undefined)
     let setParentHeightRef = useRef<(height: number) => void>()
 
@@ -67,20 +78,20 @@ export function createSlidingWindow<S extends Readonly<string[]>>(duration: numb
       if (node.style.height === "") node.style.height = node.clientHeight + "px"
 
       // set the parent setter to a ref variable (to be distributed to child context and used in child)
-      setParentHeightRef.current = (height) => node.style.height = `${height}px`
+      setParentHeightRef.current = (height) => node.style.height = `${ height }px`
     }, [])
 
-    const goTo = (dest: T) => {
+    const goTo = (dest: State) => {
       setState(dest)
       setLeftSide(state) // <-- [curr, dest]
-      setRightSide(dest) 
+      setRightSide(dest)
       setAnimationState("right")
     }
 
-    const goBack = (dest: T) => {
+    const goBack = (dest: State) => {
       setState(dest)
       setLeftSide(dest) // [dest, curr] -->
-      setRightSide(state) 
+      setRightSide(state)
       setAnimationState("left")
     }
 
@@ -96,40 +107,56 @@ export function createSlidingWindow<S extends Readonly<string[]>>(duration: numb
 
     const resetState = () => {
       // console.log("Resetting State")
-      setState(states[0] as T)
+      setState(states[0] as State)
     }
 
     return {
-      states: { state, leftSide, rightSide, animationState, setParentHeightRef},
+      states: { state, leftSide, rightSide, animationState, setParentHeightRef, goTo, goBack },
       goTo, goBack, resetState, parentContainerRef,
     }
   }
 
   // Setting Context to avoid prop drilling
   type contextType = ReturnType<typeof useSlidingWindowContainer>['states']
-
   const [Provider, useSlidingWindowContext] = createReactContext<contextType | undefined>(undefined)
 
+  const [SlidingWindowGoToProvider, , slidingWindowGoToContext] = createReactContext(
+    { goTo: (state: State) => { } }
+  )
 
   function SlidingWindowProvider({ children, states }: { children: ReactNode, states: contextType }) {
-    return <Provider value={ states }>
-      <div className={ cn(
-        "relative w-full items-center transition-none", // transition-none important
-        states.animationState && cn(
-          "transition-transform duration-500 w-[200%] grid grid-cols-2 pointer-events-none",
-          states.animationState === "right" && "-translate-x-1/2", // Start from left most to mid
-          states.animationState === "left" && "-left-full translate-x-1/2", // Start from mid (not left most) to left most
-        ),
-      ) }>
-        { children }
-      </div>
+    return <Provider value={states}>
+      <SlidingWindowStateProvider value={{
+        state: states.state,
+        goTo: states.goTo,
+        goBack: states.goBack,
+      }}>
+        <div className={cn(
+          "relative w-full items-center transition-none", // transition-none important
+          states.animationState && cn(
+            "transition-transform duration-500 w-[200%] grid grid-cols-2 pointer-events-none",
+            states.animationState === "right" && "-translate-x-1/2", // Start from left most to mid
+            states.animationState === "left" && "-left-full translate-x-1/2", // Start from mid (not left most) to left most
+          ),
+        )}>
+          {children}
+        </div>
+      </SlidingWindowStateProvider>
     </Provider>
   }
 
   // Child Component
-  function SlidingPage({ state, className, ...props }: ComponentProps<"div"> & { state: T }) {
+  function SlidingPage(
+    props: {
+      state: State,
+      prev?: State,
 
-    const { state: currentWindowState, leftSide, rightSide, setParentHeightRef } = useSlidingWindowContext()!
+    } & ComponentProps<"div">
+  ) {
+
+    const { state, className, children, ...rest } = props
+
+    const { state: currentWindowState, leftSide, rightSide, setParentHeightRef, goBack } = useSlidingWindowContext()!
     const show = currentWindowState === state
     enum pos { left = "left", right = "right" }
     const position = leftSide === state ? pos.left : rightSide === state ? pos.right : undefined
@@ -161,15 +188,53 @@ export function createSlidingWindow<S extends Readonly<string[]>>(duration: numb
     }, [setParentHeightRef])
 
     return (
-      !hidden && <div id={ pageId } data-state-id={ state } ref={ ref }
-        className={ cn(className, "transition-all duration-500",
+      !hidden && <div id={pageId} data-state-id={state} ref={ref}
+        className={cn(className, "transition-all duration-500",
           // Swaps the grid placement to be the correct order
           position === pos.left && "col-start-1 col-end-1 row-start-1 row-end-1",
           position === pos.right && "col-start-2 col-end-2 row-start-1 row-end-1",
-        ) } { ...props } />
+        )} {...rest} >
+        <SlidingWindowGoBackProvider value={{
+          goBackFn: props.prev ? () => goBack(props.prev!) : () => { }
+        }}>
+          {children}
+        </SlidingWindowGoBackProvider>
+      </div>
     )
   }
 
-  return { useSlidingWindowContainer, SlidingWindowProvider, SlidingPage }
+  return {
+    windowStates,
+    useSlidingWindowContainer,
+    SlidingWindowProvider,
+    SlidingPage
+  }
+}
+
+type SlidingWindowStateEnum<State extends string> = Readonly<{
+  [key in State]: string
+}>
+
+const [SlidingWindowStateProvider, , slidingWindowStateContext] = createReactContext(
+  {
+    state: null as string | null,
+    goTo: (state: string) => { },
+    goBack: (state: string) => { }
+  }
+)
+
+const [SlidingWindowGoBackProvider, , slidingWindowGoBackContext] = createReactContext(
+  { goBackFn: () => { } }
+)
+
+export function useSlidingWindow<State extends string = string>(stateEnum?: SlidingWindowStateEnum<State>){
+  const window = useContext(slidingWindowStateContext)
+  const goBack = useContext(slidingWindowGoBackContext)
+
+  return {
+    state: window.state,
+    goTo: (toState: State) => window.goTo(toState),
+    goBack: goBack.goBackFn,
+  }
 }
 

@@ -13,12 +13,10 @@ import { useSession } from "@/lib/auth/next-auth.client"
 import { toast } from "sonner"
 import { runServerAction } from "@/lib/serveraction/return"
 import { useRouter } from "next/navigation"
-import { addGuildToList } from "@/app/app/client"
 import { useZodForm } from "../api/create-form"
 import { uploadAsWebp } from "@/actions/uploads/client-upload-webp"
 import { useGuilds } from "@/app/app/query"
 import { useModal } from "../base/modal"
-
 
 export default function CreateGuildForm(
   props: {
@@ -32,6 +30,7 @@ export default function CreateGuildForm(
   const guilds = useGuilds()
   const modal = useModal()
 
+
   const form = useZodForm({
     schema: {
       guildName: z.string().min(1).max(64),
@@ -43,25 +42,22 @@ export default function CreateGuildForm(
     },
     async onSubmit(data) {
       try {
-        const guild = await runServerAction(s_createGuild, {
-          userId: session.getUserId(),
-          guildName: data.guildName,
-          withGuildPicture: !!data.guildPicture
-        })
-        if (data.guildPicture) {
-          await uploadAsWebp(data.guildPicture, `guild/${ guild.id }.webp`)
-        }
+
+        const guild = await requestCreateGuild(session.getUserId(), data.guildName, data.guildPicture)
         guilds.addGuild(guild)
         router.push(`/app/guild/${ guild.id }`)
         modal.close()
 
       } catch (error: any) {
+
         console.log(error)
         toast(error.message ?? "Unknown Error Occurred")
+
       }
     }
   })
 
+  // Todo: Move Image Avatar to a sigle component
   const { getRootProps, getInputProps, preview, isLoading } = useAvatarUpload({
     onImageSelected(_, resizedBlob) {
       form.setValue("guildPicture", resizedBlob)
@@ -103,8 +99,35 @@ export default function CreateGuildForm(
   )
 }
 
+
+
+
+// Callbacks
+
+async function requestCreateGuild(
+  userId: string,
+  guildName: string,
+  guildPicture: Blob | undefined
+) {
+  const guild = await runServerAction(s_createGuild, {
+    userId,
+    guildName,
+    withGuildPicture: !!guildPicture
+  })
+  if (guildPicture) {
+    await uploadAsWebp(guildPicture, `guild/${ guild.id }.webp`)
+  }
+  return guild
+}
+
+
+
+
+//Icons 
+
 function FluentImageAdd20Filled(props: SVGProps<SVGSVGElement>) {
   return (
     <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 20 20" {...props}><path fill="currentColor" d="M10 5.5a4.5 4.5 0 1 1-9 0a4.5 4.5 0 0 1 9 0Zm-4-2a.5.5 0 0 0-1 0V5H3.5a.5.5 0 0 0 0 1H5v1.5a.5.5 0 0 0 1 0V6h1.5a.5.5 0 0 0 0-1H6V3.5ZM5.5 11a5.5 5.5 0 0 0 4.9-8H14a3 3 0 0 1 3 3v8c0 .65-.206 1.25-.557 1.742l-5.39-5.308a1.5 1.5 0 0 0-2.105 0l-5.39 5.308A2.986 2.986 0 0 1 3 14v-3.6c.75.384 1.6.6 2.5.6Zm7-3a.5.5 0 1 0 0-1a.5.5 0 0 0 0 1Zm0 1a1.5 1.5 0 1 0 0-3a1.5 1.5 0 0 0 0 3Zm-8.235 7.448C4.755 16.796 5.354 17 6 17h8c.646 0 1.245-.204 1.735-.552l-5.384-5.3a.5.5 0 0 0-.702 0l-5.384 5.3Z"></path></svg>
   )
 }
+
