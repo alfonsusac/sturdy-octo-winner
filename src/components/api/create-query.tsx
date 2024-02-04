@@ -1,4 +1,15 @@
-import { HydrationBoundary as RQHydrationBoundary, QueryClient, QueryClientConfig, UndefinedInitialDataOptions, dehydrate, useQuery, QueryFunction, QueryKey, useQueryClient, QueryFilters } from "@tanstack/react-query"
+import {
+  HydrationBoundary as RQHydrationBoundary,
+  QueryClient,
+  QueryClientConfig,
+  UndefinedInitialDataOptions,
+  dehydrate,
+  useQuery,
+  QueryFunction,
+  QueryKey,
+  useQueryClient,
+  UseQueryResult
+} from "@tanstack/react-query"
 import { ReactNode, cache } from "react"
 
 // Server Only
@@ -36,9 +47,10 @@ export function prepareQuery<FnData extends any>(
 }
 
 
-export function createQuery<FnData>(
+export function createQuery<
+  FnData extends any,
+>(
   key: QueryKey,
-  // options?: UndefinedInitialDataOptions<FnData>
 ) {
   // const { queryFn, ...clientDefaultOptions} = options
 
@@ -71,40 +83,51 @@ export function createQuery<FnData>(
         queryFn: () => queryFn,
       })
     }
-
-
-    // return function HydrationBoundary(
-    //   props: Omit<HydrationBoundaryProps, 'state'>
-    // ) {
-    //   return <RQHydrationBoundary state={dehydrate(queryClient)} {...props} />
-    // }
   }
 
-  // [Client Only]
-  // Creates a function to consume the data rehydrated by the
-  //  hydration boundary. Guarantess type-safety
-  function useHook(
-    clientOptions?: Partial<UndefinedInitialDataOptions<FnData>>
-  ) {
-    const queryClient = useQueryClient()
-    const query = useQuery({
-      // ...clientDefaultOptions,
-      queryKey: key,
-      ...clientOptions
-    });
-    (query as any).setData = (fn: ((prev: FnData) => FnData)) => queryClient.setQueryData(key, fn as unknown)
+  return function <
+    FnMutations extends {
+      [key: string]: (prev: FnData) => (newData: any) => FnData
+    }
+  >(mutations?: FnMutations) {
 
-    const res = query
+    // [Client Only]
+    // Creates a function to consume the data rehydrated by the
+    //  hydration boundary. Guarantess type-safety
+    function useHook(
+      clientOptions?: Partial<UndefinedInitialDataOptions<FnData>>
+    ) {
+      const queryClient = useQueryClient()
+      const query = useQuery({
+        // ...clientDefaultOptions,
+        queryKey: key,
+        ...clientOptions
+      });
 
-    return res as typeof query & {
-      setData: (fn: ((prev: FnData) => FnData)) => void
+      (query as any).setData = (fn: ((prev: FnData) => FnData)) => queryClient.setQueryData(key, fn as unknown)
+
+      for (const mutationName in mutations) {
+        (query as any)[mutationName] = (newData: any) => queryClient.setQueryData(key, (prev) => mutations[mutationName](prev as FnData)(newData))
+      }
+
+      return query as UseQueryResult<FnData, Error>
+        & {
+          setData: (fn: ((prev: FnData) => FnData)) => void
+        }
+        & {
+          [key in keyof FnMutations]: (...arg: Parameters<ReturnType<FnMutations[key]>>) => ReturnType<ReturnType<FnMutations[key]>>
+        }
+    }
+
+
+    return {
+      prefetch,
+      useHook,
+      key: key as QueryKeyData<FnData>,
+      mutations,
+      // keys: options.queryKey as QueryKeyWithData<FnData>
     }
   }
 
-  return {
-    prefetch,
-    useHook,
-    key: key as QueryKeyData<FnData>,
-    // keys: options.queryKey as QueryKeyWithData<FnData>
-  }
+
 }

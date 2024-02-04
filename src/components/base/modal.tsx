@@ -57,7 +57,7 @@ function useCloseAnimation(
 
   // Callbacks
   const handleOpenChange = (open: boolean) => {
-    console.log("Handle open change", open)
+    // console.log("Handle open change", open)
     if (open) {
       setVisible(true)
       controlled?.onOpenChange?.(true)
@@ -67,12 +67,12 @@ function useCloseAnimation(
       controlled?.onOpenChange?.(false)
       setTimeout(() => setVisible(false), duration)
     }
-    console.log("handle open change end", isVisible, isOpen)
+    // console.log("handle open change end", isVisible, isOpen)
   }
 
   useEffect(() => {
     if (isVisible) {
-      console.log("next frame")
+      // console.log("next frame")
       setOpen(true)
     }
   }, [isVisible])

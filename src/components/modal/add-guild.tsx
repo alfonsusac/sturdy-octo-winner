@@ -8,7 +8,7 @@ import { User } from "@prisma/client"
 import { CloseModalButton, ModalBase } from "@/components/base/modal"
 import { Description, Title } from "@/components/base/dialog"
 import { createSlidingWindow } from "../api/create-sliding-window"
-import { useEffect, useState } from "react"
+import { useState } from "react"
 
 
 const {
@@ -34,7 +34,7 @@ export function AddGuildDialog(p: {
     <ModalBase
       trigger={ p.children ?? p.trigger }
       onOpenChange={ open => {
-        console.log("On Change", open)
+        // console.log("On Change", open)
         open && resetState()
         setOpen(open)
       } }
@@ -72,7 +72,7 @@ export function AddGuildDialog(p: {
           <CreateGuildForm
             back={ () => goBack("index") }
             finish={ () => {
-              console.log("Setting Open False")
+              // console.log("Setting Open False")
               setOpen(false)
             } }
           />
