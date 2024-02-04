@@ -21,7 +21,7 @@ import { addGuildToList } from "@/app/app/client"
 
 
 export default function CreateGuildForm(
-  p: {
+  props: {
     back: () => void
     finish: () => void
   }
@@ -72,7 +72,7 @@ export default function CreateGuildForm(
 
       toast("finishing")
       addGuildToList(guild)
-      p.finish()
+      props.finish()
 
 
     } catch (error: any) {
@@ -142,7 +142,7 @@ export default function CreateGuildForm(
       {/* Footer */ }
       <div className={ cn(style.dialogFooter) }>
         <button className={ cn(style.dialogButton) }
-          onClick={ p.back }
+          onClick={ props.back }
           type="button"
         >Back</button>
         {/* <button type="submit">Create</button> */ }
