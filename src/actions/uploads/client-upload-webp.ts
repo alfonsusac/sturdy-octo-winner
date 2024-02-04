@@ -9,7 +9,7 @@ export async function uploadAsWebp(img: Blob, path: `${string}.webp`) {
   //  the server action. Therefore, we need to create FormData first before
   //  sending it to the server.
   
-  if (img.type !== "image/blob")
+  if (img.type !== "image/png")
     throw new Error("Error uploading as Webp: only png is supported")
   
   const formData = new FormData
