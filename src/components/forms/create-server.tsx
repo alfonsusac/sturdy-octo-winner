@@ -118,20 +118,11 @@ export default function CreateGuildForm(
             preview && "outline-none",
             isLoading && "pointer-events-none"
           ) } { ...getRootProps() } type="button">
-            {/* {
-              isLoading && <div className="absolute inset-0 bg-black/80 z-10 pointer-events-none">
-              </div>
-            } */}
             <img alt="New Guild Profile Picture" src={ preview ?? undefined } className={ cn("w-full h-full object-cover absolute hidden", preview && "block", isLoading && "blur-sm") } />
             <FluentImageAdd20Filled className="text-3xl text-indigo-200/80" />
           </button>
-          {/* <small className="block self-center mt-2 text-indigo-300/40 data-[emphasize=true]:text-red-500/80">
-            Maximum File Size: 1MB
-          </small> */}
           <input className="hidden" { ...form.register("guildPicture") } { ...getInputProps() } />
         </Fieldset>
-        {/* <SpinnerSVG className="absolute left-1/2 top-1/2 block text-4xl z-10 -translate-x-1/2 -translate-y-1/2 text-indigo-200/60" /> */ }
-
         <Fieldset name="guildName" className="mt-4 flex flex-col items-stretch">
           <Label>Guild Name</Label>
           <Input />
