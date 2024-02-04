@@ -72,7 +72,6 @@ export function AddGuildDialog(p: {
           </header>
           <CreateGuildForm
             onBack={ () => goBack("index") }
-            onFinish={ closeModal }
           />
         </SlidingPage>
 

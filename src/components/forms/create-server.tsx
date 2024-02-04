@@ -22,8 +22,8 @@ import { useModal } from "../base/modal"
 
 export default function CreateGuildForm(
   props: {
-    onBack: () => void
-    onFinish: () => void
+    onBack?: () => void
+    onFinish?: () => void
     children?: ReactNode
   }
 ) {
