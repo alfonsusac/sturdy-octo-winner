@@ -3,7 +3,7 @@
 import { cn } from "@/lib/tailwind"
 import { style } from "@/style"
 // import CreateGuildForm fro../../forms/create-serverver"
-import JoinGuildForm from "./form-join-server"
+// import JoinGuildForm from "./form-join-server"
 import { User } from "@prisma/client"
 import { CloseModalButton, ModalBase, useModal } from "@/components/base/modal"
 import { Description, Title } from "@/components/base/dialog"
@@ -20,7 +20,7 @@ import { generateSlug } from "random-word-slugs"
 import { uploadAsWebp } from "@/actions/uploads/client-upload-webp"
 import { toast } from "sonner"
 import { runServer } from "@/lib/serveraction/return"
-import { s_createGuild } from "@/actions/crud-guild"
+import { s_createGuild, s_joinGuild } from "@/actions/crud-guild"
 
 
 const {
@@ -29,7 +29,6 @@ const {
   SlidingWindowProvider,
   SlidingPage,
 } = createSlidingWindow(500, "index", "create", "join")
-export { windowStates as AddGuildModalWindowStates }
 
 
 
@@ -95,7 +94,7 @@ export function AddGuildDialog(
             <Title>Join a Server</Title>
             <Description>Enter an invite below to join an existing server</Description>
           </header>
-          <JoinGuildForm toBack={backToIndex} />
+          <JoinGuildForm onBack={backToIndex} />
         </SlidingPage>
 
       </SlidingWindowProvider>
@@ -107,7 +106,7 @@ export function AddGuildDialog(
 
 // Create Guild Form
 
-export default function CreateGuildForm(
+function CreateGuildForm(
   props: {
     onBack?: () => void
     onFinish?: () => void
@@ -145,8 +144,7 @@ export default function CreateGuildForm(
 
   return (
     <Form {...form}>
-      {/* Fields */}
-      <div className="flex flex-col p-4 items-stretch">
+      <section className="flex flex-col p-4 items-stretch">
         <Fieldset name="guildPicture" className="flex flex-col items-stretch self-center">
           <AvatarPicker />
         </Fieldset>
@@ -154,13 +152,11 @@ export default function CreateGuildForm(
           <Label>Guild Name</Label>
           <Input />
         </Fieldset>
-      </div>
-
-      {/* Footer */}
-      <div className={cn(style.dialogFooter)}>
+      </section>
+      <footer className={cn(style.dialogFooter)}>
         <button className={cn(style.dialogButton)} type="button" onClick={props.onBack}>Back</button>
         <Button className={cn(style.dialogButton, "mt-0")}>Create</Button>
-      </div>
+      </footer>
     </Form>
   )
 }
@@ -168,3 +164,78 @@ export default function CreateGuildForm(
 
 
 
+// Join Guild Form
+
+function JoinGuildForm(
+  props: {
+    onBack?: () => void
+    onFinish?: () => void
+  }
+) {
+  const session = useSession()
+  const router = useRouter()
+  const guilds = useGuilds()
+  const modal = useModal()
+
+  const form = useZodForm({
+    schema: {
+      invite: z.string().length(8),
+    },
+    mode: "onSubmit",
+    async onSubmit(data) {
+      const { guild, fail } = await requestJoinGuild(session.getUserId(), data.invite)
+      if (fail === "notfound") {
+        toast("Not Found")
+        form.setError("invite", {
+          message: "Invite key not found!",
+          type: "serverError"
+        })
+        return
+      }
+      if (fail === "alreadymember") {
+        toast("Already a member")
+        form.setError("invite", {
+          message: `You already joined this server (${guild.name})`,
+          type: "alternate",
+        })
+        return
+      }
+      guilds.addGuild(guild)
+      router.push(`/app/guild/${ guild.id }`)
+      modal.close()
+    },
+    async onError(error) {
+      console.error(error)
+      toast(error.message ?? "Unknown Error Occurred")
+    }
+  })
+
+  async function requestJoinGuild(userId: string, inviteKey: string) {
+    return await runServer(s_joinGuild, { userId, inviteKey })
+  }
+
+  return (
+    <Form {...form}>
+      <section className="flex flex-col p-4 items-stretch">
+        <Fieldset name="invite" className="mt-4 flex flex-col items-stretch">
+          <Label disableError>Invite Link</Label>
+          <Input placeholder='hTKzmaks' autoCorrect="off" />
+
+          <div className="h-4 text-[0.8rem] mt-2 italic">
+            {
+              form.formState.errors.invite && form.formState.errors.invite?.type !== 'alternate' && <span className="text-red-400">↪ {form.formState.errors.invite?.message}</span>
+            }
+            {
+              form.formState.errors.invite?.type === 'alternate' &&  <span className="text-green-400">↪ {form.formState.errors.invite?.message}</span>
+            }
+          </div>
+
+        </Fieldset>
+      </section>
+      <footer className={cn(style.dialogFooter)}>
+        <button className={cn(style.dialogButton)} type="button" onClick={props.onBack}>Back</button>
+        <Button className={cn(style.dialogButton, "mt-0")} ignoreFormError>Join Guild</Button>
+      </footer>
+    </Form>
+  )
+}

@@ -19,9 +19,9 @@ export function Form<
 ) {
   const { onSubmit, children, ...providerProp } = prop
   return (
-    <FormProvider { ...providerProp }>
-      <form onSubmit={ prop.handleSubmit(onSubmit) }>
-        { children }
+    <FormProvider {...providerProp}>
+      <form onSubmit={prop.handleSubmit(onSubmit)}>
+        {children}
       </form>
     </FormProvider>
   )
@@ -45,9 +45,9 @@ export function FieldSet<
   props: ControllerProps<TFVs, TN>
 ) {
   return (
-    <FormFieldContext.Provider value={ { name: props.name } }>
+    <FormFieldContext.Provider value={{ name: props.name }}>
       <FormItem>
-        <Controller { ...props } />
+        <Controller {...props} />
       </FormItem>
     </FormFieldContext.Provider>
   )
@@ -61,9 +61,9 @@ export function Fieldset(
   }
 ) {
   return (
-    <FormFieldContext.Provider value={ { name: prop.name } }>
-      <FormItem className={ prop.className }>
-        { prop.children }
+    <FormFieldContext.Provider value={{ name: prop.name }}>
+      <FormItem className={prop.className}>
+        {prop.children}
       </FormItem>
     </FormFieldContext.Provider>
   )
@@ -81,8 +81,8 @@ export const FormItem = forwardRef(
   ) {
     const id = useId()
     return (
-      <FormItemContext.Provider value={ { id } }>
-        <div ref={ ref } className={ cn("space-y-2", props.className) } { ...props } />
+      <FormItemContext.Provider value={{ id }}>
+        <div ref={ref} className={cn("space-y-2", props.className)} {...props} />
       </FormItemContext.Provider>
     )
   }
@@ -101,14 +101,14 @@ export const FormControl = forwardRef<
   ) {
     const { error, formItemId, formDescriptionId, formMessageId } = useFormField()
     return (
-      <Slot ref={ ref } id={ formItemId }
+      <Slot ref={ref} id={formItemId}
         aria-describedby={
           !error
-            ? `${formDescriptionId}`
-            : `${formDescriptionId} ${formMessageId}`
+            ? `${ formDescriptionId }`
+            : `${ formDescriptionId } ${ formMessageId }`
         }
-        aria-invalid={ !!error }
-        { ...props }
+        aria-invalid={!!error}
+        {...props}
       />
     )
   }
@@ -131,9 +131,9 @@ export function useFormField() {
   return {
     id,
     name: fieldContext.name,
-    formItemId: `${id}-form-item`,
-    formDescriptionId: `${id}-form-item-description`,
-    formMessageId: `${id}-form-item-message`,
+    formItemId: `${ id }-form-item`,
+    formDescriptionId: `${ id }-form-item-description`,
+    formMessageId: `${ id }-form-item-message`,
     ...fieldState,
     register: () => register(fieldContext.name),
     formState
@@ -147,17 +147,19 @@ export function useFormField() {
 
 export const Label = forwardRef(
   function Label(
-    props: ComponentPropsWithoutRef<typeof RadixLabel>,
+    props: ComponentPropsWithoutRef<typeof RadixLabel> & {
+      disableError?: boolean
+    },
     ref: Ref<HTMLLabelElement>
   ) {
     const { error, formItemId } = useFormField()
-    const { className, children, ...rest } = props
-    return <RadixLabel ref={ ref } htmlFor={ formItemId }
-      className={ cn(error && "text-red-500", className) }
-      { ...rest }
+    const { className, children, disableError, ...rest } = props
+    return <RadixLabel ref={ref} htmlFor={formItemId}
+      className={cn(!disableError && error && "text-red-500", className)}
+      {...rest}
     >
-      { children } {
-        error?.message && <span className="normal-case font-medium italic"> - {
+      {children} {
+        !disableError && error?.message && <span className="normal-case font-medium italic"> - {
           error?.message
         }</span>
       }
@@ -173,34 +175,36 @@ export const Input = forwardRef(
     const { id, formItemId, error, formDescriptionId, formMessageId, register } = useFormField()
 
     return <input
-      id={ formItemId }
+      id={formItemId}
       aria-describedby={
         !error
-          ? `${formDescriptionId}`
-          : `${formDescriptionId} ${formMessageId}`
+          ? `${ formDescriptionId }`
+          : `${ formDescriptionId } ${ formMessageId }`
       }
-      aria-invalid={ !!error }
+      aria-invalid={!!error}
       autoComplete="off"
-      { ...register() }
-      { ...props }
+      {...register()}
+      {...props}
     />
   }
 )
 
 export const Button = forwardRef(
   function Button(
-    props: ComponentPropsWithoutRef<"button">,
+    props: ComponentPropsWithoutRef<"button"> & {
+      ignoreFormError?: boolean
+    },
     ref: Ref<HTMLButtonElement>
   ) {
-    const { className, children, type, ...rest } = props
+    const { className, children, type, ignoreFormError,  ...rest } = props
     const { formState, error } = useFormField()
-    
+
     return <button
-      ref={ ref }
-      className={ cn(formState && "mt-3", className) }
-      disabled={ formState.isSubmitting || !!error || !formState.isValid }
-      type={ type ?? 'submit' }
-      { ...rest }
+      ref={ref}
+      className={cn(formState && "mt-3", className)}
+      disabled={(formState.isSubmitting || (!!error && !ignoreFormError) || (!formState.isValid && !ignoreFormError))}
+      type={type ?? 'submit'}
+      {...rest}
     >
       {
         formState.isSubmitting ? "Loading..." : children
@@ -216,7 +220,7 @@ export const Message = forwardRef(
   ) {
     const { formState } = useFormField()
     return <div className="text-xs overflow-hidden h-6 opacity-60"
-      { ...props }
+      {...props}
     />
   }
 )

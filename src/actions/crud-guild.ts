@@ -55,6 +55,58 @@ export async function s_deleteGuild(
     return { data: "" }
   } catch (error) {
     console.log(error)
-    return { error: "Unknown Prisma Error When Deleting Guild" }
+    return { error: "Unknown Prisma error when deleting guild" }
+  }
+}
+
+export async function s_joinGuild(
+  params: {
+    userId: string,
+    inviteKey: string
+  }
+) {
+  const user = await Auth.getUserSession()
+  if (user.id !== params.userId)
+    return { error: "Not Authenticated" }
+
+  try {
+    const invite = await prisma.guildInvite.findUnique({
+      where: { inviteKey: params.inviteKey },
+    })
+
+    if (!invite) {
+      return { data: { fail: "notfound", guild: undefined } } as const
+    }
+
+    const isMember = await prisma.guildMember.findUnique({
+      where: {
+        guildId_userId: {
+          guildId: invite.guildId,
+          userId: user.id
+        }
+      },
+      include: {
+        guild: true
+      }
+    })
+
+    if (isMember) {
+      return { data: { fail: "alreadymember", guild: isMember.guild}} as const
+    }
+    
+    const member = await prisma.guildMember.create({
+      data: {
+        guildId: invite.guildId,
+        userId: user.id
+      },
+      select: {
+        guild: {}
+      }
+    })
+
+    return { data: { fail: undefined, guild: member.guild } } as const
+  } catch (error) {
+    console.log(error)
+    return { error: "Unknown Prsiam error when joining guild" }
   }
 }
