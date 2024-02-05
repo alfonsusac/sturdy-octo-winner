@@ -75,14 +75,14 @@ model Guild {
   owner          User          @relation(fields: [ownerUserId], references: [id])
   ownerUserId    String
   channels       Channel[]
-  invites    GuildInvite[]
+  invites        GuildInvite[]
 }
 
 model GuildInvite {
-  id         String   @id @default(uuid())
-  inviteKey  String   @unique
-  guild      Guild    @relation(fields: [guildId], references: [id])
-  guildId    String
+  id        String @id @default(uuid())
+  inviteKey String @unique
+  guild     Guild  @relation(fields: [guildId], references: [id])
+  guildId   String
 }
 
 model GuildMember {
@@ -107,7 +107,6 @@ model Message {
   sender              String
   content             String
   created_at          DateTime           @default(now())
-  origin              String
   channel             Channel?           @relation(fields: [channelId], references: [id])
   channelId           String?
   directMessageRoom   DirectMessageRoom? @relation(fields: [directMessageRoomId], references: [id])
