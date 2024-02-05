@@ -4,14 +4,13 @@
 import { generateSlug } from "random-word-slugs"
 import { cn } from "@/lib/tailwind"
 import { style } from "@/style"
-import { ReactNode, SVGProps } from "react"
+import { ReactNode } from "react"
 import { Button, Fieldset, Form, Input, Label } from "../base/form"
 import * as z from "zod"
-import { useAvatarUpload } from "../api/use-avatar-upload"
 import { s_createGuild } from "@/actions/crud-guild"
 import { useSession } from "@/lib/auth/next-auth.client"
 import { toast } from "sonner"
-import { runServerAction } from "@/lib/serveraction/return"
+import { runServer } from "@/lib/serveraction/return"
 import { useRouter } from "next/navigation"
 import { useZodForm } from "../api/create-form"
 import { uploadAsWebp } from "@/actions/uploads/client-upload-webp"
@@ -94,11 +93,7 @@ async function requestCreateGuild(
   guildName: string,
   guildPicture: Blob | undefined
 ) {
-  const guild = await runServerAction(s_createGuild, {
-    userId,
-    guildName,
-    withGuildPicture: !!guildPicture
-  })
+  const guild = await runServer(s_createGuild, { userId, guildName, withGuildPicture: !!guildPicture })
   if (guildPicture) {
     await uploadAsWebp(guildPicture, `guild/${ guild.id }.webp`)
   }

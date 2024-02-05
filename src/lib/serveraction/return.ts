@@ -1,16 +1,6 @@
 
-// export function handleServerActionReturn<T extends any>(res: {
-//   error: string
-//   data?: undefined
-// } | {
-//   data: T
-//   error?: undefined
-// }) {
-//   if ('error' in res) throw res.error
-//   else return res.data
-// }
 
-export async function runServerAction<
+export async function runServer<
   P extends any,
   R extends object | undefined,
 >(

@@ -2,7 +2,7 @@
 
 import { s_sendMessage } from "@/actions/crud-message"
 import { useSession } from "@/lib/auth/next-auth.client"
-import { runServerAction } from "@/lib/serveraction/return"
+import { runServer } from "@/lib/serveraction/return"
 import { Message } from "@prisma/client"
 import { UndefinedInitialDataOptions, useQuery, useQueryClient } from "@tanstack/react-query"
 import { FormEvent, useEffect, useRef, useState } from "react"
@@ -126,7 +126,7 @@ export function ChatInput(
     event.currentTarget.reset()
 
     try {
-      const message = await runServerAction(s_sendMessage, {
+      const message = await runServer(s_sendMessage, {
         userid: session.getUserId(),
         channelid: props.channelid,
         message: value

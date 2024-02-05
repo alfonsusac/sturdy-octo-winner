@@ -26,7 +26,7 @@ export async function s_createGuild(
         owner: { connect: { id: params.userId } },
         members: { create: { user: { connect: { id: params.userId } } } },
         channels: { create: { name: "general" } },
-        invites: { create : { inviteKey: nanoid(6) } }
+        invites: { create: { inviteKey: nanoid(8) } }
       }
     })
 
@@ -48,26 +48,10 @@ export async function s_deleteGuild(
     return { error: "Not Authenticated" }
 
   try {
-    await prisma.guildInvite.deleteMany({
-      where: {
-        guildId: params.guildId
-      }
-    })
-    await prisma.guildMember.deleteMany({
-      where: {
-        guildId: params.guildId
-      }
-    })
-    await prisma.channel.deleteMany({
-      where: {
-        guildId: params.guildId
-      }
-    })
-    await prisma.guild.delete({
-      where: {
-        id: params.guildId
-      }
-    })
+    await prisma.guildInvite.deleteMany({ where: { guildId: params.guildId } })
+    await prisma.guildMember.deleteMany({ where: { guildId: params.guildId } })
+    await prisma.channel.deleteMany({ where: { guildId: params.guildId } })
+    await prisma.guild.delete({ where: { id: params.guildId } })
     return { data: "" }
   } catch (error) {
     console.log(error)

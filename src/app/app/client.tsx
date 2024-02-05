@@ -15,7 +15,7 @@ import { cn } from "@/lib/tailwind"
 import { DropdownBase, DropdownItem } from "@/components/base/dropdown"
 import GuildSettingView from "@/components/setting-menu/guildSetting"
 import { QueryClient, QueryClientProvider, useQueryClient } from "@tanstack/react-query"
-import { runServerAction } from "@/lib/serveraction/return"
+import { runServer } from "@/lib/serveraction/return"
 import { s_deleteGuild } from "@/actions/crud-guild"
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { createQuery } from "@/components/api/create-query"
@@ -274,7 +274,7 @@ function GuildContextMenu(
       const startDeleting = async () => {
         if (!ignore) {
           try {
-            await runServerAction(s_deleteGuild, {
+            await runServer(s_deleteGuild, {
               userId: session.getUserId(),
               guildId: props.guild.id
             })
