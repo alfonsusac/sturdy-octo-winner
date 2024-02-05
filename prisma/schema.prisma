@@ -80,11 +80,9 @@ model Guild {
 
 model GuildInvite {
   id         String   @id @default(uuid())
-  inviteKey  String
+  inviteKey  String   @unique
   guild      Guild    @relation(fields: [guildId], references: [id])
   guildId    String
-
-  @@unique([guildId, inviteKey]) // Invite Key must be unique per guild
 }
 
 model GuildMember {
