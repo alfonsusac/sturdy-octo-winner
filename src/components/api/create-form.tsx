@@ -10,7 +10,8 @@ export function useZodForm<
 >(
   props: {
     schema: Schema,
-    onSubmit?: (data: z.infer<ZodObject<Schema>>) => void
+    onSubmit?: (data: z.infer<ZodObject<Schema>>) => Promise<void>,
+    onError?: (error: any) => void
   } & UseFormProps<z.infer<ZodObject<Schema>>>
 ) {
   const {schema, onSubmit, ...rhfProps } = props
@@ -18,12 +19,23 @@ export function useZodForm<
   // Hook
   const form = RHFuseForm({
     resolver: zodResolver(z.object(schema)),
-    mode: "onChange",
+    mode: "onChange", // Default
     ...rhfProps
   });
   
 
-  (form as any).onSubmit = onSubmit
+  (form as any).onSubmit = async (data: z.infer<ZodObject<Schema>>) => {
+    try {
+      await onSubmit?.(data)
+    } catch (error: any) {
+      if (props.onError) {
+        props.onError?.(error)
+      } else {
+        console.error(error)
+        console.log("Error in zod form with schema:", schema)
+      }
+    }
+  }
 
   const res = form
 
@@ -31,19 +43,3 @@ export function useZodForm<
     onSubmit: (data: z.infer<ZodObject<Schema>>) => void
   } 
 }
-
-
-
-// const form = useZodForm({
-//   schema: {
-//     guildName: z.string().min(1).max(64),
-//     guildPicture: z.instanceof(Blob).optional()
-//   },
-//   onSubmit(data) {
-    
-//   },
-//   defaultValues: {
-    
-//   },
-//   mode: "onChange"
-// })

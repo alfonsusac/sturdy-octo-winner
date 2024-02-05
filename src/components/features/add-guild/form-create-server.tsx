@@ -5,18 +5,18 @@ import { generateSlug } from "random-word-slugs"
 import { cn } from "@/lib/tailwind"
 import { style } from "@/style"
 import { ReactNode } from "react"
-import { Button, Fieldset, Form, Input, Label } from "../base/form"
+import { Button, Fieldset, Form, Input, Label } from "../../base/form"
 import * as z from "zod"
 import { s_createGuild } from "@/actions/crud-guild"
 import { useSession } from "@/lib/auth/next-auth.client"
 import { toast } from "sonner"
 import { runServer } from "@/lib/serveraction/return"
 import { useRouter } from "next/navigation"
-import { useZodForm } from "../api/create-form"
+import { useZodForm } from "../../api/create-form"
 import { uploadAsWebp } from "@/actions/uploads/client-upload-webp"
 import { useGuilds } from "@/app/app/query"
-import { useModal } from "../base/modal"
-import { AvatarPicker } from "../base/avatar-picker"
+import { useModal } from "../../base/modal"
+import { AvatarPicker } from "../../base/avatar-picker"
 
 export default function CreateGuildForm(
   props: {
@@ -42,6 +42,9 @@ export default function CreateGuildForm(
       try {
 
         const guild = await requestCreateGuild(session.getUserId(), data.guildName, data.guildPicture)
+        if (data.guildPicture) {
+          await uploadAsWebp(data.guildPicture, `guild/${ guild.id }.webp`)
+        }
         guilds.addGuild(guild)
         router.push(`/app/guild/${ guild.id }`)
         modal.close()
@@ -93,9 +96,5 @@ async function requestCreateGuild(
   guildName: string,
   guildPicture: Blob | undefined
 ) {
-  const guild = await runServer(s_createGuild, { userId, guildName, withGuildPicture: !!guildPicture })
-  if (guildPicture) {
-    await uploadAsWebp(guildPicture, `guild/${ guild.id }.webp`)
-  }
-  return guild
+  return await runServer(s_createGuild, { userId, guildName, withGuildPicture: !!guildPicture })
 }
