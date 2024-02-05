@@ -7,5 +7,5 @@ export async function upload(data: Blob, filepath: string) {
   await fetch(uploadURL, {method: "PUT",
     body: data,
   })
-  return uploadURL.split('?')[0]
+  return uploadURL.split('?')[0] // returns image url
 }
