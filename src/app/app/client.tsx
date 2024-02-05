@@ -264,36 +264,48 @@ function GuildContextMenu(
   const router = useRouter()
   const guilds = useGuilds()
 
-  const [deleting, setDeleting] = useState(false)
+  // const [deleting, setDeleting] = useState(false)
 
-
-  // Delete Guild in the next frame
-  useEffect(() => {
-    let ignore = false
-
-    if (deleting) {
-      const startDeleting = async () => {
-        if (!ignore) {
-          try {
-            await runServer(s_deleteGuild, {
-              userId: session.getUserId(),
-              guildId: props.guild.id
-            })
-          } catch (error: any) {
-            toast.error(error.message)
-          }
-          removeGuildFromList(props.guild.id)
-          setDeleting(false)
-        }
-      }
-      startDeleting()
+  async function handleDeleteGuildButton() {
+    router.push('/app')
+    try {
+      await runServer(s_deleteGuild, {
+        userId: session.getUserId(),
+        guildId: props.guild.id
+      })
+      guilds.removeGuild(props.guild.id)
+    } catch (error: any) {
+      toast.error(error.message)
     }
+  }
 
-    return () => {
-      ignore = true
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [deleting])
+  // // Delete Guild in the next frame
+  // useEffect(() => {
+  //   let ignore = false
+
+  //   if (deleting) {
+  //     const startDeleting = async () => {
+  //       if (!ignore) {
+  //         try {
+  //           await runServer(s_deleteGuild, {
+  //             userId: session.getUserId(),
+  //             guildId: props.guild.id
+  //           })
+  //         } catch (error: any) {
+  //           toast.error(error.message)
+  //         }
+  //         removeGuildFromList(props.guild.id)
+  //         setDeleting(false)
+  //       }
+  //     }
+  //     startDeleting()
+  //   }
+
+  //   return () => {
+  //     ignore = true
+  //   }
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [deleting])
 
   return (
     <>
@@ -301,27 +313,18 @@ function GuildContextMenu(
       <DropdownBase
         open={props.open} onOpenChange={props.setOpen}
         trigger={props.children}>
-        <DropdownItem
-          onClick={() => {
-            setOpen(true)
-          }}
-        >
-          <FluentSettings28Filled />
-          Guild Settings
-        </DropdownItem>
         {
           session.getUserId() === props.guild.ownerUserId &&
-          <DropdownItem
-            className="text-red-400 hover:bg-red-500 hover:text-white"
-            onClick={async () => {
-              router.push('/app')
-              // Delete Guild in the next frame
-              setDeleting(true)
-            }}
-          >
-            <MaterialSymbolsDeleteRounded />
-            Delete Guild (Dev)
-          </DropdownItem>
+          <>
+            <DropdownItem onClick={() => { setOpen(true) }}>
+              <FluentSettings28Filled />
+              Guild Settings
+            </DropdownItem>
+            <DropdownItem className="text-red-400 hover:bg-red-500 hover:text-white" onClick={handleDeleteGuildButton}>
+              <MaterialSymbolsDeleteRounded />
+              Delete Guild (Dev)
+            </DropdownItem>
+          </>
         }
       </DropdownBase>
     </>
