@@ -102,7 +102,8 @@ export function createQuery<
         // ...clientDefaultOptions,
         queryKey: key,
         ...clientOptions
-      });
+      })
+      const rawQuery = query;
 
       (query as any).setData = (fn: ((prev: FnData) => FnData)) => queryClient.setQueryData(key, fn as unknown)
 
@@ -118,7 +119,6 @@ export function createQuery<
           [key in keyof FnMutations]: (...arg: Parameters<ReturnType<FnMutations[key]>>) => ReturnType<ReturnType<FnMutations[key]>>
         }
     }
-
 
     return {
       prefetch,
