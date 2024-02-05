@@ -1,5 +1,6 @@
 "use client"
 
+import { AvatarPicker } from "@/components/base/avatar-picker"
 import { SessionProvider as SP, useSession } from "next-auth/react"
 
 export function UpdateSession() {
@@ -12,6 +13,7 @@ export function UpdateSession() {
       <button onClick={ () => session.update({ rng: Math.random().toFixed(3) }) }>
         { !session.data ? "Loading" : "Update Session" }
       </button>
+      <AvatarPicker />
     </>
   )
 }

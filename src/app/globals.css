@@ -60,8 +60,12 @@
   
   form {
     & button, [type='button'], [type='reset'], [type='submit'] {
-      padding-block: 0.6rem;
-      padding-inline: 1rem;
+      /* padding-block: 0.6rem; */
+      /* padding-inline: 1rem; */
+      padding-top: 0.6rem;
+      padding-bottom: 0.6rem;
+      padding-left: 1rem;
+      padding-right: 1rem;
       font-size: 0.8rem;
       background-color: rgb(165 180 252 / 0.2);
       display: flex;
