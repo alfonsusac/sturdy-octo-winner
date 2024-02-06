@@ -25,6 +25,7 @@ const auth = {
         !session.user.email ||
         !session.user.provider
       ) {
+        // Todo: Redirect to auth and pass last URL so that when they log in, it will be redirected back to previously known locations
         redirect('/auth')
       }
 
