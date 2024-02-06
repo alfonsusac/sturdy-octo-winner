@@ -19,7 +19,7 @@ import * as z from "zod"
 import { generateSlug } from "random-word-slugs"
 import { uploadAsWebp } from "@/actions/uploads/client-upload-webp"
 import { toast } from "sonner"
-import { runServer } from "@/lib/serveraction/return"
+import { runServer } from "@/lib/client/server-action"
 import { s_createGuild, s_joinGuild } from "@/actions/crud-guild"
 
 

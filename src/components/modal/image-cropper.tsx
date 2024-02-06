@@ -25,7 +25,7 @@ import { Slider } from "../base/slider"
 import { CloseModalButton, ModalBase } from "../base/modal"
 import { Button, ModalFooter, Title } from "../base/dialog"
 import { toast } from "sonner"
-import { createCanvasFromResizedBase64 } from "@/lib/file"
+import { createCanvasFromResizedBase64 } from "@/lib/client/file"
 
 export default function ImageCropper(
   {

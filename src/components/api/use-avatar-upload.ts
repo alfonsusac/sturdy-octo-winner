@@ -1,4 +1,4 @@
-import { createCanvasFromResizedBase64, readFileAsDataURL } from "@/lib/file"
+import { createCanvasFromResizedBase64, readFileAsDataURL } from "@/lib/client/file"
 import { useEffect, useState, useTransition } from "react"
 import { FileRejection, useDropzone } from "react-dropzone"
 import { toast } from "sonner"

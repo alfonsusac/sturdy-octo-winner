@@ -1,6 +1,6 @@
 import { SVGProps } from "react"
 import { TitleBar } from "../../titlebar"
-import prisma from "@/lib/db/prisma"
+import { prisma } from "@/lib/server/prisma"
 import { HydrateState } from "@/components/api/create-query"
 import { GuildName, ServerMemberItem } from "./client"
 

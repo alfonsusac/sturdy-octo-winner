@@ -1,6 +1,6 @@
 "use server"
 
-import prisma from "@/lib/db/prisma"
+import { prisma } from "@/lib/server/prisma"
 
 export async function getUserPublicInfo(id: string) {
   const user = await prisma.user.findUnique({ where: { id } })

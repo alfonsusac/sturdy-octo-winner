@@ -15,7 +15,7 @@ import { cn } from "@/lib/tailwind"
 import { DropdownBase, DropdownItem } from "@/components/base/dropdown"
 import GuildSettingView from "@/components/setting-menu/guildSetting"
 import { QueryClient, QueryClientProvider, useQueryClient } from "@tanstack/react-query"
-import { runServer } from "@/lib/serveraction/return"
+import { runServer } from "@/lib/client/server-action"
 import { s_deleteGuild } from "@/actions/crud-guild"
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { createQuery } from "@/components/api/create-query"

@@ -1,11 +1,11 @@
 import RegisterForm from "./form"
-import prisma from "@/lib/db/prisma"
+import { prisma } from "@/lib/server/prisma"
 import { zfd } from "zod-form-data"
 import { getUserDefaultImage } from "@/controller/user"
-import { Auth } from "@/lib/auth/auth-setup"
 import { AcccountProvider } from "@prisma/client"
-import redirect from "@/lib/navigation"
+import redirect from "@/lib/server/navigation"
 import { SessionProvider } from "@/lib/auth/next-auth.client"
+import auth from "@/lib/server/auth"
 
 /**
  *  The Register Page should:
@@ -17,8 +17,9 @@ import { SessionProvider } from "@/lib/auth/next-auth.client"
 
 export default async function Page() {
 
-  const session = await Auth.getSession()
-  if (!session.provider || !session.sub) redirect('/auth', "No Session Found")
+  const session = await auth.getRawSession()
+  if (!session || !session.user.provider || !session.user.sub)
+    redirect('/auth', "No Session Found")
 
   // Check if user already exist in the database. Since this page is only for new users
   // const account = await prisma.user.find
@@ -26,8 +27,8 @@ export default async function Page() {
   const account = await prisma.account.findUnique({
     where: {
       providerData: {
-        providerType: session.provider as AcccountProvider,
-        providerAccountId: session.sub
+        providerType: session.user.provider as AcccountProvider,
+        providerAccountId: session.user.sub
       }
     }
   })
@@ -35,12 +36,12 @@ export default async function Page() {
 
   // idempotent:
   // find existing id if not exist then create
-  const userDefaultImage = await getUserDefaultImage(session.sub)
+  const userDefaultImage = await getUserDefaultImage(session.user.sub)
 
   async function registerNewUser(formData: FormData) {
     "use server"
     try {
-      const session = await Auth.getSession()
+      const session = await auth.getSession()
       if (!session.provider || !session.sub) redirect('/auth')
 
       //Validate user input
@@ -98,8 +99,8 @@ export default async function Page() {
         <SessionProvider session={session}>
           <RegisterForm
             action={ registerNewUser }
-            defaultDisplayname={ session.name ?? "" }
-            defaultUsername={ session.email?.split('@')[0] ?? "" }
+            defaultDisplayname={ session.user.name ?? "" }
+            defaultUsername={ session.user.email?.split('@')[0] ?? "" }
             // https://www.dicebear.com/styles/bottts-neutral/
             defaultProfilepicture={ `https://api.dicebear.com/7.x/bottts-neutral/svg?seed=${userDefaultImage?.id}` }
             suggestProfilepicture={ "" }

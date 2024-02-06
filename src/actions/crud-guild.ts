@@ -1,7 +1,7 @@
 "use server"
 
-import { Auth } from "@/lib/auth/auth-setup"
-import prisma from "@/lib/db/prisma"
+import auth from "@/lib/server/auth"
+import { prisma } from "@/lib/server/prisma"
 import { nanoid } from "nanoid"
 
 export async function s_createGuild(
@@ -11,7 +11,7 @@ export async function s_createGuild(
     withGuildPicture: boolean
   }
 ) {
-  const user = await Auth.getUserSession()
+  const user = await auth.getSession()
   if (user.id !== params.userId)
     return { error: "Not Authenticated" }
 
@@ -43,7 +43,7 @@ export async function s_deleteGuild(
     guildId: string,
   }
 ) {
-  const user = await Auth.getUserSession()
+  const user = await auth.getSession()
   if (user.id !== params.userId)
     return { error: "Not Authenticated" }
 
@@ -65,7 +65,7 @@ export async function s_joinGuild(
     inviteKey: string
   }
 ) {
-  const user = await Auth.getUserSession()
+  const user = await auth.getSession()
   if (user.id !== params.userId)
     return { error: "Not Authenticated" }
 

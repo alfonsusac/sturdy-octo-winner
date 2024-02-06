@@ -1,4 +1,4 @@
-import { LoginLocalDev, LoginViaGoogle } from "@/lib/auth/login-button"
+import { LoginLocalDev, LoginViaGoogle } from "@/components/login-button"
 
 export default function AuthPage() {
   return (

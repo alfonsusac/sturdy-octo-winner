@@ -1,6 +1,6 @@
 import { TitleBar } from "@/app/app/titlebar"
 import { AkarIconsHashtag } from "../page"
-import prisma from "@/lib/db/prisma"
+import { prisma } from "@/lib/server/prisma"
 import { ChatInput, MessageList } from "./client"
 import { HydrationBoundary, QueryClient, dehydrate } from "@tanstack/react-query"
 

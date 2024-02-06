@@ -1,10 +1,10 @@
 "use server"
 
-import { Auth } from "@/lib/auth/auth-setup"
-import prisma from "@/lib/db/prisma"
-import redirect from "@/lib/navigation"
+import { prisma } from "@/lib/server/prisma"
+import redirect from "@/lib/server/navigation"
 import { AcccountProvider } from "@prisma/client"
 import { zfd } from "zod-form-data"
+import auth from "@/lib/server/auth"
 
 const schema = zfd.formData({
   username: zfd.text(),
@@ -14,8 +14,10 @@ const schema = zfd.formData({
 
 export async function registerUserToDB(formData: FormData) {
   try {
-    const session = await Auth.getSession()
-    if (!session.provider || !session.sub) redirect('/auth')
+    const session = await auth.getSession({
+      allowNoUserId: true
+    })
+    // if (!session.provider || !session.sub) redirect('/auth')
 
     //Validate user input
 

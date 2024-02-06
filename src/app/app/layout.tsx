@@ -2,13 +2,13 @@ import { cn } from "@/lib/tailwind"
 import { style } from "@/style"
 import { SVGProps } from "react"
 import { getSessionUserData } from "@/controller/user"
-import { Auth } from "@/lib/auth/auth-setup"
 import { GuildHeader, GuildList, HomeButton, ClientProviders, UserStatus } from "./client"
 import { AddGuildDialog } from "../../components/features/add-guild/add-guild-modal"
 import { SidebarItem } from "@/components/parts/sidebar-item"
-import prisma from "@/lib/db/prisma"
+import { prisma } from "@/lib/server/prisma"
 import { HydrateState } from "@/components/api/create-query"
 import { prepareGuildsQuery } from "./query"
+import auth from "@/lib/server/auth"
 
 
 export default async function AppLayout(
@@ -18,7 +18,7 @@ export default async function AppLayout(
     header: React.ReactNode
   }
 ) {
-  const { session } = await Auth.getUserSession()
+  const session = await auth.getRawSession()
   const user = await getSessionUserData()
   const guilds = await prisma.guild.findMany({
     where: { members: { some: { userId: user.id } } }

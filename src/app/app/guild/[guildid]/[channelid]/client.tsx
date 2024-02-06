@@ -2,7 +2,7 @@
 
 import { s_sendMessage } from "@/actions/crud-message"
 import { useSession } from "@/lib/auth/next-auth.client"
-import { runServer } from "@/lib/serveraction/return"
+import { runServer } from "@/lib/client/server-action"
 import { Message } from "@prisma/client"
 import { UndefinedInitialDataOptions, useQuery, useQueryClient } from "@tanstack/react-query"
 import { FormEvent, useEffect, useRef, useState } from "react"

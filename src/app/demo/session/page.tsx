@@ -1,9 +1,10 @@
 import { getServerSession } from "next-auth"
 import ClientSession, { SP } from "./client"
-import { authOption } from "@/lib/auth/auth-setup"
+import { authOptions } from "@/lib/server/auth-options"
+import auth from "@/lib/server/auth"
 
 export default async function Page() {
-  const session = await getServerSession(authOption)
+  const session = await auth.getRawSession()
   return (
     <SP>
       <pre>

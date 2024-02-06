@@ -1,6 +1,6 @@
 import { AkarIconsHashtag } from "@/app/app/guild/[guildid]/page"
 import { TooltipBase } from "@/components/base/tooltip"
-import prisma from "@/lib/db/prisma"
+import { prisma } from "@/lib/server/prisma"
 import { cn } from "@/lib/tailwind"
 import { ComponentProps, ReactNode, SVGProps } from "react"
 import { ChannelListItem, ChannelListItemButton } from "./client"

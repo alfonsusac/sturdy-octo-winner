@@ -4,7 +4,7 @@ import { SubmitHandler, useForm } from "react-hook-form"
 import { Button, FieldSet, Fieldset, Form, Input, Label } from "../base/form"
 import { FormLabel } from "../base/form-field"
 import { useSession } from "@/lib/auth/next-auth.client"
-import updateDisplayname from "@/actions/session/update-dname-action"
+import s_updateDisplayname from "@/actions/session/update-dname-action"
 import { toast } from "sonner"
 import { infer as i, object, string } from "zod"
 import { useEffect } from "react"
@@ -31,7 +31,7 @@ export default function ChangeDisplaynameForm() {
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
     try {
-      await session.update("update-displayname", async () => await updateDisplayname(data))
+      await session.update("update-displayname", async () => await s_updateDisplayname(data))
       form.reset({
         displayname: data.displayname
       })

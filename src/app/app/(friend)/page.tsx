@@ -2,9 +2,9 @@ import { cn } from "@/lib/tailwind"
 import { style } from "@/style"
 import { AppPageClient, Client_FriendCount, Client_FriendList, TabsContentClient } from "./client"
 import { HydrateState } from "@/components/api/create-query"
-import prisma from "@/lib/db/prisma"
-import { Auth } from "@/lib/auth/auth-setup"
+import { prisma } from "@/lib/server/prisma"
 import { prepareFriendListQuery, prepareFriendRequestListQuery } from "../query"
+import auth from "@/lib/server/auth"
 
 export default async function AppPage() {
   // fetch friends list
@@ -12,7 +12,7 @@ export default async function AppPage() {
   // fetch add new friend
 
   await prepareFriendRequestListQuery(async () => {
-    return await prisma.friendRequest.findMany({ where: { toUserID: (await Auth.getUserSession()).id } })
+    return await prisma.friendRequest.findMany({ where: { toUserID: (await auth.getSession()).id } })
   })
 
   const pageStyle = cn("px-4 pt-4 flex flex-col min-h-0")
@@ -41,7 +41,7 @@ export default async function AppPage() {
 
 async function AllFriendList() {
 
-  const friendList = await prisma.user.findMany({ where: { friendsOf: { some: { id: (await Auth.getUserSession()).id } } } })
+  const friendList = await prisma.user.findMany({ where: { friendsOf: { some: { id: (await auth.getSession()).id } } } })
   await prepareFriendListQuery(friendList)
 
   return (
@@ -62,7 +62,7 @@ async function AllFriendList() {
 
 async function AllFriendRequests() {
 
-  const friendRequests = await prisma.friendRequest.findMany({ where: { toUserID: (await Auth.getUserSession()).id } })
+  const friendRequests = await prisma.friendRequest.findMany({ where: { toUserID: (await auth.getSession()).id } })
   await prepareFriendRequestListQuery(friendRequests)
 
   return (

@@ -1,19 +1,20 @@
 import { getQueryClient, prepareQuery } from "@/components/api/create-query"
-import { Auth } from "@/lib/auth/auth-setup"
-import prisma from "@/lib/db/prisma"
-import { logFunc } from "@/lib/devutil"
-import redirect from "@/lib/navigation"
+import { prisma } from "@/lib/server/prisma"
+import { logFunc } from "@/lib/util"
+import redirect from "@/lib/server/navigation"
 import { memoize } from "nextjs-better-unstable-cache"
 import { cache } from "react"
 import "server-only"
+import auth from "@/lib/server/auth"
 
 // -----------------------------------------------
 // Get Session User Data (from DB)
 // -----------------------------------------------
+// This function from auth.getSession()
 export const getSessionUserData = cache(async () => {
   logFunc("Getting User Data")
 
-  const { id } = await Auth.getUserSession()
+  const { id } = await auth.getSession()
   const user = await findUserById(id)
 
   prepareQuery(['user', id], user)
@@ -65,7 +66,7 @@ export const getUserDefaultImage = memoize(
 
 export const getUserGuildList = cache(
   async () => {
-    const { id } = await Auth.getUserSession()
+    const { id } = await auth.getSession()
     const guilds = await prisma.guild.findMany({
       where: {
         members: {

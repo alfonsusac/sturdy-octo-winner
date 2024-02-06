@@ -1,17 +1,17 @@
 "use server"
 
 import z from "zod"
-import prisma from "@/lib/db/prisma"
-import { Auth } from "@/lib/auth/auth-setup"
+import { prisma } from "@/lib/server/prisma"
 import { ServerActionSessionUpdate } from "@/lib/auth/next-auth.client"
+import auth from "@/lib/server/auth"
 
 
-export default async function updateDisplayname(input: { displayname: string }): Promise<ServerActionSessionUpdate> {
+export default async function s_updateDisplayname(input: { displayname: string }): Promise<ServerActionSessionUpdate> {
   try {
-    const { userid } = await Auth.getSession()
+    const { id } = await auth.getSession()
   
     const res = await prisma.user.update({
-      where: { id: userid },
+      where: { id },
       data: { displayName: input.displayname }
     })
   

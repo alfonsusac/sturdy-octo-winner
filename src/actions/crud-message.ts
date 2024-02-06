@@ -1,7 +1,7 @@
 "use server"
 
-import { Auth } from "@/lib/auth/auth-setup"
-import prisma from "@/lib/db/prisma"
+import auth from "@/lib/server/auth"
+import { prisma } from "@/lib/server/prisma"
 
 export async function s_sendMessage(
   params: {
@@ -15,7 +15,7 @@ export async function s_sendMessage(
     throw new Error("Can't send to channel and direct message at the same time. Please only provide one")
   }
 
-  const user = await Auth.getUserSession()
+  const user = await auth.getSession()
   if (user.id !== params.userid)
     return { error: "Not Authenticated" }
 

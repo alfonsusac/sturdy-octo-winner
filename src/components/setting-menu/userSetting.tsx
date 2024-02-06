@@ -1,4 +1,4 @@
-import updateProfilePicture from "@/actions/session/update-pfp-action"
+import s_updateProfilePicture from "@/actions/session/update-pfp-action"
 import { SettingPage, TabContent, TabTrigger, dividerStyle, tabTriggerStyle } from "@/components/base/settings"
 import ChangeDisplaynameForm from "@/components/forms/change-displayname"
 import ImageCropper from "@/components/modal/image-cropper"
@@ -51,13 +51,10 @@ export default function UserSettingView(p: {
                   defaultValue={ session.data?.user.image }
                   onCrop={ async (img) => {
                     const user = session.data?.user
-                    if(!user) throw new Error("Not Authenticated")
+                    if (!user) throw new Error("Not Authenticated")
+                    const pfp = await upload(img.blob, `user/${ user.userid }${ user.image?.at(-5) === '0' ? "1" : user.image?.at(-5) === "1" ? "0" : "1" }.png`)
                     await session.update("update-display-picture",
-                      async () => await updateProfilePicture(
-                        {
-                          pfp: await upload(img.blob, `user/${user.userid}${user.image?.at(-5) === '0' ? "1" : user.image?.at(-5) === "1" ? "0" : "1"}.png`)
-                        }
-                      )
+                      async () => await s_updateProfilePicture({ pfp })
                     )
                   }}
                 />

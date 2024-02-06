@@ -1,13 +1,12 @@
 "use server"
 
-import { Auth } from "@/lib/auth/auth-setup"
-import { S3 } from "@/lib/upload/config"
+import auth from "@/lib/server/auth"
+import { S3 } from "@/lib/server/s3"
 import { PutObjectCommand } from "@aws-sdk/client-s3"
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner"
 
 export async function s_getPresignedURL(pathAndKey: string, type?: string) {
-  const user = await Auth.getUserSession()
-  if (!user) throw new Error("Not Authenticated")
+  -await auth.getSession()
   const command = new PutObjectCommand({
     Bucket: 'diskott-avatars',
     Key: pathAndKey,

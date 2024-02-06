@@ -1,4 +1,4 @@
-import redirect from "@/lib/navigation"
+import redirect from "@/lib/server/navigation"
 
 export default function Page() {
   redirect('/app')
