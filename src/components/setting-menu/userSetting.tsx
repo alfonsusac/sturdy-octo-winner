@@ -11,6 +11,8 @@ export default function UserSettingView(p: {
   children: React.ReactNode
 }) {
   const session = useSession()
+
+  
   return (
     <SettingPage
       trigger={ p.children }
@@ -50,16 +52,6 @@ export default function UserSettingView(p: {
                   onCrop={ async (img) => {
                     const user = session.data?.user
                     if(!user) throw new Error("Not Authenticated")
-
-                    // const buffer2 = await fetch(dataURL).then(res => res.blob())
-                    // const buffer = Buffer.from(dataURL.replace(/^data:image\/\w+;base64,/, ""), 'base64')
-                    // const uploadURL = await getPresignedURLForUserProfilePicture()
-                    // if (!uploadURL) throw new Error('Something went wrong when prefetching presigned URL')
-                    // const res = await fetch(uploadURL, {
-                    //   method: "PUT", body: img.blob,
-                    // })
-                    // const newImageUrl = uploadURL.split('?')[0]
-                    
                     await session.update("update-display-picture",
                       async () => await updateProfilePicture(
                         {

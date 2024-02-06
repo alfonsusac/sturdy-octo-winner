@@ -47,6 +47,8 @@
     "nextjs-better-unstable-cache": "^1.0.0",
     "node-fetch": "^3.3.2",
     "prisma": "^5.8.1",
+    "pusher": "^5.2.0",
+    "pusher-js": "8.4.0-rc2",
     "random-word-slugs": "^0.1.7",
     "random-words": "^2.0.0",
     "react": "^18.2.0",
