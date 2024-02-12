@@ -7,7 +7,7 @@ import { useSession } from "@/lib/auth/next-auth.client"
 import { runServer } from "@/lib/client/server-action"
 import { Message } from "@prisma/client"
 import { UndefinedInitialDataOptions, useQuery, useQueryClient } from "@tanstack/react-query"
-import { FormEvent, useEffect, useRef, useState } from "react"
+import { FormEvent, ReactNode, useEffect, useRef, useState } from "react"
 import ReactTextareaAutosize from "react-textarea-autosize"
 import { toast } from "sonner"
 import { useChannelMessages } from "./query"
@@ -23,28 +23,23 @@ export function MessageList(
   const { data: messages } = useChannelMessages([props.channelid])
   const listRef = useRef<HTMLDivElement>(null)
 
-  // const [newMessageEntered, setNewMessageEntered] = useState(false)
-
-  // addMessageToList = (message) => {
-  //   addMessage(message)
-  //   setNewMessageEntered(true)
-  // }
-
   useEffect(() => {
-    // if (newMessageEntered) {
-    // listRef.current?.scrollTo({ top: listRef.current.scrollHeight })
     if (listRef.current) {
       listRef.current.scrollTop = listRef.current.scrollHeight
     }
-    // setNewMessageEntered(false)
-    // }
   }, [messages])
+
+  useEffect(() => {
+    if (listRef.current) {
+      listRef.current.style.opacity = "1"
+    }
+  }, [])
 
   return (
     <div className="bg-blue-500/0 h-full flex">
       <div
         ref={listRef}
-        className="grow max-h-full w-full flex flex-col-reverse mt-auto bg-indigo-400/0 py-2 overflow-y-scroll gap-1 pb-4"
+        className="opacity-0 grow max-h-full w-full flex flex-col mt-auto bg-indigo-400/0 py-2 overflow-y-scroll gap-1 pb-4"
       >
         {
           messages?.map((message, i) => (
@@ -103,6 +98,26 @@ function MessageItem(
 
 
 export function ChatInput(
+  props: {
+    children: ReactNode
+  }
+) {
+
+  return (
+    <div className="shrink-0 w-auto -mt-1 bg-[#212231] rounded-lg px-4
+      flex flex-row gap-2 items-center
+      focus-within:outline
+      focus-within:outline-4
+      focus-within:outline-indigo-300/10
+      shadow-xl mx-4 z-[1]
+    ">
+      { props.children }
+    </div>
+  )
+  
+}
+
+export function ChatInputField(
   props: {
     channelid: string
   }
