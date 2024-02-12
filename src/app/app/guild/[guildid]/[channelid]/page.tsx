@@ -15,20 +15,16 @@ export default async function Channel(
 ) {
   const { channelid } = context.params
 
-  const channelMessages = await prisma.message.findMany({
-    where: {
-      channelId: channelid
-    },
-    orderBy: {
-      created_at: 'desc'
-    }
-  })
-  
-  prepareChannelMessages(channelid, channelMessages)
+  prepareChannelMessages([channelid],
+    async () => await prisma.message.findMany({
+      where: { channelId: channelid },
+      orderBy: { created_at: 'desc' }
+    })
+  )
 
   return (
     <HydrateState>
-      <TitleBar icon={<AkarIconsHashtag />} title="Channel"/>
+      <TitleBar icon={<AkarIconsHashtag />} title="Channel" />
 
       <div className="h-full w-full flex flex-col pb-6">
 

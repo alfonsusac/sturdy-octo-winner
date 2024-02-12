@@ -28,3 +28,13 @@ export const {
 //         (id: string) => prev.filter(g => g.id !== id)
 //     }
 //   )
+
+
+// const e = createQuery<Message[]>()
+//   (['messages'])()
+
+
+// const f = createQuery<Message>()
+//   ((id: string)=>['messages', id])()
+
+// e.prefetch(async () => [])

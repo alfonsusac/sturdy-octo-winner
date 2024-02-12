@@ -16,8 +16,6 @@ export const {
   
 })
 
-useGuilds
-
 export function useGuild(id: string) {
   const query = useGuilds({
     select: (guilds) => guilds.find(g => g.id === id) as any

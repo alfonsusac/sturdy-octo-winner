@@ -20,13 +20,9 @@ export const getQueryClient = cache(
 )
 
 // Server Only. Hydrates any query client that is present in the current request.
-type QueryKeyData<Data extends any> = QueryKey & { data: Data }
-type Query<Data extends any = unknown> = { data: Data, key: QueryKeyData<Data> }
-
 export function HydrateState(
   props: {
     children: ReactNode,
-    queries?: Query[]
   }
 ) {
   return (
@@ -38,8 +34,7 @@ export function HydrateState(
 
 
 
-
-
+type QueryKeyWithData<Data extends any> = QueryKey & { data: Data }
 
 export function prepareQuery<FnData extends any>(
   key: QueryKey,
@@ -55,7 +50,6 @@ export function prepareQuery<FnData extends any>(
 
 
 
-type QueryKeyFn<T extends ReadonlyArray<unknown>> = (...params: T) => QueryKey
 
 export function createQuery<
   FnData extends any
@@ -64,16 +58,11 @@ export function createQuery<
 ) {
 
   return function defineQueryKeyParams<
-    KeyParams extends ReadonlyArray<unknown> = never
+    KeyParams extends any[] = []
   >(
-    key: QueryKey | QueryKeyFn<KeyParams>,
+    key: QueryKey | ((...params: KeyParams) => QueryKey),
   ) {
-    const queryKeyParamCount = (() => {
-      if (typeof key === "function") return key.arguments.count
-      else return 0
-    })()
-
-
+    const isQueryKeyAFunction = typeof key === "function"
 
     // [Server-Only]
     // Creates a prefetching function that prefetches a data
@@ -86,23 +75,28 @@ export function createQuery<
     //     Do not find solution to pass the prefetched data to HydrateState!
     //  - update #2: No longer need RQHydrationBoundary because we already have HydrateState
     //  - update #3: Now you can pass values in here.
-    
-    async function prefetch(
-      // params: KeyParams,
-      // queryFn: QueryFunction<FnData> | FnData,
-      ...args: KeyParams[0] extends never
-        ? [...Parameters<(queryFn: QueryFunction<FnData> | FnData) => {}>]
-        : [...KeyParams, ...Parameters<(queryFn: QueryFunction<FnData> | FnData) => {}>]
-    ) {
-      const params = args.slice(0, queryKeyParamCount) as any as KeyParams
-      const queryFn = args[queryKeyParamCount] as QueryFunction<FnData> | FnData
 
+    async function prefetch(
+      // queryFn: QueryFunction<FnData> | FnData,
+      // params: KeyParams
+      ...args: KeyParams extends []
+        ? [
+          ...Parameters<(queryFn: QueryFunction<FnData> | FnData) => {}>
+        ]
+        : [
+          ...Parameters<(keyParams: KeyParams) => {}>,
+          ...Parameters<(queryFn: QueryFunction<FnData> | FnData) => {}>
+        ]
+    ) {
+
+      const queryFn = (isQueryKeyAFunction ? args[1] : args[0]) as QueryFunction<FnData> | FnData
+      const params = (isQueryKeyAFunction ? args[0] : undefined)
 
       await getQueryClient().prefetchQuery({
 
         queryKey: (() => {
           if (typeof key === "function") {
-            return key(...params)
+            return key(...params as any)
           } else {
             return key
           }
@@ -134,18 +128,25 @@ export function createQuery<
       // Creates a function to consume the data rehydrated by the
       //  hydration boundary. Guarantess type-safety
       function useHook(
-        ...args: KeyParams[0] extends never
-          ? [...Parameters<(clientOption?: Partial<UndefinedInitialDataOptions<FnData>>) => void>]
-          : [...KeyParams, ...Parameters<(clientOption?: Partial<UndefinedInitialDataOptions<FnData>>) => void>]
+        // params: KeyParams
+        // clientOptions?: Partial<UndefinedInitialDataOptions<FnData>>,
+        ...args: KeyParams extends []
+          ? [
+          ...Parameters<(clientOption?: Partial<UndefinedInitialDataOptions<FnData>>) => void>
+        ]
+          : [
+          ...Parameters<(keyParams: KeyParams) => {}>,
+          ...Parameters<(clientOption?: Partial<UndefinedInitialDataOptions<FnData>>) => void>
+        ]
       ) {
         // This step extracts the parameters 
-        const params = args.slice(0, queryKeyParamCount) as any as KeyParams
-        const clientOptions = args[queryKeyParamCount] as Partial<UndefinedInitialDataOptions<FnData>>
+        const clientOptions = (isQueryKeyAFunction ? args[1] : args[0]) as Partial<UndefinedInitialDataOptions<FnData>>
+        const params = (isQueryKeyAFunction ? args[0] : undefined)
 
         // Function to process the query function
         function getKey() {
           if (typeof key === "function") {
-            return key(...params)
+            return key(...params as any)
           } else {
             return key
           }
@@ -159,7 +160,7 @@ export function createQuery<
 
         // Transfer all mutation function to useHook
         const queryClient = useQueryClient()
-        ; (query as any).setData = (fn: ((prev: FnData) => FnData)) => queryClient.setQueryData(getKey(), fn as unknown)
+          ; (query as any).setData = (fn: ((prev: FnData) => FnData)) => queryClient.setQueryData(getKey(), fn as unknown)
         for (const mutationName in mutations) {
           ; (query as any)[mutationName] = (newData: any) => queryClient.setQueryData(getKey(), (prev) => mutations[mutationName](prev as FnData)(newData))
         }
@@ -174,12 +175,13 @@ export function createQuery<
           }
       }
 
+      
+
       return {
         prefetch,
         useHook,
-        key: key as QueryKeyData<FnData>,
+        key,
         mutations,
-        // keys: options.queryKey as QueryKeyWithData<FnData>
       }
     }
   }
