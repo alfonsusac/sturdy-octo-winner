@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { Inter, Open_Sans, Outfit } from 'next/font/google'
+import { Inter, Outfit } from 'next/font/google'
 import './globals.css'
 import { cn } from '@/lib/tailwind'
 import { Toaster } from 'sonner'
@@ -19,14 +19,14 @@ export const metadata: Metadata = {
   description: 'Discord Clone to Learn about Next.js',
 }
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+export default function RootLayout(
+  props: {
+    children: React.ReactNode
+  }
+) {
   return (
     <html lang="en">
-      <body className={ cn(
+      <body className={cn(
         sans.variable,
         logo.variable,
         "font-sans",
@@ -34,8 +34,8 @@ export default function RootLayout({
         "text-indigo-100/90",
         "bg-gradient-to-b from-indigo-200/10 to-indigo-500/20",
         "selection:bg-green-800 data-[sonner-toast]:!font-normal"
-      ) }>
-        <Toaster toastOptions={ {
+      )}>
+        <Toaster toastOptions={{
           unstyled: true,
           style: {
             fontWeight: 400,
@@ -46,11 +46,11 @@ export default function RootLayout({
             default: "bg-[#343850]",
             success: "bg-[#37474D] [&_[data-icon]]:text-green-300/80",
           },
-        } }
-          visibleToasts={ Infinity } 
+        }}
+          visibleToasts={Infinity}
           expand={true}
         />
-        { children }
+        {props.children}
       </body>
     </html>
   )
