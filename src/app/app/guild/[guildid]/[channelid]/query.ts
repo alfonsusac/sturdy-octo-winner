@@ -11,7 +11,7 @@ export const {
   )({
 
     addMessage: (prev) =>
-      (newData: Message) => [...prev, newData],
+      (newData: Message) => [newData, ...prev],
 
   })
 
