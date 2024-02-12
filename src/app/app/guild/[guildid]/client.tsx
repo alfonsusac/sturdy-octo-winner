@@ -2,7 +2,7 @@
 
 import { Channel } from "@prisma/client"
 import { UndefinedInitialDataOptions, useQuery } from "@tanstack/react-query"
-import { useGuilds } from "../../query"
+import { useGuilds, useUser } from "../../query"
 import Image from "next/image"
 import { getUserPublicInfo } from "./action"
 import { toast } from "sonner"
@@ -39,13 +39,21 @@ export function GuildName(
 export function ServerMemberItem(
   props: { userid: string }
 ) {
-  const query = useQuery({
-    queryKey: ['user', props.userid],
+
+  const query = useUser([props.userid], {
     queryFn: async () => {
-      toast(`Fetching user info: ${ props.userid }`)
+      // toast(`Fetching user info: ${ props.userid }`)
       return await getUserPublicInfo(props.userid)
     }
   })
+
+  // const query = useQuery({
+  //   queryKey: ['user', props.userid],
+  //   queryFn: async () => {
+  //     toast(`Fetching user info: ${ props.userid }`)
+  //     return await getUserPublicInfo(props.userid)
+  //   }
+  // })
 
   return (
     <div className="flex-none flex gap-2">

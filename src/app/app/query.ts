@@ -5,7 +5,6 @@ import { UseQueryResult, useQuery } from "@tanstack/react-query"
 export const {
   prefetch: prepareGuildsQuery,
   useHook: useGuilds,
-  mutations
 } = createQuery<Guild[]>()(['guilds'])({
 
   addGuild: (prev) =>
@@ -36,13 +35,7 @@ export const {
   useHook: useFriendRequestList,
 } = createQuery<FriendRequest[]>()(['friendRequestList'])()
 
-
-
-
-// export function useGuild(id: string) {
-//   const query = useQuery({
-//     queryKey: ['guilds'],
-//     queryFn: () => ([] as Guild[]),
-//     select: (guilds) => guilds.find(g => g.id === id)
-//   })
-// }
+export const {
+  prefetch: prefetchUser,
+  useHook: useUser,
+} = createQuery<Partial<User>>()((userid) => ['user', userid])()

@@ -11,6 +11,8 @@ import { FormEvent, ReactNode, useEffect, useRef, useState } from "react"
 import ReactTextareaAutosize from "react-textarea-autosize"
 import { toast } from "sonner"
 import { useChannelMessages } from "./query"
+import { getUserPublicInfo } from "../action"
+import { useUser } from "@/app/app/query"
 
 
 
@@ -58,18 +60,24 @@ function MessageItem(
   }
 ) {
   const session = useSession()
-  const { data: senderUser } = useQuery({
-    queryKey: ['user-data', props.message.sender],
-    initialData: () => {
-      if (props.message.sender === session.getUserId()) {
-        return {
-          id: session.getUserId(),
-          image: session.data!.user.image!,
-          name: session.data!.user.name!,
-        }
-      }
+  const { data: senderUser } = useUser([props.message.sender], {
+    queryFn: async () => {
+      // toast(`Fetching user info: ${ props.userid }`)
+      return await getUserPublicInfo(props.message.sender)
     }
   })
+  // const { data: senderUser } = useQuery({
+  //   queryKey: ['user-data', props.message.sender],
+  //   initialData: () => {
+  //     if (props.message.sender === session.getUserId()) {
+  //       return {
+  //         id: session.getUserId(),
+  //         image: session.data!.user.image!,
+  //         name: session.data!.user.name!,
+  //       }
+  //     }
+  //   }
+  // })
 
   const { message } = props
   return (
@@ -77,12 +85,12 @@ function MessageItem(
       flex gap-3
     ">
       <div className="rounded-full overflow-hidden w-8 h-8 shrink-0">
-        <img src={senderUser?.image} />
+        <img src={senderUser?.profilePicture} />
       </div>
       <div className="">
         <div className="flex gap-2 items-baseline">
           <div className="">
-            {senderUser?.name}
+            {senderUser?.displayName}
           </div>
           <div className="text-indigo-300/30 text-[0.65rem] font-medium">
             {message.created_at.toUTCString()}

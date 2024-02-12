@@ -6,6 +6,7 @@ import { memoize } from "nextjs-better-unstable-cache"
 import { cache } from "react"
 import "server-only"
 import auth from "@/lib/server/auth"
+import { prefetchUser } from "@/app/app/query"
 
 // -----------------------------------------------
 // Get Session User Data (from DB)
@@ -16,8 +17,8 @@ export const getSessionUserData = cache(async () => {
   logFunc("Getting User Data")
   
   const { id } = await auth.getSession()
-  const user = await findUserById(id)
-  prepareQuery(['user', id], user)
+  const user = await findUserById(id)!
+  prefetchUser([id], user!)
 
   if (!user) {
     auth.logout()
