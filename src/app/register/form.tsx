@@ -74,20 +74,6 @@ export default function RegisterForm(p: {
           </div>
         </div>
       </div>
-      {/* 
-      <fieldset>
-        <label htmlFor="displaypicture">Display Picture</label>
-        <input
-          type="url"
-          onChange={ (e) => {
-            e.preventDefault()
-            debounced(e.target.value)
-            setLoading(true)
-            setError(false)
-          } }
-          defaultValue={ p.suggestProfilepicture }
-        />
-      </fieldset> */}
 
       <fieldset>
         <label htmlFor="displayname">Display Name<span className="text-red-500/80">*</span></label>
@@ -121,10 +107,7 @@ export default function RegisterForm(p: {
       </fieldset>
 
       <FormSubmitButton />
-{/* 
-      <pre>
-        { JSON.stringify(session.data, null, 1) }
-      </pre> */}
+      
     </form>
   )
 }

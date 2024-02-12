@@ -1,3 +1,5 @@
+/* eslint-disable @next/next/no-img-element */
+/* eslint-disable jsx-a11y/alt-text */
 "use client"
 
 import { s_sendMessage } from "@/actions/crud-message"
@@ -14,25 +16,28 @@ import { toast } from "sonner"
 export let addMessageToList: ((message: Message) => void)
 export let removeMessageFromList: ((id: string) => void)
 export function useMessages(
+  channelid: string,
   options?: Omit<UndefinedInitialDataOptions<Message[]>, 'queryKey'>
 ) {
   return useQuery<Message[]>({
-    queryKey: ['channel-messages'],
+    queryKey: ['channel', channelid, 'messages'],
     ...options
   })
 }
 
 export function MessageList(
-  props: {}
+  props: {
+    channelid: string
+  }
 ) {
   const queryClient = useQueryClient()
-  const { data: messages } = useMessages()
+  const { data: messages } = useMessages(props.channelid)
   const listRef = useRef<HTMLDivElement>(null)
 
   const [newMessageEntered, setNewMessageEntered] = useState(false)
 
   addMessageToList = (message) => {
-    queryClient.setQueryData(['channel-messages'], (prev: Message[]) => [message, ...prev])
+    queryClient.setQueryData(['channel', props.channelid, 'messages'], (prev: Message[]) => [message, ...prev])
     setNewMessageEntered(true)
   }
   useEffect(() => {
@@ -43,7 +48,7 @@ export function MessageList(
   }, [newMessageEntered])
 
   removeMessageFromList = (id) => {
-    queryClient.setQueryData(['channel-messages'], (prev: Message[]) => prev.filter(g => g.id !== id))
+    queryClient.setQueryData(['channel', props.channelid, 'messages'], (prev: Message[]) => prev.filter(g => g.id !== id))
   }
 
   return (
@@ -141,7 +146,6 @@ export function ChatInput(
 
   const formref = useRef<HTMLFormElement>(null)
   const buttonref = useRef<HTMLButtonElement>(null)
-
 
   return <form
     onSubmit={ submitHandler }

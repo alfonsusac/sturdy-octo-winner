@@ -10,16 +10,19 @@ import auth from "@/lib/server/auth"
 // -----------------------------------------------
 // Get Session User Data (from DB)
 // -----------------------------------------------
-// This function from auth.getSession()
+// How can this be assimilated with auth.getSession() ?
+// Should I combine this method with auth.getSession() ?
 export const getSessionUserData = cache(async () => {
   logFunc("Getting User Data")
-
+  
   const { id } = await auth.getSession()
   const user = await findUserById(id)
-
   prepareQuery(['user', id], user)
 
-  if (!user) redirect('/register', "No user found with that id (getSessionUserData)")
+  if (!user) {
+    auth.logout()
+    redirect('/register', "No user found with that id (getSessionUserData)")
+  }
   else return user
 })
 
