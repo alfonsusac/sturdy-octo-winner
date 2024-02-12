@@ -1,5 +1,4 @@
 import { black, cyan, gray } from "ansis"
-import { headers } from "next/headers"
 import { NextRequest } from "next/server"
 
 export function middleware(request: NextRequest) {
