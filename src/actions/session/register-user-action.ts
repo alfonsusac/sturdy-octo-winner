@@ -12,15 +12,13 @@ const schema = zfd.formData({
   profilepicture: zfd.text(),
 })
 
-export async function registerUserToDB(formData: FormData) {
+export async function s_registerUserToDB(formData: FormData) {
   try {
     const session = await auth.getSession({
       allowNoUserId: true
     })
-    // if (!session.provider || !session.sub) redirect('/auth')
 
     //Validate user input
-
     const { username, displayname, profilepicture } = schema.parse(formData)
 
     // Create user
