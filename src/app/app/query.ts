@@ -6,12 +6,17 @@ export const {
   prefetch: prepareGuildsQuery,
   useHook: useGuilds,
   mutations
-} = createQuery<Guild[]>(['guilds'])({
-  addGuild:
-    (prev) => (newData: Guild) => [...prev, newData],
-  removeGuild:
-    (prev) => (id: string) => prev.filter(g => g.id !== id)
+} = createQuery<Guild[]>()(['guilds'])({
+
+  addGuild: (prev) =>
+    (newData: Guild) => [...prev, newData],
+  
+  removeGuild: (prev) =>
+    (id: string) => prev.filter(g => g.id !== id)
+  
 })
+
+useGuilds
 
 export function useGuild(id: string) {
   const query = useGuilds({
@@ -26,12 +31,12 @@ export function useGuild(id: string) {
 export const {
   prefetch: prepareFriendListQuery,
   useHook: useFriendList,
-} = createQuery<User[]>(['friendList'])()
+} = createQuery<User[]>()(['friendList'])()
 
 export const {
   prefetch: prepareFriendRequestListQuery,
   useHook: useFriendRequestList,
-} = createQuery<FriendRequest[]>(['friendRequestList'])()
+} = createQuery<FriendRequest[]>()(['friendRequestList'])()
 
 
 
