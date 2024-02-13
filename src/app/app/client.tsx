@@ -1,7 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 "use client"
 
-import { useSession } from "@/lib/auth/next-auth.client"
 import { Session } from "next-auth"
 import { SessionProvider } from "next-auth/react"
 import { ReactNode, SVGProps, useEffect, useState } from "react"
@@ -20,6 +19,7 @@ import { s_deleteGuild } from "@/actions/crud-guild"
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { createQuery } from "@/components/api/create-query"
 import { useGuild, useGuilds } from "./query"
+import { useSession } from "@/lib/client/auth-hooks"
 // import { useGuilds } from "./layout"
 
 
@@ -71,14 +71,14 @@ export function UserStatus(p: {
   return (
     <div className="min-w-0 bg-black/30 h-12 p-2.5 rounded-b-lg flex flex-row gap-2 items-center flex-1">
       <div className="h-full aspect-square rounded-full overflow-hidden bg-black/50 shrink-0">
-        <img src={session.data?.user?.image ?? ""} alt="Current user's profile picture" className="w-full h-full object-cover" />
+        <img src={session.image ?? ""} alt="Current user's profile picture" className="w-full h-full object-cover" />
       </div>
       <div className="flex flex-col gap-1 leading-[0.8] justify-center grow">
         <div className="text-[0.8rem] text-indigo-100/90 font-medium truncate shrink min-w-0 flex-1">
-          {session.data?.user?.name ?? ""} hhhhhhhhhhhhhhhhhhhhhhhhhhh
+          {session.name ?? ""}
         </div>
         <div className="text-[0.7rem] text-indigo-100/60 truncate">
-          status hhhhhhhhhhhhhhhhhhhhhhhhhhhhhh
+          status
         </div>
       </div>
       <UserSettingView>
@@ -270,7 +270,7 @@ function GuildContextMenu(
     router.push('/app')
     try {
       await runServer(s_deleteGuild, {
-        userId: session.getUserId(),
+        userId: session.userid,
         guildId: props.guild.id
       })
       guilds.removeGuild(props.guild.id)
@@ -314,7 +314,7 @@ function GuildContextMenu(
         open={props.open} onOpenChange={props.setOpen}
         trigger={props.children}>
         {
-          session.getUserId() === props.guild.ownerUserId &&
+          session.userid === props.guild.ownerUserId &&
           <>
             <DropdownItem onClick={() => { setOpen(true) }}>
               <FluentSettings28Filled />
