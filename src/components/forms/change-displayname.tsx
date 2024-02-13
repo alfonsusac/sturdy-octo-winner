@@ -2,13 +2,11 @@
 
 import { SubmitHandler, useForm } from "react-hook-form"
 import { Button, FieldSet, Fieldset, Form, Input, Label } from "../base/form"
-import { FormLabel } from "../base/form-field"
-import { useSession } from "@/lib/auth/next-auth.client"
 import s_updateDisplayname from "@/actions/session/update-dname-action"
 import { toast } from "sonner"
 import { infer as i, object, string } from "zod"
-import { useEffect } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { useSession } from "@/lib/client/auth-hooks"
 
 type Inputs = {
   displayname: string
@@ -19,13 +17,13 @@ export default function ChangeDisplaynameForm() {
   const session = useSession()
 
   const schema = object({
-    displayname: string().refine(str => str !== session.data?.user.name)
+    displayname: string().refine(str => str !== session.name)
   })
 
   const form = useForm({
     resolver: zodResolver(schema),
     defaultValues: {
-      displayname: session.data?.user.name ?? ""
+      displayname: session.name ?? ""
     },
   })
 

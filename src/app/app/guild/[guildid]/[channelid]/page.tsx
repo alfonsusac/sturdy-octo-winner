@@ -25,18 +25,15 @@ export default async function Channel(
   return (
     <HydrateState>
       <TitleBar icon={<AkarIconsHashtag />} title="Channel" />
-
       <div className="h-full w-full flex flex-col pb-6">
 
         <MessageList channelid={channelid} />
 
-        {/* Input */}
         <ChatInput>
           <ChatInputField channelid={channelid} />
         </ChatInput>
         
       </div>
-
     </HydrateState>
   )
 }

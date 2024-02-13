@@ -11,7 +11,6 @@ import { createSlidingWindow } from "../../api/create-sliding-window"
 import { useState } from "react"
 import { Button, Fieldset, Form, Input, Label } from "../../base/form"
 import { AvatarPicker } from "../../base/avatar-picker"
-import { useSession } from "@/lib/auth/next-auth.client"
 import { useRouter } from "next/navigation"
 import { useGuilds } from "@/app/app/query"
 import { useZodForm } from "../../api/create-form"
@@ -21,6 +20,7 @@ import { uploadAsWebp } from "@/actions/uploads/client-upload-webp"
 import { toast } from "sonner"
 import { runServer } from "@/lib/client/server-action"
 import { s_createGuild, s_joinGuild } from "@/actions/crud-guild"
+import { useSession } from "@/lib/client/auth-hooks"
 
 
 const {
@@ -124,7 +124,7 @@ function CreateGuildForm(
     },
     defaultValues: { guildName: generateSlug(2, { format: "title" }) },
     async onSubmit(data) {
-      const guild = await requestCreateGuild(session.getUserId(), data.guildName, data.guildPicture)
+      const guild = await requestCreateGuild(session.userid, data.guildName, data.guildPicture)
       if (data.guildPicture) {
         await uploadAsWebp(data.guildPicture, `guild/${ guild.id }.webp`)
       }
@@ -183,7 +183,7 @@ function JoinGuildForm(
     },
     mode: "onSubmit",
     async onSubmit(data) {
-      const { guild, fail } = await requestJoinGuild(session.getUserId(), data.invite)
+      const { guild, fail } = await requestJoinGuild(session.userid, data.invite)
       if (fail === "notfound") {
         toast("Not Found")
         form.setError("invite", {

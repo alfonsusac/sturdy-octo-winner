@@ -3,15 +3,14 @@ import { SettingPage, TabContent, TabTrigger, dividerStyle, tabTriggerStyle } fr
 import ChangeDisplaynameForm from "@/components/forms/change-displayname"
 import ImageCropper from "@/components/modal/image-cropper"
 import LogoutButton from "@/components/ui/logout"
-import { useSession } from "@/lib/auth/next-auth.client"
 import { SVGProps } from "react"
 import { upload } from "../../actions/uploads/client-upload"
+import { useSession } from "@/lib/client/auth-hooks"
 
 export default function UserSettingView(p: {
   children: React.ReactNode
 }) {
   const session = useSession()
-
   
   return (
     <SettingPage
@@ -48,30 +47,28 @@ export default function UserSettingView(p: {
                 <ImageCropper
                   className="rounded-full"
                   width={ 256 }
-                  defaultValue={ session.data?.user.image }
+                  defaultValue={ session.image }
                   onCrop={ async (img) => {
-                    const user = session.data?.user
-                    if (!user) throw new Error("Not Authenticated")
-                    const pfp = await upload(img.blob, `user/${ user.userid }${ user.image?.at(-5) === '0' ? "1" : user.image?.at(-5) === "1" ? "0" : "1" }.png`)
+                    const pfp = await upload(img.blob, `user/${ session.userid }${ session.image?.at(-5) === '0' ? "1" : session.image?.at(-5) === "1" ? "0" : "1" }.png`)
                     await session.update("update-display-picture",
                       async () => await s_updateProfilePicture({ pfp })
                     )
                   }}
                 />
               </div>
-              <div className="font-medium text-base pl-20 ml-2">{ session.data?.user.name }</div>
+              <div className="font-medium text-base pl-20 ml-2">{ session.name }</div>
             </div>
             {/* Details of user card */ }
             <div className="bg-[#26293a] mt-4 w-full p-4 rounded-md flex flex-col gap-4">
               <div className="flex items-center">
                 <div className="grow">
                   <div className="text-[0.65rem] uppercase font-semibold opacity-80">Display Name</div>
-                  { session.data?.user.name }
+                  { session.name }
                 </div>
               </div>
               <div>
                 <div className="text-[0.65rem] uppercase font-semibold opacity-80">Email</div>
-                { session.data?.user.email }
+                { session.email }
               </div>
             </div>
           </div>
