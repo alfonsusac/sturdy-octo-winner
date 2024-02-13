@@ -9,7 +9,6 @@ import { useDebouncedCallback } from "use-debounce"
 import ProfilePicture from "./pfp"
 import { useSession } from "next-auth/react"
 import { User } from "@prisma/client"
-import { JWTUpdateParam } from "@/lib/auth/on-register"
 import { registerUser } from "@/actions/session/register-user"
 
 export default function RegisterForm(p: {

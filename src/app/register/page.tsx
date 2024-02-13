@@ -4,8 +4,8 @@ import { zfd } from "zod-form-data"
 import { getUserDefaultImage } from "@/controller/user"
 import { AcccountProvider } from "@prisma/client"
 import redirect from "@/lib/server/navigation"
-import { SessionProvider } from "@/lib/auth/next-auth.client"
 import auth from "@/lib/server/auth"
+import { SessionProvider } from "@/lib/client/auth-hooks"
 
 /**
  *  The Register Page should:

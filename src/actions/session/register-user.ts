@@ -1,6 +1,6 @@
 import { useSession } from "next-auth/react"
 import { s_registerUserToDB } from "./register-user-action"
-import { JWTUpdateParam } from "@/lib/auth/on-register"
+import { JWTUpdateParam } from "@/lib/server/auth-callbacks"
 
 export async function registerUser(data: FormData, session: ReturnType<typeof useSession>, event: {
   onError: (mes: string) => void,

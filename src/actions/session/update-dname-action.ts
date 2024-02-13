@@ -2,8 +2,8 @@
 
 import z from "zod"
 import { prisma } from "@/lib/server/prisma"
-import { ServerActionSessionUpdate } from "@/lib/auth/next-auth.client"
 import auth from "@/lib/server/auth"
+import { ServerActionSessionUpdate } from "@/lib/client/auth-hooks"
 
 
 export default async function s_updateDisplayname(input: { displayname: string }): Promise<ServerActionSessionUpdate> {
