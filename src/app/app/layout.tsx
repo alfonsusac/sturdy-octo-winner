@@ -1,4 +1,4 @@
-import { cn } from "@/lib/tailwind"
+import { cn } from "@/lib/shared/tailwind"
 import { style } from "@/style"
 import { SVGProps } from "react"
 import { getSessionUserData } from "@/controller/user"

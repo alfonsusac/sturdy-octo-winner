@@ -3,7 +3,6 @@
 "use client"
 
 import { s_sendMessage } from "@/actions/crud-message"
-import { useSession } from "@/lib/auth/next-auth.client"
 import { runServer } from "@/lib/client/server-action"
 import { Message } from "@prisma/client"
 import { UndefinedInitialDataOptions, useQuery, useQueryClient } from "@tanstack/react-query"
@@ -13,6 +12,7 @@ import { toast } from "sonner"
 import { useChannelMessages } from "./query"
 import { getUserPublicInfo } from "../action"
 import { useUser } from "@/app/app/query"
+import { useSession } from "@/lib/client/auth-hooks"
 
 
 
@@ -145,7 +145,7 @@ export function ChatInputField(
 
     try {
       const message = await runServer(s_sendMessage, {
-        userid: session.getUserId(),
+        userid: session.userid,
         channelid: props.channelid,
         message: value
       })

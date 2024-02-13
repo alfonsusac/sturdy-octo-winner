@@ -2,7 +2,7 @@ import { ReactNode } from "react"
 import { ModalBase } from "../base/modal"
 import { DialogBase, Title } from "../base/dialog"
 import { style } from "@/style"
-import { cn } from "@/lib/tailwind"
+import { cn } from "@/lib/shared/tailwind"
 import { Form } from "../base/form"
 import { useForm } from "react-hook-form"
 

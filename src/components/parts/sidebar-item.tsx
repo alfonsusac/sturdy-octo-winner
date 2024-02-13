@@ -1,6 +1,6 @@
 "use client"
 
-import { cn } from "@/lib/tailwind"
+import { cn } from "@/lib/shared/tailwind"
 import { style } from "@/style"
 import { ReactNode, forwardRef } from "react"
 import { useActivePath } from "../api/use-active-path"

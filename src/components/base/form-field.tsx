@@ -1,4 +1,4 @@
-import { cn } from "@/lib/tailwind"
+import { cn } from "@/lib/shared/tailwind"
 import { Label } from "@radix-ui/react-label"
 import { ComponentProps, ComponentPropsWithoutRef, ElementRef, Ref, createContext, forwardRef } from "react"
 import { useFormField } from "./form"

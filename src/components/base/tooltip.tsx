@@ -1,6 +1,6 @@
 "use client"
 
-import { cn } from "@/lib/tailwind"
+import { cn } from "@/lib/shared/tailwind"
 import { Tooltip, TooltipArrow, TooltipContent, TooltipPortal, TooltipProvider, TooltipTrigger } from "@radix-ui/react-tooltip"
 import { ReactNode } from "react"
 

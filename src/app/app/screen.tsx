@@ -1,6 +1,6 @@
 "use client"
 
-import { cn } from "@/lib/tailwind"
+import { cn } from "@/lib/shared/tailwind"
 import { RefObject, createContext, useContext, useRef } from "react"
 
 const screen = createContext(undefined as RefObject<HTMLDivElement> | undefined)

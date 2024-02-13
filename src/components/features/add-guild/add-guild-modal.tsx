@@ -1,6 +1,6 @@
 "use client"
 
-import { cn } from "@/lib/tailwind"
+import { cn } from "@/lib/shared/tailwind"
 import { style } from "@/style"
 // import CreateGuildForm fro../../forms/create-serverver"
 // import JoinGuildForm from "./form-join-server"

@@ -1,6 +1,6 @@
 import { ComponentProps, ReactNode, useCallback, useContext, useEffect, useId, useRef, useState } from "react"
 import { createReactContext } from "./create-context"
-import { cn } from "@/lib/tailwind"
+import { cn } from "@/lib/shared/tailwind"
 
 // ※ Sliding Window API
 //  trigger dynamic adaptive height transition when switching pages from left/right

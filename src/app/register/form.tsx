@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 "use client"
 
-import { cn } from "@/lib/tailwind"
+import { cn } from "@/lib/shared/tailwind"
 import { useRouter, useSearchParams } from "next/navigation"
 import { useRef, useState } from "react"
 import { useFormStatus } from "react-dom"

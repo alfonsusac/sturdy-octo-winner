@@ -16,7 +16,7 @@
 // https://medium.com/@thewh1teagle/uploading-files-to-s3-using-fetch-api-9e8834310043
 // @thewh1teangle
 
-import { cn } from "@/lib/tailwind"
+import { cn } from "@/lib/shared/tailwind"
 import Image from "next/image"
 import { SVGProps, useEffect, useRef, useState } from "react"
 import AvatarEditor from "react-avatar-editor"

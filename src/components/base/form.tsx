@@ -1,4 +1,4 @@
-import { cn } from "@/lib/tailwind"
+import { cn } from "@/lib/shared/tailwind"
 import { Slot } from "@radix-ui/react-slot"
 import { ComponentProps, ComponentPropsWithoutRef, ElementRef, ReactElement, ReactNode, Ref, createContext, forwardRef, useContext, useId } from "react"
 import { ControllerProps, FieldValues as FVs, FieldPath as FP, FormProvider, SubmitHandler, UseFormReturn, Controller, useFormContext } from "react-hook-form"

@@ -1,4 +1,4 @@
-import { cn } from "@/lib/tailwind"
+import { cn } from "@/lib/shared/tailwind"
 import { HomeSidebarMenuItem } from "./client"
 import { SVGProps } from "react"
 import { style } from "@/style"

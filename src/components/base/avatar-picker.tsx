@@ -3,7 +3,7 @@
 
 import { ComponentPropsWithoutRef, SVGProps } from "react"
 import { useAvatarUpload } from "../api/use-avatar-upload"
-import { cn } from "@/lib/tailwind"
+import { cn } from "@/lib/shared/tailwind"
 import { useFormContext } from "react-hook-form"
 
 export function AvatarPicker(

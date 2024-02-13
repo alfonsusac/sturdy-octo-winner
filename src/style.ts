@@ -1,4 +1,4 @@
-import { cn } from "./lib/tailwind"
+import { cn } from "./lib/shared/tailwind"
 
 export const style = {
   buttonListItem: cn(

@@ -1,6 +1,6 @@
 "use client"
 
-import { cn } from '@/lib/tailwind'
+import { cn } from '@/lib/shared/tailwind'
 import { style } from '@/style'
 import * as Dialog from '@radix-ui/react-dialog'
 import { CSSProperties, ReactNode, Ref, SVGProps, forwardRef, use, useEffect, useState } from "react"

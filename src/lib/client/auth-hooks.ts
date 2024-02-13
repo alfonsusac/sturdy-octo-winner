@@ -2,7 +2,7 @@
 
 import { SessionProvider as sp, useSession as useNextAuthSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
-import { JWTUpdateParam } from "../auth/on-register"
+import { JWTUpdateParam } from "../server/auth-callbacks"
 
 export function useSession() {
   const router = useRouter()
@@ -66,3 +66,7 @@ export type ServerActionSessionUpdate = Promise<{
   data: undefined
   error: string
 }>
+
+
+
+export const SessionProvider = sp

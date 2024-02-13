@@ -1,5 +1,5 @@
 import { AppLogo } from '@/components/logo'
-import { cn } from '@/lib/tailwind'
+import { cn } from '@/lib/shared/tailwind'
 import Image from 'next/image'
 
 export default function Home() {

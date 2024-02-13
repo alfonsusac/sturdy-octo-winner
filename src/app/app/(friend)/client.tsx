@@ -4,7 +4,7 @@ import { ReactNode, SVGProps } from "react"
 import { FluentPeople28Filled } from "../@innersidebar/default"
 import { TitleBar } from "../titlebar"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@radix-ui/react-tabs"
-import { cn } from "@/lib/tailwind"
+import { cn } from "@/lib/shared/tailwind"
 import { useFriendList } from "../query"
 import Image from "next/image"
 

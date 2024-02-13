@@ -3,7 +3,7 @@
 import { ComponentPropsWithoutRef, ReactNode, Ref, forwardRef } from "react"
 import { useActivePath } from "@/components/api/use-active-path"
 import { useParams, useRouter } from "next/navigation"
-import { cn } from "@/lib/tailwind"
+import { cn } from "@/lib/shared/tailwind"
 import { Slot } from "@radix-ui/react-slot"
 
 

@@ -1,4 +1,4 @@
-import { cn } from "@/lib/tailwind"
+import { cn } from "@/lib/shared/tailwind"
 import { style } from "@/style"
 import { AppPageClient, Client_FriendCount, Client_FriendList, TabsContentClient } from "./client"
 import { HydrateState } from "@/components/api/create-query"

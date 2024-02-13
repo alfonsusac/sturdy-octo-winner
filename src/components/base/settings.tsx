@@ -1,6 +1,6 @@
 import { ReactNode } from "react"
 import { CloseModalButton, ModalBase } from "./modal"
-import { cn } from "@/lib/tailwind"
+import { cn } from "@/lib/shared/tailwind"
 import * as Dialog from '@radix-ui/react-dialog'
 import * as Tabs from '@radix-ui/react-tabs'
 import { style } from "@/style"

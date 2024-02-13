@@ -1,6 +1,6 @@
 import { ComponentProps, forwardRef } from "react"
 import { FormControl, useFormField } from "./form"
-import { cn } from "@/lib/tailwind"
+import { cn } from "@/lib/shared/tailwind"
 
 // export function Input() {
 //   const { } = useFormField()

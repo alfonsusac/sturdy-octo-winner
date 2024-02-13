@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { Inter, Outfit } from 'next/font/google'
 import './globals.css'
-import { cn } from '@/lib/tailwind'
+import { cn } from '@/lib/shared/tailwind'
 import { Toaster } from 'sonner'
 
 const sans = Inter({

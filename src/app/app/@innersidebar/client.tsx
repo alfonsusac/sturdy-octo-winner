@@ -1,7 +1,7 @@
 "use client"
 
 import { useActivePath } from "@/components/api/use-active-path"
-import { cn } from "@/lib/tailwind"
+import { cn } from "@/lib/shared/tailwind"
 import { style } from "@/style"
 import Link from "next/link"
 import { usePathname } from "next/navigation"

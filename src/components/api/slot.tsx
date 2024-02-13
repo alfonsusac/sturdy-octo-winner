@@ -1,4 +1,4 @@
-import { cn } from "@/lib/tailwind"
+import { cn } from "@/lib/shared/tailwind"
 import React, { DOMAttributes } from "react"
 
 export function Slot({ children, render, className, ...rest }: {

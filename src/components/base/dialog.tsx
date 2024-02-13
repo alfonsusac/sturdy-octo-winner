@@ -1,7 +1,7 @@
 import { ComponentPropsWithoutRef, ReactNode } from "react"
 import { CloseModalButton, ModalBase } from "./modal"
 import { DialogContent } from "@radix-ui/react-dialog"
-import { cn } from "@/lib/tailwind"
+import { cn } from "@/lib/shared/tailwind"
 import * as Dialog from '@radix-ui/react-dialog'
 import { style } from "@/style"
 

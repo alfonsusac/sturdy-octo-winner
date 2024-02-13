@@ -1,6 +1,6 @@
 "use client"
 
-import { cn } from "@/lib/tailwind"
+import { cn } from "@/lib/shared/tailwind"
 import { useState } from "react"
 
 export function Button(p: {

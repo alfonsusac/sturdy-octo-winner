@@ -5,9 +5,7 @@ import CredentialsProvider from "next-auth/providers/credentials"
 import { env } from "../env"
 import chalk from "chalk"
 import { JWT } from "next-auth/jwt"
-import { getJWTfromOAuth } from "../auth/on-login"
-import { registerUserHandler } from "../auth/on-register"
-import { onUpdateHandler } from "../auth/on-update"
+import { getJWTfromOAuth, onUpdateHandler, registerUserHandler } from "./auth-callbacks"
 
 
 export const authOptions: AuthOptions = {

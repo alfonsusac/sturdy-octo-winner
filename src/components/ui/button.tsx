@@ -3,7 +3,7 @@
 import { Attributes, ButtonHTMLAttributes, useState } from "react"
 import { Slot } from "../api/slot"
 import { delay } from "@/lib/util"
-import { cn } from "@/lib/tailwind"
+import { cn } from "@/lib/shared/tailwind"
 import { Icon } from '@iconify/react'
 
 export function ButtonBase(p: React.ComponentProps<"button"> & {
